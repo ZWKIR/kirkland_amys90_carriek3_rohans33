@@ -6,11 +6,11 @@ README.md
 ## Install guide
 1) Clone the repo into a local directory:
 ```
-git clone git@github.com:zwkir/kirkland_amy_carrie_rohan.git
+git clone git@github.com:zwkir/kirkland_amys90_carriek3_rohans33.git
 ```
 2) Enter the app directory:
 ```
-cd kirkland_amy_carrie_rohan/
+cd kirkland_amys90_carriek3_rohans33
 ```
 3) Open a virtual environment:
 ```
