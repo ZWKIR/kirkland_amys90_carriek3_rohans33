@@ -1,5 +1,5 @@
 README.md
-# Catt by Kirk Force One
+# Catt by Kirkland
 ## Roster: Carrie Ko (), Rohan Sen (), Amy Shrestha (Project Manager)  
 **Description**: ????
 
