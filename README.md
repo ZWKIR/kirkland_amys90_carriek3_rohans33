@@ -1,7 +1,7 @@
 README.md
 # Catt by Kirkland
 ## Roster: Carrie Ko (), Rohan Sen (), Amy Shrestha (Project Manager)  
-**Description**: ????
+**Description**: This game is an RPG where the user plays the role of a wandering cat who finds joy in connecting with other cats. After logging in (and reading the backstory), you can click on different cats on the game screen to interact with them. By interacting with different cats, the user is able to gain affection points, raise affection levels, and receive interesting gifts. When exchanging dialogue with cats, the user can also encounter fun options, like trivia or jokes. Encounters cost energy, which is replenished daily. Utilizing the weather API, based on New York City's weather (shown as an icon on the interface), the user can encounter cats of different regions. Encounter all the cats to get a prize!!
 
 ## Install guide
 1) Clone the repo into a local directory:
