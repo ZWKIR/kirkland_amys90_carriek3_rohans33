@@ -7,7 +7,7 @@ import urllib.request
 import json
 from io import StringIO
 
-#FLASK declaration
+#FLASK Declaration
 #====================================================================================#
 app = Flask(__name__)  # create Flask object
 app.secret_key = b'kirklandsignature'
@@ -84,3 +84,81 @@ for b in a:
         '{b['stranger_friendly']}', 
         ''
     );""")
+
+#Helper Functions
+#====================================================================================#
+def loggedin():
+    if 'username' in session:
+        return True
+    return False
+
+#Webpage Sites
+#====================================================================================#
+@app.route("/signup", methods=['GET', 'POST'])
+def signup():
+    return render_template('signup.html')
+
+@app.route("/login", methods=['GET', 'POST'])
+def login():
+    if loggedin():
+        return redirect(url_for('home'))
+    if request.method == 'POST':
+        session.permanent = True
+        with sqlite3.connect(DB_FILE) as db:
+                c = db.cursor()
+                for row in c.execute(f"SELECT * FROM user_profile WHERE username LIKE '{request.form['id']}';"):
+                    if(row[1] == request.form['pass']):
+                        session['username'] = request.form['id']
+                        session['password'] = request.form['pass']
+                        return redirect(url_for('home'))
+                    else:
+                        #return loginpage(valid=False)
+                        return loginpage()
+        #return loginpage(valid=False)
+        return loginpage()
+    else:
+        #return loginpage(valid=True)
+        return loginpage()
+        
+@app.route("/profile", methods=['GET', 'POST'])
+def profile():
+    return render_template('profile.html')
+
+@app.route("/logout", methods=['GET', 'POST'])
+def logout():
+    if loggedin():
+        return redirect(url_for('logout'))
+    return redirect(url_for('login'))
+
+@app.route("/start", methods=['GET', 'POST'])
+def startscreen():
+    return redirect(url_for('start'))
+
+'''
+def settings():
+    return 0
+'''
+
+@app.route("/encounters", methods=['GET', 'POST'])
+def encounters():
+    return redirect(url_for('encounters'))
+
+@app.route("/encounters/<weather>", methods=['GET', 'POST'])
+def weatherEncounter(weather):
+    return redirect(url_for('weatherEncounter'))
+
+#HTML Pages
+#====================================================================================#
+def loginpage(valid=True):
+    return render_template('login.html')
+    '''
+    if(valid==True):
+        return render_template('login.html',username=user)
+    else:
+        return render_template('login.html',invalid="Your username or password was incorrect")
+    '''
+
+#====================================================================================#
+if __name__ == "__main__":  # false if this file imported as module
+    #app.debug = True  # enable PSOD, auto-server-restart on code chg
+    app.run(port=8900)
