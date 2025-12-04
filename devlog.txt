@@ -4,3 +4,5 @@ AmyS -- 2025-12-02 19:48
 RohanS -- 2025-12-03 11:21
 - Design doc update for new component map WIP
 - API README completed
+RohanS -- 2025-12-04 00:05
+- Design doc uploaded
