@@ -3,6 +3,9 @@ from flask import render_template  # facilitate jinja templating
 from flask import request, redirect, url_for  # facilitate form submission
 from flask import session
 import sqlite3   #enable control of an sqlite database
+import urllib.request
+import json
+from io import StringIO
 
 #FLASK declaration
 #====================================================================================#
@@ -72,3 +75,12 @@ c.execute("""CREATE TABLE IF NOT EXISTS cats(
 	joke_type TEXT
 );""")
 
+with urllib.request.urlopen("https://api.thecatapi.com/v1/breeds") as response:
+    a = json.loads(response.read())
+for b in a:
+    c.execute(f"""INSERT OR REPLACE INTO cats(
+        '{b['name']}', 
+        '{b['energy_level']}', 
+        '{b['stranger_friendly']}', 
+        ''
+    );""")
