@@ -17,6 +17,61 @@ DB_FILE="catt.db"
 db = sqlite3.connect(DB_FILE) #open if file exists, otherwise create
 c = db.cursor()
 
+#profile
+c.execute("""
+CREATE TABLE IF NOT EXISTS user_profile(
+	username TEXT PRIMARY KEY NOT NULL, 
+	password TEXT NOT NULL, 
+	sprite TEXT
+);""")
+
+c.execute("""
+CREATE TABLE IF NOT EXISTS encounter_maps(
+	background TEXT, 
+	num_cats INTEGER, 
+	energy_lvl INTEGER, 
+	weather TEXT
+);""")
+
+c.execute("""
+CREATE TABLE IF NOT EXISTS user_encounters(
+	username TEXT, 
+	cat TEXT, 
+	affection INTEGER, 
+	level INTEGER
+);""")
+
+c.execute("""CREATE TABLE IF NOT EXISTS dialogue(
+	encounter_type TEXT, 
+	response1 TEXT, 
+	response2 TEXT, 
+	response3 TEXT, 
+	response4 TEXT
+);""")
+
+c.execute("""CREATE TABLE IF NOT EXISTS jokes(
+	category TEXT, 
+	part1 TEXT, 
+	part2 TEXT, 
+	desired_response TEXT
+);""")
+
+c.execute("""CREATE TABLE IF NOT EXISTS trivia(
+	difficulty TEXT, 
+	answer1 TEXT, 
+	answer2 TEXT, 
+	answer3 TEXT, 
+	answer4 TEXT, 
+	correct_answer TEXT
+	);""")
+
+c.execute("""CREATE TABLE IF NOT EXISTS cats(
+	breed TEXT, 
+	energy_lvl INTEGER, 
+	difficulty INTEGER, 
+	joke_type TEXT
+);""")
+
 #Helper Functions
 #====================================================================================#
 def loggedin():
