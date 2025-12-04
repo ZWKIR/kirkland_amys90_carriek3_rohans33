@@ -1,0 +1,26 @@
+<!Doctype html>
+<html>
+  <head>
+    <title> Welcome </title>
+  </head>
+  <body>
+
+    <h1> WELCOME, {{ username }}</h1>
+
+    <a href="/encounters">
+      <h1>START</h1>
+    </a>
+    <a href="/profile">
+      <h4>profile</h4>
+    </a>
+    <a href="/settings">
+      <h4>settings</h4>
+    </a>
+
+    <p> If you would like to logout, please click below </p>
+	<form action="/logout" method="POST">
+		<input type="submit" value="signout">
+    </form>
+
+  </body>
+</html>
