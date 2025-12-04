@@ -83,7 +83,7 @@ def loggedin():
 #====================================================================================#
 @app.route("/signup", methods=['GET', 'POST'])
 def signup():
-    return 0
+    return render_template('signup.html')
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
@@ -109,7 +109,7 @@ def login():
         
 @app.route("/profile", methods=['GET', 'POST'])
 def profile():
-    return 0
+    return render_template('profile.html')
 
 @app.route("/logout", methods=['GET', 'POST'])
 def logout():
@@ -119,7 +119,7 @@ def logout():
 
 @app.route("/start", methods=['GET', 'POST'])
 def startscreen():
-    return 0
+    return redirect(url_for('start'))
 
 '''
 def settings():
@@ -128,18 +128,24 @@ def settings():
 
 @app.route("/encounters", methods=['GET', 'POST'])
 def encounters():
-    return 0
+    return redirect(url_for('encounters'))
 
 @app.route("/encounters/<weather>", methods=['GET', 'POST'])
 def weatherEncounter(weather):
-    return 0
+    return redirect(url_for('weatherEncounter'))
 
 #HTML Pages
 #====================================================================================#
 def loginpage(valid=True):
+    return render_template('login.html')
+    '''
     if(valid==True):
         return render_template('login.html',username=user)
     else:
         return render_template('login.html',invalid="Your username or password was incorrect")
-    
-    
+    '''
+
+#====================================================================================#
+if __name__ == "__main__":  # false if this file imported as module
+    #app.debug = True  # enable PSOD, auto-server-restart on code chg
+    app.run(port=8900)
