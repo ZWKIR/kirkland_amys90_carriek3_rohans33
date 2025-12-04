@@ -16,7 +16,7 @@ cd kirkland_amys90_carriek3_rohans33
 ```
 python3 -m venv venv
 ```
-4) Activate virtual env for Linux, Windows, or Mac:
+4) Activate virtual env for Linux, Windows, or Mac:  
 i. Linux
 ```
 . venv/bin/activate
