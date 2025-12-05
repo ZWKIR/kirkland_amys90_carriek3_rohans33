@@ -24,55 +24,55 @@ c = db.cursor()
 #profile
 c.execute("""
 CREATE TABLE IF NOT EXISTS user_profile(
-	username TEXT PRIMARY KEY NOT NULL, 
-	password TEXT NOT NULL, 
+	username TEXT PRIMARY KEY NOT NULL,
+	password TEXT NOT NULL,
 	sprite TEXT
 );""")
 
 c.execute("""
 CREATE TABLE IF NOT EXISTS encounter_maps(
-	background TEXT, 
-	num_cats INTEGER, 
-	energy_lvl INTEGER, 
+	background TEXT,
+	num_cats INTEGER,
+	energy_lvl INTEGER,
 	weather TEXT
 );""")
 
 c.execute("""
 CREATE TABLE IF NOT EXISTS user_encounters(
-	username TEXT, 
-	cat TEXT, 
-	affection INTEGER, 
+	username TEXT,
+	cat TEXT,
+	affection INTEGER,
 	level INTEGER
 );""")
 
 c.execute("""CREATE TABLE IF NOT EXISTS dialogue(
-	encounter_type TEXT, 
-	response1 TEXT, 
-	response2 TEXT, 
-	response3 TEXT, 
+	encounter_type TEXT,
+	response1 TEXT,
+	response2 TEXT,
+	response3 TEXT,
 	response4 TEXT
 );""")
 
 c.execute("""CREATE TABLE IF NOT EXISTS jokes(
 	category TEXT, 
-	part1 TEXT, 
-	part2 TEXT, 
+	joke TEXT, 
+	difficulty INTEGER, 
 	desired_response TEXT
 );""")
 
 c.execute("""CREATE TABLE IF NOT EXISTS trivia(
-	difficulty TEXT, 
-	answer1 TEXT, 
-	answer2 TEXT, 
-	answer3 TEXT, 
-	answer4 TEXT, 
+	difficulty TEXT,
+	answer1 TEXT,
+	answer2 TEXT,
+	answer3 TEXT,
+	answer4 TEXT,
 	correct_answer TEXT
 	);""")
 
 c.execute("""CREATE TABLE IF NOT EXISTS cats(
-	breed TEXT, 
-	energy_lvl INTEGER, 
-	difficulty INTEGER, 
+	breed TEXT,
+	energy_lvl INTEGER,
+	difficulty INTEGER,
 	response_type INTEGER
 );""")
 
@@ -129,7 +129,7 @@ def login():
     else:
         #return loginpage(valid=True)
         return loginpage()
-        
+
 @app.route("/profile", methods=['GET', 'POST'])
 def profile():
     return profilepage()
@@ -186,7 +186,7 @@ def encounterspage():
     return render_template('encounters.html')
 
 def weatherspage():
-    return render_template('weatherecounters.html')
+	return render_template('weatherencounters.html')
 #====================================================================================#
 if __name__ == "__main__":  # false if this file imported as module
     #app.debug = True  # enable PSOD, auto-server-restart on code chg
