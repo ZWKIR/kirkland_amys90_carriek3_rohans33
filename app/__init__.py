@@ -96,7 +96,18 @@ def loggedin():
 #====================================================================================#
 @app.route("/signup", methods=['GET', 'POST'])
 def signup():
-    return render_template('signup.html')
+    if loggedin():
+        return redirect(url_for('home'))
+    else:
+        if request.method == 'POST':
+            session.permanent = True
+            with sqlite3.connect(DB_FILE) as db:
+                c = db.cursor()
+                for row in c.execute("SELECT * FROM user_profile WHERE username LIKE ?;", request.form['id']):
+                    if(row[1] == request.form['pass']):
+                        session['username'] = request.form['id']
+                        session['password'] = request.form['pass']
+    return registerpage()
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
@@ -106,7 +117,7 @@ def login():
         session.permanent = True
         with sqlite3.connect(DB_FILE) as db:
                 c = db.cursor()
-                for row in c.execute(f"SELECT * FROM user_profile WHERE username LIKE '{request.form['id']}';"):
+                for row in c.execute("SELECT * FROM user_profile WHERE username LIKE ?;", request.form['id']):
                     if(row[1] == request.form['pass']):
                         session['username'] = request.form['id']
                         session['password'] = request.form['pass']
@@ -122,33 +133,35 @@ def login():
         
 @app.route("/profile", methods=['GET', 'POST'])
 def profile():
-    return render_template('profile.html')
+    return profilepage()
 
 @app.route("/logout", methods=['GET', 'POST'])
 def logout():
     if loggedin():
-        return redirect(url_for('logout'))
-    return redirect(url_for('login'))
+        return logoutpage()
+    return loginpage()
 
 @app.route("/start", methods=['GET', 'POST'])
 def startscreen():
-    return redirect(url_for('start'))
+    return startpage()
 
-'''
+@app.route("/settings", methods=['GET', 'POST'])
 def settings():
-    return 0
-'''
+    return settingspage()
 
 @app.route("/encounters", methods=['GET', 'POST'])
 def encounters():
-    return redirect(url_for('encounters'))
+    return encounterspage()
 
 @app.route("/encounters/<weather>", methods=['GET', 'POST'])
-def weatherEncounter(weather):
-    return redirect(url_for('weatherEncounter'))
+def weatherencounters(weather):
+    return weatherspage()
 
 #HTML Pages
 #====================================================================================#
+def registerpage():
+    return render_template('signup.html')
+
 def loginpage(valid=True):
     return render_template('login.html')
     '''
@@ -158,6 +171,23 @@ def loginpage(valid=True):
         return render_template('login.html',invalid="Your username or password was incorrect")
     '''
 
+def profilepage():
+    return render_template('profile.html')
+
+def logoutpage():
+    return render_template('logout.html')
+
+def startpage():
+    return render_template('start.html')
+
+def settingspage():
+    return render_template('settings.html')
+
+def encounterspage():
+    return render_template('encounters.html')
+
+def weatherspage():
+    return render_template('weatherecounters.html')
 #====================================================================================#
 if __name__ == "__main__":  # false if this file imported as module
     #app.debug = True  # enable PSOD, auto-server-restart on code chg
