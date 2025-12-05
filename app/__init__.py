@@ -55,8 +55,8 @@ c.execute("""CREATE TABLE IF NOT EXISTS dialogue(
 
 c.execute("""CREATE TABLE IF NOT EXISTS jokes(
 	category TEXT, 
-	part1 TEXT, 
-	part2 TEXT, 
+	joke TEXT, 
+	difficuly INTEGER, 
 	desired_response TEXT
 );""")
 
