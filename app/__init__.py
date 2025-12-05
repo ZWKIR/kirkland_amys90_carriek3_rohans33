@@ -102,7 +102,7 @@ def signup():
             session.permanent = True
             with sqlite3.connect(DB_FILE) as db:
                 c = db.cursor()
-                for row in c.execute("SELECT * FROM user_profile WHERE username LIKE ?;", request.form['id']):
+                for row in c.execute("SELECT * FROM user_profile WHERE username LIKE ?;", (request.form['id'],)):
                     if(row[1] == request.form['pass']):
                         session['username'] = request.form['id']
                         session['password'] = request.form['pass']
@@ -116,7 +116,7 @@ def login():
         session.permanent = True
         with sqlite3.connect(DB_FILE) as db:
                 c = db.cursor()
-                for row in c.execute("SELECT * FROM user_profile WHERE username LIKE ?;", request.form['id']):
+                for row in c.execute("SELECT * FROM user_profile WHERE username LIKE ?;", (request.form['id'],)):
                     if(row[1] == request.form['pass']):
                         session['username'] = request.form['id']
                         session['password'] = request.form['pass']
