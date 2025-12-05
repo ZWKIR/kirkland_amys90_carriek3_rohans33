@@ -1,6 +1,6 @@
 AmyS -- 2025-12-02 19:48
 - Update README.md description
-- INITIAL DD REVIEW: PIES and Rotisserie Chicken gave feedback for our design doc. One main problem was the component map was too much like the site map, and we should create another component map that includes the db tables, apps, and sites. Another suggestion was to combine similar parts of the design together, such as the first page which explains the app and the APIs we plan to use and the 5th page explaining how we use the APIs. Rotisserie Chicken also recommended putting a short description of the project on top. 
+- INITIAL DD REVIEW: PIES and Rotisserie Chicken gave feedback for our design doc. One main problem was the component map was too much like the site map, and we should create another component map that includes the db tables, apps, and sites. Another suggestion was to combine similar parts of the design together, such as the first page which explains the app and the APIs we plan to use and the 5th page explaining how we use the APIs. Rotisserie Chicken also recommended putting a short description of the project on top.
 
 RohanS -- 2025-12-03 11:21
 - Design doc update for new component map WIP
@@ -22,3 +22,7 @@ AmyS -- 2025-12-04 11:43
 CarrieK -- 2025-12-04 11:45
 - did sqlite stuff
 - failed at cat table
+
+Rohans -- 2025-12-04 11:47
+- HTML templates updated
+- flask changes to match html
