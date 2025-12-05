@@ -22,7 +22,14 @@ AmyS -- 2025-12-04 11:43
 CarrieK -- 2025-12-04 11:45
 - did sqlite stuff
 - failed at cat table
+- did MORE sqlite stuff
+- succeeded at cat table
 
-Rohans -- 2025-12-04 11:47
+RohanS -- 2025-12-04 11:46
 - HTML templates updated
-- flask changes to match html
+
+AmyS - 2025-12-04 11:46
+- did sqlite stuff
+- failed at cat table
+- did MORE sqlite stuff
+- succeeded at cat table
