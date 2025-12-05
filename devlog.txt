@@ -22,6 +22,8 @@ AmyS -- 2025-12-04 11:43
 CarrieK -- 2025-12-04 11:45
 - did sqlite stuff
 - failed at cat table
+
+CarrieK -- 2025-12-05 11:46
 - did MORE sqlite stuff
 - succeeded at cat table
 
@@ -33,3 +35,8 @@ AmyS - 2025-12-04 11:46
 - failed at cat table
 - did MORE sqlite stuff
 - succeeded at cat table
+
+CarrieK -- 2025-12-05 13:07
+- did joke table 
+  - we will need to stock up on jokes beforehand which means we will need to commit a .db file
+- guh
