@@ -5,6 +5,7 @@ from flask import session
 import sqlite3   #enable control of an sqlite database
 import urllib.request
 import json
+import random
 from io import StringIO
 
 #FLASK Declaration
@@ -72,18 +73,16 @@ c.execute("""CREATE TABLE IF NOT EXISTS cats(
 	breed TEXT, 
 	energy_lvl INTEGER, 
 	difficulty INTEGER, 
-	joke_type TEXT
+	response_type INTEGER
 );""")
 
 with urllib.request.urlopen("https://api.thecatapi.com/v1/breeds") as response:
     a = json.loads(response.read())
 for b in a:
-    c.execute(f"""INSERT OR REPLACE INTO cats(
-        '{b['name']}', 
-        '{b['energy_level']}', 
-        '{b['stranger_friendly']}', 
-        ''
-    );""")
+    q = "INSERT OR REPLACE INTO cats(breed, energy_lvl, difficulty, response_type) VALUES(?, ?, ?, ?)"
+    d = (b['name'], b['energy_level'], b['stranger_friendly'], random.randint(0,1))
+    c.execute(q, d)
+    db.commit()
 
 #Helper Functions
 #====================================================================================#
