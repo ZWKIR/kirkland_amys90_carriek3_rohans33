@@ -55,7 +55,7 @@ c.execute("""CREATE TABLE IF NOT EXISTS dialogue(
 
 c.execute("""CREATE TABLE IF NOT EXISTS jokes(
 	category TEXT, 
-	joke TEXT, 
+	joke TEXT PRIMARY KEY, 
 	difficulty INTEGER, 
 	desired_response TEXT
 );""")
@@ -83,6 +83,26 @@ for b in a:
     d = (b['name'], b['energy_level'], b['stranger_friendly'], random.randint(0,1))
     c.execute(q, d)
     db.commit()
+
+for i in range(10):
+    with urllib.request.urlopen("https://v2.jokeapi.dev/joke/Programming,Miscellaneous,Dark,Pun?blacklistFlags=nsfw,religious,political,racist,sexist,explicit&type=single&amount=10") as response:
+        a = json.loads(response.read())
+    for b in a['jokes']:
+        t = 0
+        if(b['category'] == "Dark"):
+            t = 2
+        if(b['category'] == "Misc"):
+            t = 3
+        if(b['category'] == "Pun"):
+            t = 4
+        if(b['category'] == "Programming"):
+            t = 5
+        if(b['safe'] == False):
+            t = 1
+        q = "INSERT OR IGNORE INTO jokes(category, joke, difficulty, desired_response) VALUES(?, ?, ?, ?)"
+        d = (b['category'], b['joke'], t, "temp")
+        c.execute(q, d)
+db.commit()
 
 #Helper Functions
 #====================================================================================#
