@@ -62,6 +62,7 @@ c.execute("""CREATE TABLE IF NOT EXISTS jokes(
 
 c.execute("""CREATE TABLE IF NOT EXISTS trivia(
 	difficulty TEXT,
+        question TEXT,
 	answer1 TEXT,
 	answer2 TEXT,
 	answer3 TEXT,
@@ -73,16 +74,23 @@ c.execute("""CREATE TABLE IF NOT EXISTS cats(
 	breed TEXT,
 	energy_lvl INTEGER,
 	difficulty INTEGER,
+	difficulty2 TEXT,
 	response_type INTEGER
 );""")
 
 with urllib.request.urlopen("https://api.thecatapi.com/v1/breeds") as response:
     a = json.loads(response.read())
 for b in a:
-    q = "INSERT OR REPLACE INTO cats(breed, energy_lvl, difficulty, response_type) VALUES(?, ?, ?, ?)"
-    d = (b['name'], b['energy_level'], b['stranger_friendly'], random.randint(0,1))
+    t = ""
+    if(b['stranger_friendly'] == 5):
+        t = "easy"
+    if(b['stranger_friendly'] == 4 or b['stranger_friendly'] == 3):
+        t = "medium"
+    if(b['stranger_friendly'] == 2 or b['stranger_friendly'] == 1):
+        t = "hard"
+    q = "INSERT OR REPLACE INTO cats(breed, energy_lvl, difficulty, difficulty2, response_type) VALUES(?, ?, ?, ?, ?)"
+    d = (b['name'], b['energy_level'], b['stranger_friendly'], t, random.randint(0,1))
     c.execute(q, d)
-    db.commit()
 
 for i in range(10):
     with urllib.request.urlopen("https://v2.jokeapi.dev/joke/Programming,Miscellaneous,Dark,Pun?blacklistFlags=nsfw,religious,political,racist,sexist,explicit&type=single&amount=10") as response:
@@ -102,6 +110,17 @@ for i in range(10):
         q = "INSERT OR IGNORE INTO jokes(category, joke, difficulty, desired_response) VALUES(?, ?, ?, ?)"
         d = (b['category'], b['joke'], t, "temp")
         c.execute(q, d)
+
+for i in range(10):
+    with urllib.request.urlopen("https://the-trivia-api.com/v2/questions") as response:
+        a = json.loads(response.read())
+    for b in a:
+        t = [b['incorrectAnswers'][0], b['incorrectAnswers'][1], b['incorrectAnswers'][2], b['correctAnswer']]
+        random.shuffle(t)
+        q = "INSERT OR IGNORE INTO trivia(difficulty, question, answer1, answer2, answer3, answer4, correct_answer) VALUES (?, ?, ?, ?, ?, ?, ?)"
+        d = (b['difficulty'], b['question']['text'], t[0], t[1], t[2], t[3], b['correctAnswer'])
+        c.execute(q, d)
+
 db.commit()
 
 #Helper Functions
@@ -209,5 +228,5 @@ def weatherspage():
 	return render_template('weatherencounters.html')
 #====================================================================================#
 if __name__ == "__main__":  # false if this file imported as module
-    #app.debug = True  # enable PSOD, auto-server-restart on code chg
+    app.debug = True  # enable PSOD, auto-server-restart on code chg
     app.run(port=8900)
