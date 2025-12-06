@@ -40,3 +40,11 @@ CarrieK -- 2025-12-05 13:07
 - did joke table 
   - we will need to stock up on jokes beforehand which means we will need to commit a .db file
 - guh
+
+CarrieK -- 2025-12-05 22:02
+- did trivia table
+  - once again, need to stock up on trivia questions
+- changed some db table values, will need to add changes to design doc
+- unfortunately, to get more jokes and trivia questions, i had to request the sites in a for loop
+  - makes loading longer, don't be surprised when it takes a bit longer for the flask app to run
+- hopefully didnt mess anything up!!!!!! hahahahahahahha
