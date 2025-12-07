@@ -27,14 +27,12 @@ CarrieK -- 2025-12-05 11:46
 - did MORE sqlite stuff
 - succeeded at cat table
 
-RohanS -- 2025-12-04 11:46
+RohanS -- 2025-12-05 11:46
 - HTML templates updated
 
-AmyS - 2025-12-04 11:46
-- did sqlite stuff
-- failed at cat table
-- did MORE sqlite stuff
-- succeeded at cat table
+AmyS - 2025-12-05 11:46
+- Updated Flask weblinks
+- Fixed problems in functionality
 
 CarrieK -- 2025-12-05 13:07
 - did joke table 
