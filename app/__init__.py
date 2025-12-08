@@ -128,18 +128,16 @@ for i in range(10):
         d = (b['difficulty'], b['question']['text'], t[0], t[1], t[2], t[3], b['correctAnswer'])
         c.execute(q, d)
 
-with open("cities", "r") as f:
+with open("locations", "r") as f:
     lines = f.read().strip().splitlines()
-city,lat,lon = random.choice(lines)
+city,lat,lon = random.choice(lines).split(",")
 
-with urllib.request.urlopen(f"https://api.pirateweather.net/forecast/apikey/{lat},{lon}") as response:
+with open("keys/key_pirateWeather.txt", "r") as f:
+    key = f.read().strip()
+
+with urllib.request.urlopen(f"https://api.pirateweather.net/forecast/{key}/{lat},{lon}") as response:
     a = json.loads(response.read())
-for b in a:
-    t = [b['incorrectAnswers'][0], b['incorrectAnswers'][1], b['incorrectAnswers'][2], b['correctAnswer']]
-    random.shuffle(t)
-    q = "INSERT OR IGNORE INTO trivia(difficulty, question, answer1, answer2, answer3, answer4, correct_answer) VALUES (?, ?, ?, ?, ?, ?, ?)"
-    d = (b['difficulty'], b['question']['text'], t[0], t[1], t[2], t[3], b['correctAnswer'])
-    c.execute(q, d)
+    temperature = a["currently"]["temperature"]
 
 db.commit()
 
@@ -305,7 +303,7 @@ def logoutpage():
     return render_template('logout.html')
 
 def startpage(user=''):
-    return render_template('start.html', username=user)
+    return render_template('start.html', username=user, temperature=temperature, city=city)
 
 def settingspage(username='', error=''):
     return render_template('settings.html', username=username, error=error)
