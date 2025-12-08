@@ -190,7 +190,30 @@ def login():
 
 @app.route("/profile", methods=['GET', 'POST'])
 def profile():
-    return profilepage()
+    if not loggedin():
+        return redirect(url_for('login'))
+
+    profile_icons = [
+        "/static/cat1.jpg",
+        "/static/cat2.jpeg",
+        "/static/cat3.jpg",
+        "/static/cat4.jpg",
+        "/static/cat5.jpg"
+    ]
+        
+    with sqlite3.connect(DB_FILE) as db:
+        c = db.cursor()
+        c.execute("SELECT * FROM user_profile WHERE username = ?", (session["username"],))
+        user = c.fetchone()
+            
+        if request.method == 'POST':
+            icon = request.form.get("profile_icon")
+            c.execute("UPDATE user_profile SET sprite = ? WHERE username = ?", (icon, session["username"]))
+            db.commit()
+            return redirect(url_for('profile'))
+    
+    sprite = user[2]
+    return profilepage(profile_icons, sprite, user[0])
 
 @app.route("/logout", methods=['GET', 'POST'])
 def logout():
@@ -228,8 +251,8 @@ def loginpage(valid=True):
     else:
         return render_template('login.html',invalid="Your username or password was incorrect")
 
-def profilepage():
-    return render_template('profile.html')
+def profilepage(profile_icons, icon, user=''):
+    return render_template('profile.html', profile_icons=profile_icons, icon=icon, username=user)
 
 def logoutpage():
     return render_template('logout.html')
@@ -248,4 +271,4 @@ def weatherspage():
 #====================================================================================#
 if __name__ == "__main__":  # false if this file imported as module
     #app.debug = True  # enable PSOD, auto-server-restart on code chg
-    app.run()
+    app.run(port=8000)
