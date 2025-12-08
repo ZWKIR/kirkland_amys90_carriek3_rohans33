@@ -150,7 +150,7 @@ def signup():
 @app.route("/login", methods=['GET', 'POST'])
 def login():
     if loggedin():
-        return redirect(url_for('home'))
+        return redirect(url_for('startscreen'))
     if request.method == 'POST':
         session.permanent = True
         with sqlite3.connect(DB_FILE) as db:
@@ -159,7 +159,7 @@ def login():
                     if(row[1] == request.form['pass']):
                         session['username'] = request.form['id']
                         session['password'] = request.form['pass']
-                        return redirect(url_for('home'))
+                        return profilepage()
                     else:
                         #return loginpage(valid=False)
                         return loginpage()
@@ -225,8 +225,8 @@ def encounterspage():
     return render_template('encounters.html')
 
 def weatherspage():
-	return render_template('weatherencounters.html')
+    return render_template('weatherencounters.html')
 #====================================================================================#
 if __name__ == "__main__":  # false if this file imported as module
-    app.debug = True  # enable PSOD, auto-server-restart on code chg
-    app.run(port=8900)
+    #app.debug = True  # enable PSOD, auto-server-restart on code chg
+    app.run()
