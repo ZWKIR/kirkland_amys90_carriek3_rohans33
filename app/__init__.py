@@ -128,6 +128,19 @@ for i in range(10):
         d = (b['difficulty'], b['question']['text'], t[0], t[1], t[2], t[3], b['correctAnswer'])
         c.execute(q, d)
 
+with open("cities", "r") as f:
+    lines = f.read().strip().splitlines()
+city,lat,lon = random.choice(lines)
+
+with urllib.request.urlopen(f"https://api.pirateweather.net/forecast/apikey/{lat},{lon}") as response:
+    a = json.loads(response.read())
+for b in a:
+    t = [b['incorrectAnswers'][0], b['incorrectAnswers'][1], b['incorrectAnswers'][2], b['correctAnswer']]
+    random.shuffle(t)
+    q = "INSERT OR IGNORE INTO trivia(difficulty, question, answer1, answer2, answer3, answer4, correct_answer) VALUES (?, ?, ?, ?, ?, ?, ?)"
+    d = (b['difficulty'], b['question']['text'], t[0], t[1], t[2], t[3], b['correctAnswer'])
+    c.execute(q, d)
+
 db.commit()
 
 #Helper Functions
@@ -265,6 +278,10 @@ def encounters():
 @app.route("/encounters/<weather>", methods=['GET', 'POST'])
 def weatherencounters(weather):
     return weatherspage()
+
+@app.route("/")
+def index():
+    return loginpage()
 
 #HTML Pages
 #====================================================================================#
