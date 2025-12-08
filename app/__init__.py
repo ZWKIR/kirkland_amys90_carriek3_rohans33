@@ -178,7 +178,7 @@ def login():
         with sqlite3.connect(DB_FILE) as db:
                 c = db.cursor()
                 for row in c.execute("SELECT * FROM user_profile WHERE username LIKE ?;", (request.form['username'],)):
-                    if(row[1] == request.form['pass']):
+                    if(row[1] == request.form['password']):
                         session['username'] = request.form['username']
                         session['password'] = request.form['password']
                         return redirect(url_for('start'))

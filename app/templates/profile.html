@@ -5,10 +5,15 @@
   </head>
 
   <body>
-    <h2>
-        Welcome to your profile.
-    </h2>
+    <nav>
+      <a href="{{ url_for('start') }}">Start</a>
+      <a href="{{ url_for('settings') }}">Settings</a>
+      <a href="{{ url_for('logout') }}">Logout</a>
+    </nav>
 
+    <h2>
+        User Information
+    </h2>
 
   </body>
 
