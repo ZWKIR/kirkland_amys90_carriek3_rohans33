@@ -162,6 +162,10 @@ def startscreen():
         return startscreenpage(True, '< press to start >')
     return startscreenpage(False, '')
 
+@app.route("/choose", methods=['GET', 'POST'])
+def choose():
+    return choosepage()
+
 @app.route("/signup", methods=['GET', 'POST'])
 def signup():
     if loggedin():
@@ -294,6 +298,9 @@ def startscreenpage(valid=False, start_button = ''):
         return render_template('startscreen.html', start_button = '< press to start >')
     else:
         return render_template('startscreen.html', start_button = '')
+
+def choosepage():
+    return render_template('choose.html')
 
 def registerpage(valid=True, invalid=''):
     if(valid==True):
