@@ -53,3 +53,7 @@ AmyS -- 2025-12-08 01:30
 - finish profile page and picture
 - finished settings page (and editing password)
 - finshed register page errors (duplicate usernames, empty fields)
+
+RohanS -- 2025-12-09 02:22
+- Weather fetched for one of 10 random cities
+- Temperature displayed on start screen
