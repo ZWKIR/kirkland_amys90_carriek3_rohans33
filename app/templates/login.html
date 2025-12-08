@@ -12,9 +12,13 @@
       Enter your username below to proceed.
     </h3>
       <form action="/login" method="POST">
-        <input type="text" name="id">
-        <input type="password" name="pass">
-        <input type="submit" name="sub1">
+        <label for="username">Username:</label><br>
+        <input type="text" id="username" name="username"><br>
+        <label for="pwd">Password:</label><br>
+        <input type="password" id="password" name="password">
+        <br>
+        <input type="submit" name="sub1" value="Login">
+        <p> {{invalid}} </p>
       </form>
     <br>
     <div class="signup">

@@ -127,7 +127,7 @@ db.commit()
 #====================================================================================#
 usernames = {}
 for row in c.execute("SELECT username, password FROM user_profile"):
-    usernames[username]=password
+    usernames[row[0]] = row[1]
 
 print(usernames)
 
@@ -162,14 +162,9 @@ def signup():
                     return registerpage(False, t)
                 '''
                 
-                for row in c.execute("SELECT * FROM user_profile WHERE username LIKE ?;", (request.form['id'],)):
-                    if(row[0] != ''):
-                        return registerpage()
-                        #return registerpage(False, "Username taken")
-                
-                c.execute("INSERT INTO user_profile VALUES (?, ?, ?);", (request.form['id'], request.form['pass'], None))
-                session['username'] = request.form['id']
-                session['password'] = request.form['pass']
+                c.execute("INSERT INTO user_profile VALUES (?, ?, ?);", (request.form['username'], request.form['password'], None))
+                session['username'] = request.form['username']
+                session['password'] = request.form['password']
                 return redirect(url_for('start'))
     return registerpage()
 
@@ -182,19 +177,16 @@ def login():
         session.permanent = True
         with sqlite3.connect(DB_FILE) as db:
                 c = db.cursor()
-                for row in c.execute("SELECT * FROM user_profile WHERE username LIKE ?;", (request.form['id'],)):
+                for row in c.execute("SELECT * FROM user_profile WHERE username LIKE ?;", (request.form['username'],)):
                     if(row[1] == request.form['pass']):
-                        session['username'] = request.form['id']
-                        session['password'] = request.form['pass']
+                        session['username'] = request.form['username']
+                        session['password'] = request.form['password']
                         return redirect(url_for('start'))
                     else:
-                        #return loginpage(valid=False)
-                        return loginpage()
-        #return loginpage(valid=False)
-        return loginpage()
+                        return loginpage(valid=False)
+        return loginpage(valid=False)
     else:
-        #return loginpage(valid=True)
-        return loginpage()
+        return loginpage(valid=True)
 
 @app.route("/profile", methods=['GET', 'POST'])
 def profile():
@@ -221,7 +213,7 @@ def settings():
 def encounters():
     return encounterspage()
 
-@app.route("/weatherencounters", methods=['GET', 'POST'])
+@app.route("/encounters/<weather>", methods=['GET', 'POST'])
 def weatherencounters(weather):
     return weatherspage()
 
@@ -231,13 +223,10 @@ def registerpage():
     return render_template('signup.html')
 
 def loginpage(valid=True):
-    return render_template('login.html')
-    '''
     if(valid==True):
-        return render_template('login.html',username=user)
+        return render_template('login.html',invalid='')
     else:
         return render_template('login.html',invalid="Your username or password was incorrect")
-    '''
 
 def profilepage():
     return render_template('profile.html')
