@@ -1,0 +1,70 @@
+<!DOCTYPE HTML>
+<!--
+    Kirkland
+    Amy Shrestha, Carrie Ko, Rohan Sen
+    SoftDev 2025
+    time spent: 0.1 hrs
+  -->
+<html>
+  <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
+    <title>CATT</title>
+    <style>
+        body{
+            text-align: center;
+            padding-top: 20%;
+            font-size: 400%;
+            font-family: "Silkscreen", sans-serif;
+        }
+        .button{
+            border: none;
+            background: none;
+            font-size: 50%;
+            font-family: "Silkscreen", sans-serif;
+        }
+        button:hover{
+            cursor: pointer;
+        }
+        .joyce{
+            top: 42%;
+            margin: 0%;
+            left: 36%;
+        }
+        #blink {
+            transition: 0.2s;
+        }
+        a:link {
+            color: #363132;
+        }
+    </style>
+  </head>
+  <body>
+    <h1>
+      CATT
+    </h1>
+
+    <br>
+
+    <h3 id="blink">
+      <button class="button"> {{start_button}} </button>
+    </h3>
+    <script type="text/javascript">
+            var blink = document.getElementById('blink');
+            setInterval(function(){blink.style.opacity = (blink.style.opacity == 0 ? 1 : 0);}, 600);
+    </script>
+
+    
+
+    <br>
+
+    <div class="signup">
+      <a href="{{url_for('signup')}}"> <button class="b">Sign Up</button> </a>
+    </div>
+    <div class="signup">
+      <a href="{{url_for('login')}}"> <button class="b">Login</button> </a>
+    </div>
+  </body>
+
+</html>

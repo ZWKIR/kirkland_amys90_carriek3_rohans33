@@ -156,6 +156,12 @@ def loggedin():
 
 #Webpage Sites
 #====================================================================================#
+@app.route("/startscreen", methods=['GET', 'POST'])
+def startscreen():
+    if loggedin():
+        return startscreenpage(True, '< press to start >')
+    return startscreenpage(False, '')
+
 @app.route("/signup", methods=['GET', 'POST'])
 def signup():
     if loggedin():
@@ -279,10 +285,16 @@ def weatherencounters(weather):
 
 @app.route("/")
 def index():
-    return loginpage()
+    return startscreenpage()
 
 #HTML Pages
 #====================================================================================#
+def startscreenpage(valid=False, start_button = ''):
+    if(valid==True):
+        return render_template('startscreen.html', start_button = '< press to start >')
+    else:
+        return render_template('startscreen.html', start_button = '')
+
 def registerpage(valid=True, invalid=''):
     if(valid==True):
         return render_template('signup.html',invalid=invalid)
@@ -315,5 +327,5 @@ def weatherspage():
     return render_template('weatherencounters.html')
 #====================================================================================#
 if __name__ == "__main__":  # false if this file imported as module
-    #app.debug = True  # enable PSOD, auto-server-restart on code chg
+    app.debug = True  # enable PSOD, auto-server-restart on code chg
     app.run(port=8000)
