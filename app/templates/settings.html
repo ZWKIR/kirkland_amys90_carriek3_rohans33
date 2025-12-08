@@ -4,6 +4,12 @@
     <title>User Account Information</title>
 </head>
 <body>
+  <nav>
+    <a href="{{ url_for('start') }}">Start</a>
+    <a href="{{ url_for('profile') }}">Profile</a>
+    <a href="{{ url_for('logout') }}">Logout</a>
+  </nav>
+
     <h1>User Account Information</h1>
     <p>Username: {{username}}</p>
     <button onclick="location.href='/start'">Back to Home</button>

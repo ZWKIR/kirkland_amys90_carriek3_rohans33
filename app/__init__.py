@@ -55,13 +55,14 @@ c.execute("""CREATE TABLE IF NOT EXISTS dialogue(
 
 c.execute("""CREATE TABLE IF NOT EXISTS jokes(
 	category TEXT, 
-	joke TEXT, 
+	joke TEXT PRIMARY KEY, 
 	difficulty INTEGER, 
 	desired_response TEXT
 );""")
 
 c.execute("""CREATE TABLE IF NOT EXISTS trivia(
 	difficulty TEXT,
+        question TEXT,
 	answer1 TEXT,
 	answer2 TEXT,
 	answer3 TEXT,
@@ -73,19 +74,63 @@ c.execute("""CREATE TABLE IF NOT EXISTS cats(
 	breed TEXT,
 	energy_lvl INTEGER,
 	difficulty INTEGER,
+	difficulty2 TEXT,
 	response_type INTEGER
 );""")
 
 with urllib.request.urlopen("https://api.thecatapi.com/v1/breeds") as response:
     a = json.loads(response.read())
 for b in a:
-    q = "INSERT OR REPLACE INTO cats(breed, energy_lvl, difficulty, response_type) VALUES(?, ?, ?, ?)"
-    d = (b['name'], b['energy_level'], b['stranger_friendly'], random.randint(0,1))
+    t = ""
+    if(b['stranger_friendly'] == 5):
+        t = "easy"
+    if(b['stranger_friendly'] == 4 or b['stranger_friendly'] == 3):
+        t = "medium"
+    if(b['stranger_friendly'] == 2 or b['stranger_friendly'] == 1):
+        t = "hard"
+    q = "INSERT OR REPLACE INTO cats(breed, energy_lvl, difficulty, difficulty2, response_type) VALUES(?, ?, ?, ?, ?)"
+    d = (b['name'], b['energy_level'], b['stranger_friendly'], t, random.randint(0,1))
     c.execute(q, d)
-    db.commit()
+
+for i in range(10):
+    with urllib.request.urlopen("https://v2.jokeapi.dev/joke/Programming,Miscellaneous,Dark,Pun?blacklistFlags=nsfw,religious,political,racist,sexist,explicit&type=single&amount=10") as response:
+        a = json.loads(response.read())
+    for b in a['jokes']:
+        t = 0
+        if(b['category'] == "Dark"):
+            t = 2
+        if(b['category'] == "Misc"):
+            t = 3
+        if(b['category'] == "Pun"):
+            t = 4
+        if(b['category'] == "Programming"):
+            t = 5
+        if(b['safe'] == False):
+            t = 1
+        q = "INSERT OR IGNORE INTO jokes(category, joke, difficulty, desired_response) VALUES(?, ?, ?, ?)"
+        d = (b['category'], b['joke'], t, "temp")
+        c.execute(q, d)
+
+for i in range(10):
+    with urllib.request.urlopen("https://the-trivia-api.com/v2/questions") as response:
+        a = json.loads(response.read())
+    for b in a:
+        t = [b['incorrectAnswers'][0], b['incorrectAnswers'][1], b['incorrectAnswers'][2], b['correctAnswer']]
+        random.shuffle(t)
+        q = "INSERT OR IGNORE INTO trivia(difficulty, question, answer1, answer2, answer3, answer4, correct_answer) VALUES (?, ?, ?, ?, ?, ?, ?)"
+        d = (b['difficulty'], b['question']['text'], t[0], t[1], t[2], t[3], b['correctAnswer'])
+        c.execute(q, d)
+
+db.commit()
 
 #Helper Functions
 #====================================================================================#
+usernames = {}
+for row in c.execute("SELECT username, password FROM user_profile"):
+    usernames[row[0]] = row[1]
+
+print(usernames)
+
 def loggedin():
     if 'username' in session:
         return True
@@ -96,39 +141,52 @@ def loggedin():
 @app.route("/signup", methods=['GET', 'POST'])
 def signup():
     if loggedin():
-        return redirect(url_for('home'))
+        return redirect(url_for('start'))
     else:
         if request.method == 'POST':
-            session.permanent = True
             with sqlite3.connect(DB_FILE) as db:
                 c = db.cursor()
-                for row in c.execute("SELECT * FROM user_profile WHERE username LIKE ?;", (request.form['id'],)):
-                    if(row[1] == request.form['pass']):
-                        session['username'] = request.form['id']
-                        session['password'] = request.form['pass']
+                session.permanent = True
+                
+                # for invalid requests / empty form responses
+                '''
+                t = ""
+                if(request.form['id'] == "" or request.form['pass'] == "" or request.form['email'] == ""):
+                    t = "Please enter a valid "
+                    if(request.form['id'] == ""):
+                        t = t + "username "
+                    if(request.form['email'] == ""):
+                        t = t + "email "
+                    if(request.form['pass'] == ""):
+                        t = t + "password "
+                    return registerpage(False, t)
+                '''
+                
+                c.execute("INSERT INTO user_profile VALUES (?, ?, ?);", (request.form['username'], request.form['password'], None))
+                session['username'] = request.form['username']
+                session['password'] = request.form['password']
+                return redirect(url_for('start'))
     return registerpage()
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
     if loggedin():
-        return redirect(url_for('home'))
+        return redirect(url_for('start'))
+
     if request.method == 'POST':
         session.permanent = True
         with sqlite3.connect(DB_FILE) as db:
                 c = db.cursor()
-                for row in c.execute("SELECT * FROM user_profile WHERE username LIKE ?;", (request.form['id'],)):
-                    if(row[1] == request.form['pass']):
-                        session['username'] = request.form['id']
-                        session['password'] = request.form['pass']
-                        return redirect(url_for('home'))
+                for row in c.execute("SELECT * FROM user_profile WHERE username LIKE ?;", (request.form['username'],)):
+                    if(row[1] == request.form['password']):
+                        session['username'] = request.form['username']
+                        session['password'] = request.form['password']
+                        return redirect(url_for('start'))
                     else:
-                        #return loginpage(valid=False)
-                        return loginpage()
-        #return loginpage(valid=False)
-        return loginpage()
+                        return loginpage(valid=False)
+        return loginpage(valid=False)
     else:
-        #return loginpage(valid=True)
-        return loginpage()
+        return loginpage(valid=True)
 
 @app.route("/profile", methods=['GET', 'POST'])
 def profile():
@@ -137,12 +195,15 @@ def profile():
 @app.route("/logout", methods=['GET', 'POST'])
 def logout():
     if loggedin():
+        session.pop('username')
         return logoutpage()
-    return loginpage()
+    return redirect(url_for('login'))
 
 @app.route("/start", methods=['GET', 'POST'])
-def startscreen():
-    return startpage()
+def start():
+    if loggedin():
+        return startpage(session['username'])
+    return redirect(url_for('login'))
 
 @app.route("/settings", methods=['GET', 'POST'])
 def settings():
@@ -162,13 +223,10 @@ def registerpage():
     return render_template('signup.html')
 
 def loginpage(valid=True):
-    return render_template('login.html')
-    '''
     if(valid==True):
-        return render_template('login.html',username=user)
+        return render_template('login.html',invalid='')
     else:
         return render_template('login.html',invalid="Your username or password was incorrect")
-    '''
 
 def profilepage():
     return render_template('profile.html')
@@ -176,8 +234,8 @@ def profilepage():
 def logoutpage():
     return render_template('logout.html')
 
-def startpage():
-    return render_template('start.html')
+def startpage(user=''):
+    return render_template('start.html', username=user)
 
 def settingspage():
     return render_template('settings.html')
@@ -186,8 +244,8 @@ def encounterspage():
     return render_template('encounters.html')
 
 def weatherspage():
-	return render_template('weatherencounters.html')
+    return render_template('weatherencounters.html')
 #====================================================================================#
 if __name__ == "__main__":  # false if this file imported as module
     #app.debug = True  # enable PSOD, auto-server-restart on code chg
-    app.run(port=8900)
+    app.run()
