@@ -125,6 +125,12 @@ db.commit()
 
 #Helper Functions
 #====================================================================================#
+usernames = {}
+for row in c.execute("SELECT username, password FROM user_profile"):
+    usernames[username]=password
+
+print(usernames)
+
 def loggedin():
     if 'username' in session:
         return True
@@ -135,22 +141,43 @@ def loggedin():
 @app.route("/signup", methods=['GET', 'POST'])
 def signup():
     if loggedin():
-        return redirect(url_for('home'))
+        return redirect(url_for('start'))
     else:
         if request.method == 'POST':
-            session.permanent = True
             with sqlite3.connect(DB_FILE) as db:
                 c = db.cursor()
+                session.permanent = True
+                
+                # for invalid requests / empty form responses
+                '''
+                t = ""
+                if(request.form['id'] == "" or request.form['pass'] == "" or request.form['email'] == ""):
+                    t = "Please enter a valid "
+                    if(request.form['id'] == ""):
+                        t = t + "username "
+                    if(request.form['email'] == ""):
+                        t = t + "email "
+                    if(request.form['pass'] == ""):
+                        t = t + "password "
+                    return registerpage(False, t)
+                '''
+                
                 for row in c.execute("SELECT * FROM user_profile WHERE username LIKE ?;", (request.form['id'],)):
-                    if(row[1] == request.form['pass']):
-                        session['username'] = request.form['id']
-                        session['password'] = request.form['pass']
+                    if(row[0] != ''):
+                        return registerpage()
+                        #return registerpage(False, "Username taken")
+                
+                c.execute("INSERT INTO user_profile VALUES (?, ?, ?);", (request.form['id'], request.form['pass'], None))
+                session['username'] = request.form['id']
+                session['password'] = request.form['pass']
+                return redirect(url_for('start'))
     return registerpage()
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
     if loggedin():
-        return redirect(url_for('startscreen'))
+        return redirect(url_for('start'))
+
     if request.method == 'POST':
         session.permanent = True
         with sqlite3.connect(DB_FILE) as db:
@@ -159,7 +186,7 @@ def login():
                     if(row[1] == request.form['pass']):
                         session['username'] = request.form['id']
                         session['password'] = request.form['pass']
-                        return profilepage()
+                        return redirect(url_for('start'))
                     else:
                         #return loginpage(valid=False)
                         return loginpage()
@@ -176,12 +203,15 @@ def profile():
 @app.route("/logout", methods=['GET', 'POST'])
 def logout():
     if loggedin():
+        session.pop('username')
         return logoutpage()
-    return loginpage()
+    return redirect(url_for('login'))
 
 @app.route("/start", methods=['GET', 'POST'])
-def startscreen():
-    return startpage()
+def start():
+    if loggedin():
+        return startpage(session['username'])
+    return redirect(url_for('login'))
 
 @app.route("/settings", methods=['GET', 'POST'])
 def settings():
@@ -191,7 +221,7 @@ def settings():
 def encounters():
     return encounterspage()
 
-@app.route("/encounters/<weather>", methods=['GET', 'POST'])
+@app.route("/weatherencounters", methods=['GET', 'POST'])
 def weatherencounters(weather):
     return weatherspage()
 
@@ -215,8 +245,8 @@ def profilepage():
 def logoutpage():
     return render_template('logout.html')
 
-def startpage():
-    return render_template('start.html')
+def startpage(user=''):
+    return render_template('start.html', username=user)
 
 def settingspage():
     return render_template('settings.html')
