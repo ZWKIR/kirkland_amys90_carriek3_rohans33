@@ -179,7 +179,7 @@ def signup():
                         t = t + "password "
                     return registerpage(False, t)                
                 
-                c.execute("INSERT INTO user_profile VALUES (?, ?, ?);", (request.form['username'], request.form['password'], None))
+                c.execute("INSERT INTO user_profile VALUES (?, ?, ?);", (request.form['username'], request.form['password'], "/static/placeholder.jpg"))
                 session['username'] = request.form['username']
                 session['password'] = request.form['password']
                 return redirect(url_for('start'))
