@@ -57,3 +57,7 @@ AmyS -- 2025-12-08 01:30
 RohanS -- 2025-12-09 02:22
 - Weather fetched for one of 10 random cities
 - Temperature displayed on start screen
+
+RohanS -- 2025-12-09 11:48
+- Encounters formatting to now look smattered accross the screen
+- Bootstrap added to all templates
