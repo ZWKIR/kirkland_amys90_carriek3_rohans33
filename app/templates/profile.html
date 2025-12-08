@@ -23,8 +23,8 @@
       <img src= "{{ icon }}" class= "img-fluid" alt= "profilepic" style="width:150px; height:150px; object-fit:cover;">
     </div>
 
-    <details class = "profile-select">
-        <summary class="button">CUSTOMIZE PROFILE</summary>
+    <details class = "profile-select" style="padding:10px;">
+        <summary class="button">Change Profile Picture</summary>
           <div class = "profile-icons">
             {% for icon in profile_icons %}
             <form action = "/profile" method = "POST">
