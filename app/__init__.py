@@ -146,21 +146,20 @@ def signup():
         if request.method == 'POST':
             with sqlite3.connect(DB_FILE) as db:
                 c = db.cursor()
+                c.execute("SELECT username FROM user_profile WHERE username = ?", (request.form['username'],))
+                if c.fetchone():
+                    return registerpage(False, "Duplicate username")
                 session.permanent = True
                 
                 # for invalid requests / empty form responses
-                '''
                 t = ""
-                if(request.form['id'] == "" or request.form['pass'] == "" or request.form['email'] == ""):
+                if(request.form['username'] == "" or request.form['password'] == ""):
                     t = "Please enter a valid "
-                    if(request.form['id'] == ""):
+                    if(request.form['username'] == ""):
                         t = t + "username "
-                    if(request.form['email'] == ""):
-                        t = t + "email "
-                    if(request.form['pass'] == ""):
+                    if(request.form['password'] == ""):
                         t = t + "password "
-                    return registerpage(False, t)
-                '''
+                    return registerpage(False, t)                
                 
                 c.execute("INSERT INTO user_profile VALUES (?, ?, ?);", (request.form['username'], request.form['password'], None))
                 session['username'] = request.form['username']
@@ -230,7 +229,27 @@ def start():
 
 @app.route("/settings", methods=['GET', 'POST'])
 def settings():
-    return settingspage()
+    if not loggedin():
+        return redirect(url_for('login'))
+    
+    with sqlite3.connect(DB_FILE) as db:
+        c = db.cursor()
+        c.execute("SELECT * FROM user_profile WHERE username = ?", (session["username"],))
+        user = c.fetchone()
+            
+        if request.method == 'POST':
+            oldP = request.form.get('old_pass')
+            newP = request.form.get('new_pass')
+            # both fields are filled out
+            if oldP and newP:
+                if oldP == user[1]:
+                    c.execute("UPDATE user_profile SET password = ? WHERE username = ?", (newP, session['username']))
+                    db.commit()
+                else:
+                    return render_template('settings.html', username=session['username'], error="Incorrect old password")
+            else:
+                return render_template('settings.html', username=session['username'], error="Both fields must be filled")
+    return settingspage(username=session['username'])
 
 @app.route("/encounters", methods=['GET', 'POST'])
 def encounters():
@@ -242,7 +261,11 @@ def weatherencounters(weather):
 
 #HTML Pages
 #====================================================================================#
-def registerpage():
+def registerpage(valid=True, invalid=''):
+    if(valid==True):
+        return render_template('signup.html',invalid=invalid)
+    else:
+        return render_template('signup.html',invalid=invalid)
     return render_template('signup.html')
 
 def loginpage(valid=True):
@@ -260,8 +283,8 @@ def logoutpage():
 def startpage(user=''):
     return render_template('start.html', username=user)
 
-def settingspage():
-    return render_template('settings.html')
+def settingspage(username='', error=''):
+    return render_template('settings.html', username=username, error=error)
 
 def encounterspage():
     return render_template('encounters.html')

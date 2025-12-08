@@ -3,7 +3,7 @@
     Kirkland
     Amy Shrestha, Carrie Ko, Rohan Sen
     SoftDev 2025
-    time spent: 0.1 hrs
+    time spent: 0.4 hrs
   -->
 <html>
 <head>
@@ -18,7 +18,17 @@
 
     <h1>User Account Information</h1>
     <p>Username: {{username}}</p>
-    <p>Change Password: <p>
+  		<div class="sign3">Change password:</div>
+      <div class="forms">
+  		    <form action="/settings" method="POST">
+              <input type="password" placeholder="old password" name="old_pass">
+              <br><input type="password" placeholder="new password" name="new_pass">
+              <br><input type="submit" name="password_form" value="Submit">
+            </form>
+            <p>{{ error }}</p>
+      </div>
+
+      <br>
     <button onclick="location.href='/start'">Back to Home</button>
 </body>
 </html>
