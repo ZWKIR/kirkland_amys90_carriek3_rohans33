@@ -1,3 +1,10 @@
+# Amy Shrestha, Carrie Ko, Rohan Sen
+# Kirkland
+# SoftDev
+# P01
+# 2025-12-08
+# time spent: 30.0
+
 from flask import Flask
 from flask import render_template  # facilitate jinja templating
 from flask import request, redirect, url_for  # facilitate form submission
