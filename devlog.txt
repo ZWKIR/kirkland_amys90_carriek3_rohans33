@@ -54,20 +54,20 @@ AmyS -- 2025-12-08 01:30
 - finished settings page (and editing password)
 - finshed register page errors (duplicate usernames, empty fields)
 
-RohanS -- 2025-12-09 02:22
+RohanS -- 2025-12-08 02:22
 - Weather fetched for one of 10 random cities
 - Temperature displayed on start screen
 
-RohanS -- 2025-12-09 11:48
+RohanS -- 2025-12-08 11:48
 - Encounters formatting to now look smattered accross the screen
 - Bootstrap added to all templates
 
-AmyS -- 2025-12-09 11:49
+AmyS -- 2025-12-08 11:49
 - update profile placeholder
 - fix formatting of profile
 
-CarrieK -- 2025-12-09 13:16
+CarrieK -- 2025-12-08 13:16
 - cats cats cats
 
-CarrieK -- 2025-12-09 20:30
+CarrieK -- 2025-12-08 20:30
 - cats typing animation very cool very awesome :)
