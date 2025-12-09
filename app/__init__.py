@@ -61,9 +61,9 @@ c.execute("""CREATE TABLE IF NOT EXISTS dialogue(
 );""")
 
 c.execute("""CREATE TABLE IF NOT EXISTS jokes(
-	category TEXT, 
-	joke TEXT PRIMARY KEY, 
-	difficulty INTEGER, 
+	category TEXT,
+	joke TEXT PRIMARY KEY,
+	difficulty INTEGER,
 	desired_response TEXT
 );""")
 
@@ -85,19 +85,22 @@ c.execute("""CREATE TABLE IF NOT EXISTS cats(
 	response_type INTEGER
 );""")
 
-with urllib.request.urlopen("https://api.thecatapi.com/v1/breeds") as response:
-    a = json.loads(response.read())
-for b in a:
-    t = ""
-    if(b['stranger_friendly'] == 5):
-        t = "easy"
-    if(b['stranger_friendly'] == 4 or b['stranger_friendly'] == 3):
-        t = "medium"
-    if(b['stranger_friendly'] == 2 or b['stranger_friendly'] == 1):
-        t = "hard"
-    q = "INSERT OR REPLACE INTO cats(breed, energy_lvl, difficulty, difficulty2, response_type) VALUES(?, ?, ?, ?, ?)"
-    d = (b['name'], b['energy_level'], b['stranger_friendly'], t, random.randint(0,1))
-    c.execute(q, d)
+try:
+	with urllib.request.urlopen("https://api.thecatapi.com/v1/breeds") as response:
+	    a = json.loads(response.read())
+	for b in a:
+	    t = ""
+	    if(b['stranger_friendly'] == 5):
+	        t = "easy"
+	    if(b['stranger_friendly'] == 4 or b['stranger_friendly'] == 3):
+	        t = "medium"
+	    if(b['stranger_friendly'] == 2 or b['stranger_friendly'] == 1):
+	        t = "hard"
+	    q = "INSERT OR REPLACE INTO cats(breed, energy_lvl, difficulty, difficulty2, response_type) VALUES(?, ?, ?, ?, ?)"
+	    d = (b['name'], b['energy_level'], b['stranger_friendly'], t, random.randint(0,1))
+	    c.execute(q, d)
+except:
+	print("error with breeds")
 
 for i in range(10):
     with urllib.request.urlopen("https://v2.jokeapi.dev/joke/Programming,Miscellaneous,Dark,Pun?blacklistFlags=nsfw,religious,political,racist,sexist,explicit&type=single&amount=10") as response:
@@ -176,7 +179,7 @@ def signup():
                 if c.fetchone():
                     return registerpage(False, "Duplicate username")
                 session.permanent = True
-                
+
                 # for invalid requests / empty form responses
                 t = ""
                 if(request.form['username'] == "" or request.form['password'] == ""):
@@ -185,8 +188,8 @@ def signup():
                         t = t + "username "
                     if(request.form['password'] == ""):
                         t = t + "password "
-                    return registerpage(False, t)                
-                
+                    return registerpage(False, t)
+
                 c.execute("INSERT INTO user_profile VALUES (?, ?, ?);", (request.form['username'], request.form['password'], "/static/placeholder.jpg"))
                 session['username'] = request.form['username']
                 session['password'] = request.form['password']
@@ -225,18 +228,18 @@ def profile():
         "/static/cat4.jpg",
         "/static/cat5.jpg"
     ]
-        
+
     with sqlite3.connect(DB_FILE) as db:
         c = db.cursor()
         c.execute("SELECT * FROM user_profile WHERE username = ?", (session["username"],))
         user = c.fetchone()
-            
+
         if request.method == 'POST':
             icon = request.form.get("profile_icon")
             c.execute("UPDATE user_profile SET sprite = ? WHERE username = ?", (icon, session["username"]))
             db.commit()
             return redirect(url_for('profile'))
-    
+
     sprite = user[2]
     return profilepage(profile_icons, sprite, user[0])
 
@@ -257,12 +260,12 @@ def start():
 def settings():
     if not loggedin():
         return redirect(url_for('login'))
-    
+
     with sqlite3.connect(DB_FILE) as db:
         c = db.cursor()
         c.execute("SELECT * FROM user_profile WHERE username = ?", (session["username"],))
         user = c.fetchone()
-            
+
         if request.method == 'POST':
             oldP = request.form.get('old_pass')
             newP = request.form.get('new_pass')
