@@ -131,16 +131,17 @@ for i in range(10):
         d = (b['difficulty'], b['question']['text'], t[0], t[1], t[2], t[3], b['correctAnswer'])
         c.execute(q, d)
 
-with open("locations", "r") as f:
+with open("app/locations", "r") as f:
     lines = f.read().strip().splitlines()
 city,lat,lon = random.choice(lines).split(",")
 
-with open("keys/key_pirateWeather.txt", "r") as f:
+with open("app/keys/key_pirateWeather.txt", "r") as f:
     key = f.read().strip()
 
 with urllib.request.urlopen(f"https://api.pirateweather.net/forecast/{key}/{lat},{lon}") as response:
     a = json.loads(response.read())
     temperature = a["currently"]["temperature"]
+    weather = a["currently"]["precipType"]
 
 db.commit()
 
@@ -320,7 +321,7 @@ def logoutpage():
     return render_template('logout.html')
 
 def startpage(user=''):
-    return render_template('start.html', username=user, temperature=temperature, city=city)
+	return render_template('start.html', username=user, temperature=temperature, city=city, weather=weather)
 
 def settingspage(username='', error=''):
     return render_template('settings.html', username=username, error=error)
