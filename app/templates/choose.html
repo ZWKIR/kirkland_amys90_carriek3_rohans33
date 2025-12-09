@@ -87,7 +87,7 @@
         let letter = 0;
         const text = "Login or register to continue! (no, you don't get to play as a guest. deal with it.)"
         function uh(){
-            document.getElementById("first").innerHTML = ""
+            document.getElementById("first").innerHTML = "";
         }
         function typeText() {
             if (letter < text.length) {
@@ -97,7 +97,7 @@
                 setTimeout(typeText, speed);
             }
         }
-        document.getElementById("play").onclick = function() {uh(); typeText(); setTimeout(show, 7000);};
+        document.getElementById("play").onclick = function() {this.disabled = true; uh(); typeText(); setTimeout(show, 7000);};
     });
 </script>
 

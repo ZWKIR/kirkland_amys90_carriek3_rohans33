@@ -131,17 +131,17 @@ for i in range(10):
         d = (b['difficulty'], b['question']['text'], t[0], t[1], t[2], t[3], b['correctAnswer'])
         c.execute(q, d)
 
-with open("app/locations", "r") as f:
-    lines = f.read().strip().splitlines()
-city,lat,lon = random.choice(lines).split(",")
+#with open("app/locations", "r") as f:
+#    lines = f.read().strip().splitlines()
+#city,lat,lon = random.choice(lines).split(",")
 
-with open("app/keys/key_pirateWeather.txt", "r") as f:
-    key = f.read().strip()
+#with open("app/keys/key_pirateWeather.txt", "r") as f:
+#    key = f.read().strip()
 
-with urllib.request.urlopen(f"https://api.pirateweather.net/forecast/{key}/{lat},{lon}") as response:
-    a = json.loads(response.read())
-    temperature = a["currently"]["temperature"]
-    weather = a["currently"]["precipType"]
+#with urllib.request.urlopen(f"https://api.pirateweather.net/forecast/{key}/{lat},{lon}") as response:
+#    a = json.loads(response.read())
+#    temperature = a["currently"]["temperature"]
+#    weather = a["currently"]["precipType"]
 
 db.commit()
 
@@ -254,7 +254,7 @@ def logout():
 @app.route("/start", methods=['GET', 'POST'])
 def start():
     if loggedin():
-        return startpage(session['username'])
+        return startpage()
     return redirect(url_for('login'))
 
 @app.route("/settings", methods=['GET', 'POST'])
@@ -320,8 +320,8 @@ def profilepage(profile_icons, icon, user=''):
 def logoutpage():
     return render_template('logout.html')
 
-def startpage(user=''):
-	return render_template('start.html', username=user, temperature=temperature, city=city, weather=weather)
+def startpage():
+	return render_template('start.html')
 
 def settingspage(username='', error=''):
     return render_template('settings.html', username=username, error=error)
