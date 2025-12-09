@@ -26,35 +26,30 @@
 	}
 	a{
 	    font-family: "Silkscreen", sans-serif;
-            color: white;
+        color: white;
 	    font-size: 140%;
 	    text-decoration: none;
 	}
-        .box{
-            border-style: solid;
-            border-color: white;
-            border-width: 2px;
-            padding-top: 7px;
+    p{
+        font-size:120%;
+        margin: 10px 0 0 10px;
+    }
+    .box{
+        border-style: solid;
+        border-color: white;
+        border-width: 2px;
+        padding-top: 7px;
 	    padding-left: 15px;
 	    padding-bottom: 5vh;
-        }
-	.first{
-  	    margin: 10px 0 0 10px;
-	    white-space: nowrap;
-            overflow: hidden;
-  	    width: 30em;
-  	    animation: type 4s steps(60, end); 
-        }
-	.second{
-	    margin: 10px 0 0 10px;
-            white-space: nowrap;
-            overflow: hidden;
-            width: 50em;
-            animation: type 4s steps(60, end) 4s backwards;
-        }
-	#third{
+    }
+    #play{
+        margin-left: 90vw;
+    }
+    #first{
+    }
+	#second{
 	}
-	#fourth{
+	#third{
 	    margin-left: 50px;
 	}
 	@keyframes type{ 
@@ -72,22 +67,38 @@
     <div class="container">
     	<img class="img" style="position: relative" src="/static/choose_cat.png" alt="cute cat">
     	<div class="box">
-            <p class="first" style="font-size:120%">Login or register to continue!</p>
-	    <p class="second" style="font-size:120%">(no, you don't get to play as a guest. deal with it.)</p>
-            <button class="button1" id = "third"> <a href = "login"> login </a> </button>
-            <button class="button1" id = "fourth"> <a href = "signup"> register </a> </button>
-    	</div>
+            <p> &lt; ??? &gt;</p>
+            <p id="first"><br></p>
+            <button class="button1" id = "second"> <a href = "login"> login </a> </button>
+            <button class="button1" id = "third"> <a href = "signup"> register </a> </button>
+            <button class="button1" id="play"> <img class="img" src="/static/play.png" alt="play"> </button>
+        </div>
     </div>
 </body>
 <script>
-    document.getElementById("third").style.visibility = "hidden";
-    document.getElementById("fourth").style.visibility = "hidden";
+    document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("second").style.visibility = "hidden";
+        document.getElementById("third").style.visibility = "hidden";
 
-    function show(){
-        document.getElementById("third").style.visibility = "visible";
-	document.getElementById("fourth").style.visibility = "visible";
-    }
-    setTimeout(show, 8000)
+        function show(){
+            document.getElementById("third").style.visibility = "visible";
+	        document.getElementById("second").style.visibility = "visible";
+        }
+        let letter = 0;
+        const text = "Login or register to continue! (no, you don't get to play as a guest. deal with it.)"
+        function uh(){
+            document.getElementById("first").innerHTML = ""
+        }
+        function typeText() {
+            if (letter < text.length) {
+                document.getElementById("first").innerHTML += text.charAt(letter);
+                letter++;
+                let speed = 75;
+                setTimeout(typeText, speed);
+            }
+        }
+        document.getElementById("play").onclick = function() {uh(); typeText(); setTimeout(show, 7000);};
+    });
 </script>
 
 </html>
