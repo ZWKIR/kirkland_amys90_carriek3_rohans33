@@ -60,16 +60,23 @@
 	@keyframes type{ 
   	    from { width: 0; } 
 	}
+	.container{
+	    position: fixed;
+	    width: 99vw;
+            bottom: 0;
+	}
     </style>
 </head>
 
 <body>
-    <img class="img" src="/static/choose_cat.png" alt="cute cat">
-    <div class="box">
-        <p class="first" style="font-size:120%">Login or register to continue!</p>
-	<p class="second" style="font-size:120%">(no, you don't get to play as a guest. deal with it.)</p>
-        <button class="button1" id = "third"> <a href = "login"> login </a> </button>
-        <button class="button1" id = "fourth"> <a href = "signup"> register </a> </button>
+    <div class="container">
+    	<img class="img" style="position: relative" src="/static/choose_cat.png" alt="cute cat">
+    	<div class="box">
+            <p class="first" style="font-size:120%">Login or register to continue!</p>
+	    <p class="second" style="font-size:120%">(no, you don't get to play as a guest. deal with it.)</p>
+            <button class="button1" id = "third"> <a href = "login"> login </a> </button>
+            <button class="button1" id = "fourth"> <a href = "signup"> register </a> </button>
+    	</div>
     </div>
 </body>
 <script>
