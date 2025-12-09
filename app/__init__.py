@@ -158,9 +158,7 @@ def loggedin():
 #====================================================================================#
 @app.route("/startscreen", methods=['GET', 'POST'])
 def startscreen():
-    if loggedin():
-        return startscreenpage(True, '< press to start >')
-    return startscreenpage(False, '')
+    return startscreenpage()
 
 @app.route("/choose", methods=['GET', 'POST'])
 def choose():
@@ -293,11 +291,8 @@ def index():
 
 #HTML Pages
 #====================================================================================#
-def startscreenpage(valid=False, start_button = ''):
-    if(valid==True):
-        return render_template('startscreen.html', start_button = '< press to start >')
-    else:
-        return render_template('startscreen.html', start_button = '')
+def startscreenpage():
+    return render_template('startscreen.html')
 
 def choosepage():
     return render_template('choose.html')
