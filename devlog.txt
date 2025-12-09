@@ -71,3 +71,8 @@ CarrieK -- 2025-12-08 13:16
 
 CarrieK -- 2025-12-08 20:30
 - cats typing animation very cool very awesome :)
+
+RohanS -- 2025-12-09 11:47
+- additional work on weather logic
+- error handling for api
+- route changing to make runnable
