@@ -12,7 +12,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
     <title>CATT</title>
     <style>
-        .center{
+	body{
+	    background-image: url("/static/startscreen.png");
+	    color: #3d251d;
+	    <!--background-repeat: no-repeat;
+	    background-size: cover;-->
+            transition: 2s;
+	}
+	.center{
             text-align: center;
             padding-top: 12vh;
             padding-bottom: 0vh;
@@ -34,6 +41,7 @@
             background: none;
             font-size: 50%;
             font-family: "Silkscreen", sans-serif;
+	    color: white;
         }
         button:hover{
             cursor: pointer;
@@ -49,12 +57,14 @@
   <body>
     <h1 class="center"> CATT </h1>
     <h3 class="center2" id="blink">
-      <a href = "{{url_for('choose')}}"> <button class="button">&lt; press to start &gt;</button> </a>
+      <a href = "{{url_for('choose')}}"> <button id="fadeButton" class="button">&lt; press to start &gt;</button> </a>
     </h3>
+    <div id="overlay">
     <script type="text/javascript">
             var blink = document.getElementById('blink');
             setInterval(function(){blink.style.opacity = (blink.style.opacity == 0 ? 1 : 0);}, 600);
-    </script>
+    </script> 
+  
   </body>
 
 </html>
