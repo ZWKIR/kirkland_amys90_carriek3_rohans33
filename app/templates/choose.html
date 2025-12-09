@@ -13,12 +13,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css" />
     <style>
-        .button1 {
-            color: red;
-            margin-top: 1%;
-            margin-left: 4%;
-            font-family: "Silkscreen", sans-serif;
-        }
         body {
             background-color: black;
         }
@@ -38,10 +32,166 @@
 <body>
     <img src="/static/choose_cat.png" alt="cute cat">
     <div class="box">
-        <p style="font-size:120%">Login or register to continue! (yes, you don't get a choice. deal with it.)</p>
+        <p id="text" style="font-size:120%">Login or register to continue! (yes, you don't get a choice. deal with it.)</p>
         <a href = "login"> <button class="button1"> login </button> </a>
         <a href = "register"> <button class="button1"> register </button> </a>
+	<button id="button1" onClick="next(1,2,'\n'); document.getElementById('typing').play(); showgif(); typ3()"> yes</button>
+        <button id="button2" onClick="next(1,2,'\n'); document.getElementById('typing').play(); showgif(); typ5()"> no </button>
+        <button id="button6" onClick="window.location.href='form1.html'"> yes</button>
+        <button id="button7" onClick="next(6,7,'\n'); document.getElementById('typing').play(); showgif(); typ3()" > no </button>
+        <button id="button3" onClick="window.location.href='ada.html'"> armed detective agency </button>
+        <button id="button4" onClick="window.location.href='pm.html'"> port mafia </button>
+        <button id="button5" onClick="next(3,4,5); document.getElementById('typing').play(); showgif(); typ4()"> i don't know</button>
     </div>
+		<div class="column side" style="background-color: black; padding-top: 10%; border-top: 2px solid white; border-bottom: 2px solid white; border-right: 2px solid white;">
+        <button class="button" onCLick="hel()"><img src="buton.png" alt="buttonpng"/></button>
+    </div>
+    <div class="column side">
+    </div>
+        <script type="text/javascript">
+            var txt = "Greetings, esteemed visitor! Welcome to our website, where you may be imparted some free wisdom about the amazing world of Bungou Stray Dogs!"
+            var txt2 = "\nHowever, we have a task for you!! There has been a cookie thief found in our midst and we would like your help to find out who they are. Will you help us? (please)"
+            var txt3 = "Wonderful! Where would you like to visit first then? Choose wisely!"
+            var txt4 = "Would you like some help deciding?"
+            var txt5 = "Maybe think about that a bit more."
+            var i = 0
+            var o = 0
+            var n = 0
+            var s = 0
+            var y = 0
+	        function hel() {
+	            if (i < txt.length) {
+		document.getElementById('typing').play();
+	                typ();
+		showgif()
+	            }
+	            if (i == txt.length && o < txt2.length) {
+		document.getElementById('typing').play();
+	                typ2();
+		showgif()
+	            }
+	        }
+	        function typ() {
+	            if (i < txt.length) {
+	                document.getElementById("text").innerHTML += txt.charAt(i);
+	                i++;
+                                setTimeout(typ, 40);
+	            }
+	            else { 
+		document.getElementById('typing').pause();
+		hidegif();
+	            }
+	        }
+	        function typ2() {
+	            if (o < txt2.length) {
+	                var char = txt2.charAt(o) == '\n' ? '<br>' : txt2.charAt(o);
+	                document.getElementById("text").innerHTML += char;
+	                o++;
+	                setTimeout(typ2, 40);
+	            }
+	            else {
+	                setTimeout(show(1,2,'\n'),250);
+		document.getElementById('typing').pause();
+		hidegif();
+	            }
+	        }
+	        function typ3() {
+	            if (n < txt3.length) {
+	                document.getElementById("text").innerHTML += txt3.charAt(n);
+	                n++;
+                        	setTimeout(typ3, 40);
+	            }
+	            else {
+	                setTimeout(show(3,4,5),250);
+		document.getElementById('typing').pause();
+		hidegif();
+		n = 0;
+	            }
+	        }
+	        function typ4() {
+	            if (s < txt4.length) {
+	                document.getElementById("text").innerHTML += txt4.charAt(s);
+	                s++;
+                        setTimeout(typ4, 40);
+	            }
+	            else {
+	                setTimeout(show(6,7,'\n'),250);
+		document.getElementById('typing').pause();
+		hidegif();
+		s = 0;
+	            }
+	        }
+	        function typ5() {
+	            if (y < txt5.length) {
+	                document.getElementById("text").innerHTML += txt5.charAt(y);
+	                y++;
+                        setTimeout(typ5, 40);
+	            }
+	            else {
+	                setTimeout(show(1,'\n','\n'),250);
+		document.getElementById('typing').pause();
+		hidegif();
+	            }
+	        }
+	        function buttons(a,b,c) {
+	            document.getElementById("button" + a).style.display = "inline-block";
+	            document.getElementById("button" + b).style.display = "inline-block";
+	            if (c !== '\n') {
+	                document.getElementById("button" + c).style.display = "inline-block";
+	            }
+	        }	        
+	        function next(a,b,c) { 
+	            document.getElementById('text').innerHTML = "";
+	            hide(a,b,c)
+	        } 
+	        function hide(a,b,c) { 
+	            if (a !== '\n') {
+	                document.getElementById("button" + a).style.visibility = "hidden";
+	                document.getElementById("button" + a).style.display = "none";
+	            };
+	            if (b !== '\n') {
+	                document.getElementById("button" + b).style.visibility = "hidden";
+	                document.getElementById("button" + b).style.display = "none";
+	            };
+	            if (c !== '\n') {
+	                document.getElementById("button" + c).style.visibility = "hidden";
+	                document.getElementById("button" + c).style.display = "none";
+	            };
+	        }
+	        function show(a,b,c) { 
+	            if (a !== '\n') {
+	                document.getElementById("button" + a).style.visibility = "visible";
+	                document.getElementById("button" + a).style.display = "inline-block";
+	            };
+	            if (b !== '\n') {
+	                document.getElementById("button" + b).style.visibility = "visible";
+	                document.getElementById("button" + b).style.display = "inline-block";
+	            };
+	            if (c !== '\n') {
+	                document.getElementById("button" + c).style.visibility = "visible";
+	                document.getElementById("button" + c).style.display = "inline-block";
+	            };
+	        }
+	        function showgif() { 
+	            document.getElementById("ni").style.visibility = "visible";
+	            document.getElementById("ni").style.display = "block";
+	            document.getElementById("n").style.visibility = "hidden";
+	            document.getElementById("n").style.display = "none";
+	        }
+	        function hidegif() { 
+	            document.getElementById("n").style.visibility = "visible";
+	            document.getElementById("n").style.display = "block";
+	            resetgif();
+	            document.getElementById("ni").style.visibility = "hidden";
+	            document.getElementById("ni").style.display = "none";
+	        }
+	        function resetgif() { 
+	            var gif = document.getElementById('ni');
+	            var src = gif.src;
+	            gif.src = '';
+	            gif.src = src;
+	        }
+        </script>
 </body>
 
 </html>
