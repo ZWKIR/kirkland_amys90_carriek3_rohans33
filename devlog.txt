@@ -76,3 +76,6 @@ RohanS -- 2025-12-09 11:47
 - additional work on weather logic
 - error handling for api
 - route changing to make runnable
+
+CarrieK -- 2025-12-09 11:49
+- html
