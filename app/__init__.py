@@ -101,36 +101,41 @@ try:
 	    c.execute(q, d)
 except:
 	print("error with breeds")
-
-for i in range(10):
-    with urllib.request.urlopen("https://v2.jokeapi.dev/joke/Programming,Miscellaneous,Dark,Pun?blacklistFlags=nsfw,religious,political,racist,sexist,explicit&type=single&amount=10") as response:
-        a = json.loads(response.read())
-    for b in a['jokes']:
-        t = 0
-        if(b['category'] == "Dark"):
-            t = 2
-        if(b['category'] == "Misc"):
-            t = 3
-        if(b['category'] == "Pun"):
-            t = 4
-        if(b['category'] == "Programming"):
-            t = 5
-        if(b['safe'] == False):
-            t = 1
-        q = "INSERT OR IGNORE INTO jokes(category, joke, difficulty, desired_response) VALUES(?, ?, ?, ?)"
-        d = (b['category'], b['joke'], t, "temp")
-        c.execute(q, d)
-
-for i in range(10):
-    with urllib.request.urlopen("https://the-trivia-api.com/v2/questions") as response:
-        a = json.loads(response.read())
-    for b in a:
-        t = [b['incorrectAnswers'][0], b['incorrectAnswers'][1], b['incorrectAnswers'][2], b['correctAnswer']]
-        random.shuffle(t)
-        q = "INSERT OR IGNORE INTO trivia(difficulty, question, answer1, answer2, answer3, answer4, correct_answer) VALUES (?, ?, ?, ?, ?, ?, ?)"
-        d = (b['difficulty'], b['question']['text'], t[0], t[1], t[2], t[3], b['correctAnswer'])
-        c.execute(q, d)
-
+	
+try:
+    for i in range(10):
+        with urllib.request.urlopen("https://v2.jokeapi.dev/joke/Programming,Miscellaneous,Dark,Pun?blacklistFlags=nsfw,religious,political,racist,sexist,explicit&type=single&amount=10") as response:
+            a = json.loads(response.read())
+        for b in a['jokes']:
+            t = 0
+            if(b['category'] == "Dark"):
+                t = 2
+            if(b['category'] == "Misc"):
+                t = 3
+            if(b['category'] == "Pun"):
+                t = 4
+            if(b['category'] == "Programming"):
+                t = 5
+            if(b['safe'] == False):
+                t = 1
+            q = "INSERT OR IGNORE INTO jokes(category, joke, difficulty, desired_response) VALUES(?, ?, ?, ?)"
+            d = (b['category'], b['joke'], t, "temp")
+            c.execute(q, d)
+except:
+    print("error with joke")
+    
+try:
+    for i in range(10):
+        with urllib.request.urlopen("https://the-trivia-api.com/v2/questions") as response:
+            a = json.loads(response.read())
+        for b in a:
+            t = [b['incorrectAnswers'][0], b['incorrectAnswers'][1], b['incorrectAnswers'][2], b['correctAnswer']]
+            random.shuffle(t)
+            q = "INSERT OR IGNORE INTO trivia(difficulty, question, answer1, answer2, answer3, answer4, correct_answer) VALUES (?, ?, ?, ?, ?, ?, ?)"
+            d = (b['difficulty'], b['question']['text'], t[0], t[1], t[2], t[3], b['correctAnswer'])
+            c.execute(q, d)
+except:
+    print("error with TRIVIA")
 #with open("app/locations", "r") as f:
 #    lines = f.read().strip().splitlines()
 #city,lat,lon = random.choice(lines).split(",")
