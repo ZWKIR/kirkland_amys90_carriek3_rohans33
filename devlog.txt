@@ -94,3 +94,6 @@ CarrieK -- 2025-12-09 22:35
 AmyS -- 2025-12-10 11:48
 - fix Encounters
 - trying to add weather api stuff
+
+CarrieK -- 2025-12-10 13:19
+- css for many pages + html
