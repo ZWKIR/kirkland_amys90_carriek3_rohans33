@@ -14,17 +14,41 @@
     <title> LOGIN PAGE </title>
     <style>
         body{
-	    background-image: url("/static/startscreen.png");
+	    background-color: black;
 	    color: #3d251d;
 	    font-family: "Silkscreen", sans-serif;
 	    background-repeat: no-repeat;
-	    background-size: cover;
+	    background-size: 100vw 100vh;
 	}
 	.hold{
-            text-align: center;
+        margin-top: 10vh;
+        text-align: center;
 	    margin-left: 10vw;
-            margin-right: 10vw;
+        margin-right: 10vw;
+        padding-top: 10vh;
+        color: white;
 	}
+    h1{
+        font-size: 600%
+    }
+    .a{
+        color: black;
+	    font-family: "Silkscreen", sans-serif;
+    }
+    .b{
+          padding-top: 0.5vh;
+          padding-bottom: 0.5vh;
+          padding-left: 1vw;
+          padding-right: 1vw;
+          background-color: white;
+          border: none;
+          border-radius: 6px;
+          color: black;
+      }
+      .b:hover{
+        background-color: #C7C7C7;
+        color: black;
+      }
     </style>
   </head>
   <body>
@@ -32,18 +56,23 @@
      <h1>
         Login
      </h1>
+     <br>
      <form action="/login" method="POST">
-        <h2>Username:</h2> <input class="a" type="text" name="username" required>
-        <br>
-        <h2>Password:</h2> <input class="a" type=password name="password" required>
+        <h3>Username:</h3> <input class="a" type="text" name="username" required>
         <br>
         <br>
-        <input type="submit" name="sub1" value="Login">
+        <h3>Password:</h3> <input class="a" type=password name="password" required>
+        <br>
+        <br>
+        <input class="b" type="submit" name="sub1" value="Login">
      </form>
     <h5> {{invalid}} </h5>
     <br>
+    <br>
+    <br>
+    <br>
     <div>
-    <p style="font-size: 110%"> If you don't have an account, click the button below to register. </p>
+    <p style="font-size: 110%; color: white;"> If you don't have an account, click the button below to register. </p>
     <a href="{{url_for('signup')}}"> <button class="b">Register</button> </a>
     </div>
     </div>
