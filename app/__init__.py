@@ -338,5 +338,5 @@ def weatherspage():
     return render_template('weatherencounters.html')
 #====================================================================================#
 if __name__ == "__main__":  # false if this file imported as module
-    app.debug = True  # enable PSOD, auto-server-restart on code chg
-    app.run(port=8000)
+    #app.debug = True  # enable PSOD, auto-server-restart on code chg
+    app.run(port=8100)

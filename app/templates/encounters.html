@@ -1,39 +1,41 @@
 <!DOCTYPE HTML>
 <!--
-    Kirkland
-    Amy Shrestha, Carrie Ko, Rohan Sen
-    SoftDev 2025
-    time spent: 1.0 hrs
-  -->
+   Kirkland
+   Amy Shrestha, Carrie Ko, Rohan Sen
+   SoftDev 2025
+   time spent: 1.0 hrs
+   -->
 <html>
-  <head>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <title> You encountered a cat! </title>
-  </head>
-
-  <body>
-    <nav>
-      <a href="{{ url_for('start') }}">Start</a>
-      <a href="{{ url_for('profile') }}">Profile</a>
-      <a href="{{ url_for('settings') }}">Settings</a>
-      <a href="{{ url_for('logout') }}">Logout</a>
-    </nav>
-
-    <h2>
-      You encountered a cat!
-    </h2>
-
-    <div class="container text-center">
-    {% for item in range({{ num_cats }}) %}
-  <div class="row justify-content">
-    <div class="col-4">
-      <button type="image-button" class="btn btn-secondary"><img src="/static/cattttt.png" alt="pixelcat"></button>
-    </div>
-  </div>
-  {% endfor %}
-  <!-- <div class="row justify-content-around">
-  <div class="row justify-content-between"> -->
-</div>
-  </body>
-
+   <head>
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+      <title> You encountered a cat! </title>
+   </head>
+   <body>
+      <nav>
+         <a href="{{ url_for('start') }}">Start</a>
+         <a href="{{ url_for('profile') }}">Profile</a>
+         <a href="{{ url_for('settings') }}">Settings</a>
+         <a href="{{ url_for('logout') }}">Logout</a>
+      </nav>
+      <h2>
+         You encountered a cat!
+      </h2>
+      <div class="container text-center">
+         <div class="row justify-content-start">
+            <div class="col-4">
+               <button type="image-button" class="btn btn-secondary"><img src="/static/cattttt.png" alt="pixelcat"></button>
+            </div>
+         </div>
+         <div class="row justify-content-around">
+            <div class="col-4">
+               <button type="image-button" class="btn btn-secondary"><img src="/static/cattttt.png" alt="pixelcat"></button>
+            </div>
+         </div>
+         <div class="row justify-content-between">
+            <div class="col-4">
+               <button type="image-button" class="btn btn-secondary"><img src="/static/cattttt.png" alt="pixelcat"></button>
+            </div>
+         </div>
+      </div>
+   </body>
 </html>
