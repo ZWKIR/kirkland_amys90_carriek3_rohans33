@@ -136,17 +136,20 @@ try:
             c.execute(q, d)
 except:
     print("error with TRIVIA")
-#with open("app/locations", "r") as f:
-#    lines = f.read().strip().splitlines()
-#city,lat,lon = random.choice(lines).split(",")
 
-#with open("app/keys/key_pirateWeather.txt", "r") as f:
-#    key = f.read().strip()
+'''
+with open("app/locations", "r") as f:
+    lines = f.read().strip().splitlines()
+    city,lat,lon = random.choice(lines).split(",")
 
-#with urllib.request.urlopen(f"https://api.pirateweather.net/forecast/{key}/{lat},{lon}") as response:
-#    a = json.loads(response.read())
-#    temperature = a["currently"]["temperature"]
-#    weather = a["currently"]["precipType"]
+with open("app/keys/key_pirateWeather.txt", "r") as f:
+    key = f.read().strip()
+
+with urllib.request.urlopen(f"https://api.pirateweather.net/forecast/{key}/{lat},{lon}") as response:
+    a = json.loads(response.read())
+    temperature = a["currently"]["temperature"]
+    weather = a["currently"]["precipType"]
+'''
 
 db.commit()
 
@@ -326,7 +329,7 @@ def logoutpage():
     return render_template('logout.html')
 
 def startpage():
-	return render_template('start.html')
+    return render_template('start.html')
 
 def settingspage(username='', error=''):
     return render_template('settings.html', username=username, error=error)
@@ -339,4 +342,4 @@ def weatherspage():
 #====================================================================================#
 if __name__ == "__main__":  # false if this file imported as module
     #app.debug = True  # enable PSOD, auto-server-restart on code chg
-    app.run(port=8100)
+    app.run(port=8000)

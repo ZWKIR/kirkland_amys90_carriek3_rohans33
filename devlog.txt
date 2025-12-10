@@ -84,13 +84,13 @@ CarrieK -- 2025-12-09 13:19
 - js html js cats
 
 CarrieK -- 2025-12-09 14:50
-- js html buttons cool 
-- encounter page is broken so pls fix 
+- js html buttons cool
+- encounter page is broken so pls fix
 - commented out code in py file that made it not work
 
 CarrieK -- 2025-12-09 22:35
 - CSS CSCSCc ssccscsmcs
 
-
-
-
+AmyS -- 2025-12-10 11:48
+- fix Encounters
+- trying to add weather api stuff
