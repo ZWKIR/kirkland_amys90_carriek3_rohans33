@@ -107,3 +107,6 @@ CarrieK -- 2025-12-11 13:18
 - added questionable code for encounter page and also encounter.html (its commented out though so no breaking??? hopefully???)
   - need to finish :(
   - hurts my head thinking about it ngl
+
+CarrieK -- 2025-12-11 14:50
+- more of the above 
