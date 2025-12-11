@@ -159,7 +159,7 @@ def getCloudCover():
         key = f.read().strip()
     with urllib.request.urlopen(f"https://api.pirateweather.net/forecast/{key}/{lat},{lon}") as response:
         a = json.loads(response.read())
-        weather = a["currently"]["precipType"]
+        weather = a["currently"]["cloudCover"]
     return weather
 
 def bg_file():
@@ -167,29 +167,18 @@ def bg_file():
     print(os.listdir(basepath))
 
     currWeather = getPrecip().lower()
+    cloudCover = getCloudCover().lower()
 
-    if "clear-day" in (currWeather):
+    if currWeather == "none" and cloudCover < 0.6:
         basepath = './static/clear_day.png'
-    if "clear-night" in currWeather:
-        basepath = './static/clear_night.png'
-    if "partly-cloudy-night" in currWeather:
-        basepath = './static/background_images/cloudy_night.png'
-    if "partly-cloudy-day" in currWeather or "cloudy" in currWeather:
+    elif currWeather == "none" and cloudCover >= 0.6:
         basepath = './static/cloudy_day.png'
-    if "fog" in currWeather or "wind" in currWeather:
-        basepath = './static/fog.png'
-    if "snow" in currWeather or "sleet" in currWeather:
+    elif "snow" in currWeather or "sleet" in currWeather:
         basepath = './static/snow.gif'
-    if "thunderstorm" in currWeather or "rain" in currWeather:
+    elif "rain" in currWeather:
         basepath = './static/thunderstorm_rainy.gif'
-
-    print(basepath)
-
     image = random.choice(os.listdir(basepath))
-    print(image)
-
     path = basepath + "/" + os.path.basename(image)
-
     return path
 
 db.commit()
