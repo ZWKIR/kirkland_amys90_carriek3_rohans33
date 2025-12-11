@@ -97,3 +97,7 @@ AmyS -- 2025-12-10 11:48
 
 CarrieK -- 2025-12-10 13:19
 - css for many pages + html
+
+AmyS -- 2025-12-11 11:45
+- adding functions for pulling weather data (credits to WheelOfFortune)
+- found rainy/thunderstorm and snow gif backdrops
