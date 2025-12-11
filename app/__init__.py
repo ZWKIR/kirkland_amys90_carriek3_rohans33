@@ -163,22 +163,19 @@ def getCloudCover():
     return weather
 
 def bg_file():
-    basepath = './static/'
-    print(os.listdir(basepath))
+    path = './static/'
 
     currWeather = getPrecip().lower()
-    cloudCover = getCloudCover().lower()
+    cloudCover = getCloudCover()
 
     if currWeather == "none" and cloudCover < 0.6:
-        basepath = './static/clear_day.png'
+        path = '/static/clear_day.png'
     elif currWeather == "none" and cloudCover >= 0.6:
-        basepath = './static/cloudy_day.png'
+        path = 'app/static/cloudy_day.png'
     elif "snow" in currWeather or "sleet" in currWeather:
-        basepath = './static/snow.gif'
+        path = '/static/snow.gif'
     elif "rain" in currWeather:
-        basepath = './static/thunderstorm_rainy.gif'
-    image = random.choice(os.listdir(basepath))
-    path = basepath + "/" + os.path.basename(image)
+        path = '/static/thunderstorm_rainy.gif'
     return path
 
 db.commit()
@@ -321,83 +318,7 @@ def settings():
 
 @app.route("/encounters", methods=['GET', 'POST'])
 def encounters():
-    return encounterspage()
-    '''
-    if getWeather() == "clear-day":
-        d = c.execute("SELECT * FROM encounter_maps WHERE weather = clear-day;")
-        q = "SELECT * FROM cats WHERE energy_lvl = ?"
-        cats = c.execute(d[2], q)
-        random.shuffle(cats)
-        return encounterspage(d[0], d[1], cats)
-
-    if getWeather() == "clear-night":
-        d = c.execute("SELECT * FROM encounter_maps WHERE weather = clear-night;")
-        q = "SELECT * FROM cats WHERE energy_lvl = ?"
-        cats = c.execute(d[2], q)
-        random.shuffle(cats)
-        return encounterspage(d[0], d[1], cats)
-
-    if getWeather() == "thunderstorm":
-        d = c.execute("SELECT * FROM encounter_maps WHERE weather = thunderstorm;")
-        q = "SELECT * FROM cats WHERE energy_lvl = ?"
-        cats = c.execute(d[2], q)
-        random.shuffle(cats)
-        return encounterspage(d[0], d[1], cats)
-
-    if getWeather() == "rain":
-        d = c.execute("SELECT * FROM encounter_maps WHERE weather = rain;")
-        q = "SELECT * FROM cats WHERE energy_lvl = ?"
-        cats = c.execute(d[2], q)
-        random.shuffle(cats)
-        return encounterspage(d[0], d[1], cats)
-
-    if getWeather() == "snow":
-        d = c.execute("SELECT * FROM encounter_maps WHERE weather = snow;")
-        q = "SELECT * FROM cats WHERE energy_lvl = ?"
-        cats = c.execute(d[2], q)
-        random.shuffle(cats)
-        return encounterspage(d[0], d[1], cats)
-
-    if getWeather() == "sleet":
-        d = c.execute("SELECT * FROM encounter_maps WHERE weather = sleet;")
-        q = "SELECT * FROM cats WHERE energy_lvl = ?"
-        cats = c.execute(d[2], q)
-        return encounterspage(d[0], d[1], cats)
-
-    if getWeather() == "wind":
-        d = c.execute("SELECT * FROM encounter_maps WHERE weather = wind;")
-        q = "SELECT * FROM cats WHERE energy_lvl = ?"
-        cats = c.execute(d[2], q)
-        random.shuffle(cats)
-        return encounterspage(d[0], d[1], cats)
-
-    if getWeather() == "fog":
-        d = c.execute("SELECT * FROM encounter_maps WHERE weather = fog;")
-        q = "SELECT * FROM cats WHERE energy_lvl = ?"
-        cats = c.execute(d[2], q)
-        return encounterspage(d[0], d[1], cats)
-
-    if getWeather() == "cloudy":
-        d = c.execute("SELECT * FROM encounter_maps WHERE weather = cloudy;")
-        q = "SELECT * FROM cats WHERE energy_lvl = ?"
-        cats = c.execute(d[2], q)
-        random.shuffle(cats)
-        return encounterspage(d[0], d[1], cats)
-
-    if getWeather() == "partly-cloudy-day":
-        d = c.execute("SELECT * FROM encounter_maps WHERE weather = partly-cloudy-day;")
-        q = "SELECT * FROM cats WHERE energy_lvl = ?"
-        cats = c.execute(d[2], q)
-        random.shuffle(cats)
-        return encounterspage(d[0], d[1], cats)
-
-    if getWeather() == "partly-cloudy-night":
-        d = c.execute("SELECT * FROM encounter_maps WHERE weather = partly-cloudy-night;")
-        q = "SELECT * FROM cats WHERE energy_lvl = ?"
-        cats = c.execute(d[2], q)
-        random.shuffle(cats)
-        return encounterspage(d[0], d[1], cats)
-'''
+    return encounterspage(bg_file())
 @app.route("/encounters/<weather>", methods=['GET', 'POST'])
 def weatherencounters(weather):
     return weatherspage()
@@ -439,8 +360,8 @@ def startpage():
 def settingspage(username='', error=''):
     return render_template('settings.html', username=username, error=error)
 
-def encounterspage():
-    return render_template('encounters.html')
+def encounterspage(url):
+    return render_template('encounters.html', url=url)
 
 def weatherspage():
     return render_template('weatherencounters.html')

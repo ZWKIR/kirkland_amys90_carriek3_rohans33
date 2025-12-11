@@ -113,3 +113,9 @@ CarrieK -- 2025-12-11 14:50
 
 RohanS -- 2025-12-11 17:23:
 - In the process of overhauling weather stuff
+
+RohanS -- 2025-12-11 18:09:
+- Background system redone
+- Weather system replaced to match our api
+- debugged the encounters
+- removed unnecessary table from devlog
