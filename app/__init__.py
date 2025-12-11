@@ -14,6 +14,7 @@ import urllib.request
 import json
 import random
 from io import StringIO
+import os
 
 #FLASK Declaration
 #====================================================================================#
@@ -34,14 +35,6 @@ CREATE TABLE IF NOT EXISTS user_profile(
 	username TEXT PRIMARY KEY NOT NULL,
 	password TEXT NOT NULL,
 	sprite TEXT
-);""")
-
-c.execute("""
-CREATE TABLE IF NOT EXISTS encounter_maps(
-	background TEXT,
-	num_cats INTEGER,
-	energy_lvl INTEGER,
-	weather TEXT PRIMARY KEY
 );""")
 
 c.execute("""
@@ -147,61 +140,47 @@ for i in range(len(weather)):
     d = (bkg_links[i], n_cats[i], e_lvl[i], weather[i])
     c.execute(q, d)
 
-'''
-def getWeather():
-    try:
-        with open("app/locations", "r") as f:
-            lines = f.read().strip().splitlines()
-            city,lat,lon = random.choice(lines).split(",")
-        with open("app/keys/key_pirateWeather.txt", "r") as f:
-            key = f.read().strip()
-        with urllib.request.urlopen(f"https://api.pirateweather.net/forecast/{key}/{lat},{lon}") as response:
-            a = json.loads(response.read())
-            temperature = a["currently"]["temperature"]
-            weather = a["currently"]["precipType"]
-        
-        response = requests.get(endpoint, headers = headers)
-        data = response.json()
+def getPrecip():
+    with open("app/locations", "r") as f:
+        lines = f.read().strip().splitlines()
+        city,lat,lon = random.choice(lines).split(",")
+    with open("app/keys/key_pirateWeather.txt", "r") as f:
+        key = f.read().strip()
+    with urllib.request.urlopen(f"https://api.pirateweather.net/forecast/{key}/{lat},{lon}") as response:
+        a = json.loads(response.read())
+        weather = a["currently"]["precipType"]
+    return weather
 
-        #gets all links about at pt (hourly daily etc)
-        links = data["properties"]["forecastGridData"]
-        print(links)
-
-        #gets link relating to daily forecast at pt
-        forecast_link = data["properties"]["forecast"]
-        print(forecast_link)
-
-        #retrieves forecast data at coordinates
-        forecast_response = requests.get(forecast_link, headers = headers)
-        forecast_data = forecast_response.json()
-        print(forecast_data)
-
-        #gets most recently updated forecast for next period (for example: Monday, Monday Night, Tuesday, etc.)
-        forecast = forecast_data["properties"]["periods"][0]["shortForecast"]
-        print(forecast)
-        return forecast
-    except:
-        print("An error occured with getWeather")
+def getCloudCover():
+    with open("app/locations", "r") as f:
+        lines = f.read().strip().splitlines()
+        city,lat,lon = random.choice(lines).split(",")
+    with open("app/keys/key_pirateWeather.txt", "r") as f:
+        key = f.read().strip()
+    with urllib.request.urlopen(f"https://api.pirateweather.net/forecast/{key}/{lat},{lon}") as response:
+        a = json.loads(response.read())
+        weather = a["currently"]["precipType"]
+    return weather
 
 def bg_file():
     basepath = './static/'
     print(os.listdir(basepath))
 
-    currWeather = getWeather()
+    currWeather = getPrecip().lower()
 
-    if "clear-day" in lower(currWeather):
+    if "clear-day" in (currWeather):
         basepath = './static/clear_day.png'
-    if "clear-night" in lower(currWeather):
+    if "clear-night" in currWeather:
         basepath = './static/clear_night.png'
-    if "partly-cloudy-night" in lower(currWeather):
+    if "partly-cloudy-night" in currWeather:
         basepath = './static/background_images/cloudy_night.png'
-    if "partly-cloudy-day" in lower(currWeather) or "cloudy" in lower(currWeather):
+    if "partly-cloudy-day" in currWeather or "cloudy" in currWeather:
         basepath = './static/cloudy_day.png'
-    if "fog" in lower(currWeather) or "wind" in lower(currWeather):
+    if "fog" in currWeather or "wind" in currWeather:
         basepath = './static/fog.png'
-    if "snow" in lower(currWeather) or "sleet" in lower(currWeather):
+    if "snow" in currWeather or "sleet" in currWeather:
         basepath = './static/snow.gif'
-    if "thunderstorm" in lower(currWeather) or "rain" in lower(currWeather):
+    if "thunderstorm" in currWeather or "rain" in currWeather:
         basepath = './static/thunderstorm_rainy.gif'
 
     print(basepath)
@@ -212,7 +191,7 @@ def bg_file():
     path = basepath + "/" + os.path.basename(image)
 
     return path
-'''
+
 db.commit()
 
 #Helper Functions
