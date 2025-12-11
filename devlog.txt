@@ -101,3 +101,9 @@ CarrieK -- 2025-12-10 13:19
 AmyS -- 2025-12-11 11:45
 - adding functions for pulling weather data (credits to WheelOfFortune)
 - found rainy/thunderstorm and snow gif backdrops
+
+CarrieK -- 2025-12-11 13:18
+- was very unproductive
+- added questionable code for encounter page and also encounter.html (its commented out though so no breaking??? hopefully???)
+  - need to finish :(
+  - hurts my head thinking about it ngl
