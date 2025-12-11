@@ -356,59 +356,79 @@ def encounters():
     return encounterspage()
     '''
     if getWeather() == "clear-day":
-        d = c.execute("SELECT energy_lvl FROM encounter_maps WHERE weather = clear-day;")
+        d = c.execute("SELECT * FROM encounter_maps WHERE weather = clear-day;")
         q = "SELECT * FROM cats WHERE energy_lvl = ?"
-        cats = c.execute(d, q)
+        cats = c.execute(d[2], q)
+        random.shuffle(cats)
+        return encounterspage(d[0], d[1], cats)
 
     if getWeather() == "clear-night":
-        d = c.execute("SELECT energy_lvl FROM encounter_maps WHERE weather = clear-night;")
+        d = c.execute("SELECT * FROM encounter_maps WHERE weather = clear-night;")
         q = "SELECT * FROM cats WHERE energy_lvl = ?"
-        c.execute(d, q)
+        cats = c.execute(d[2], q)
+        random.shuffle(cats)
+        return encounterspage(d[0], d[1], cats)
 
     if getWeather() == "thunderstorm":
-        d = c.execute("SELECT energy_lvl FROM encounter_maps WHERE weather = thunderstorm;")
+        d = c.execute("SELECT * FROM encounter_maps WHERE weather = thunderstorm;")
         q = "SELECT * FROM cats WHERE energy_lvl = ?"
-        c.execute(d, q)
+        cats = c.execute(d[2], q)
+        random.shuffle(cats)
+        return encounterspage(d[0], d[1], cats)
 
     if getWeather() == "rain":
-        d = c.execute("SELECT energy_lvl FROM encounter_maps WHERE weather = rain;")
+        d = c.execute("SELECT * FROM encounter_maps WHERE weather = rain;")
         q = "SELECT * FROM cats WHERE energy_lvl = ?"
-        c.execute(d, q)
+        cats = c.execute(d[2], q)
+        random.shuffle(cats)
+        return encounterspage(d[0], d[1], cats)
 
     if getWeather() == "snow":
-        d = c.execute("SELECT energy_lvl FROM encounter_maps WHERE weather = snow;")
+        d = c.execute("SELECT * FROM encounter_maps WHERE weather = snow;")
         q = "SELECT * FROM cats WHERE energy_lvl = ?"
-        c.execute(d, q)
+        cats = c.execute(d[2], q)
+        random.shuffle(cats)
+        return encounterspage(d[0], d[1], cats)
 
     if getWeather() == "sleet":
-        d = c.execute("SELECT energy_lvl FROM encounter_maps WHERE weather = sleet;")
+        d = c.execute("SELECT * FROM encounter_maps WHERE weather = sleet;")
         q = "SELECT * FROM cats WHERE energy_lvl = ?"
-        c.execute(d, q)
+        cats = c.execute(d[2], q)
+        return encounterspage(d[0], d[1], cats)
 
     if getWeather() == "wind":
-        d = c.execute("SELECT energy_lvl FROM encounter_maps WHERE weather = wind;")
+        d = c.execute("SELECT * FROM encounter_maps WHERE weather = wind;")
         q = "SELECT * FROM cats WHERE energy_lvl = ?"
-        c.execute(d, q)
+        cats = c.execute(d[2], q)
+        random.shuffle(cats)
+        return encounterspage(d[0], d[1], cats)
 
     if getWeather() == "fog":
-        d = c.execute("SELECT energy_lvl FROM encounter_maps WHERE weather = fog;")
+        d = c.execute("SELECT * FROM encounter_maps WHERE weather = fog;")
         q = "SELECT * FROM cats WHERE energy_lvl = ?"
-        c.execute(d, q)
+        cats = c.execute(d[2], q)
+        return encounterspage(d[0], d[1], cats)
 
     if getWeather() == "cloudy":
-        d = c.execute("SELECT energy_lvl FROM encounter_maps WHERE weather = cloudy;")
+        d = c.execute("SELECT * FROM encounter_maps WHERE weather = cloudy;")
         q = "SELECT * FROM cats WHERE energy_lvl = ?"
-        c.execute(d, q)
+        cats = c.execute(d[2], q)
+        random.shuffle(cats)
+        return encounterspage(d[0], d[1], cats)
 
     if getWeather() == "partly-cloudy-day":
-        d = c.execute("SELECT energy_lvl FROM encounter_maps WHERE weather = partly-cloudy-day;")
+        d = c.execute("SELECT * FROM encounter_maps WHERE weather = partly-cloudy-day;")
         q = "SELECT * FROM cats WHERE energy_lvl = ?"
-        c.execute(d, q)
+        cats = c.execute(d[2], q)
+        random.shuffle(cats)
+        return encounterspage(d[0], d[1], cats)
 
     if getWeather() == "partly-cloudy-night":
-        d = c.execute("SELECT energy_lvl FROM encounter_maps WHERE weather = partly-cloudy-night;")
+        d = c.execute("SELECT * FROM encounter_maps WHERE weather = partly-cloudy-night;")
         q = "SELECT * FROM cats WHERE energy_lvl = ?"
-        c.execute(d, q)
+        cats = c.execute(d[2], q)
+        random.shuffle(cats)
+        return encounterspage(d[0], d[1], cats)
 '''
 @app.route("/encounters/<weather>", methods=['GET', 'POST'])
 def weatherencounters(weather):
