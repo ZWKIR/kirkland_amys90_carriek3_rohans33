@@ -136,21 +136,72 @@ try:
             c.execute(q, d)
 except:
     print("error with TRIVIA")
-
 '''
-with open("app/locations", "r") as f:
-    lines = f.read().strip().splitlines()
-    city,lat,lon = random.choice(lines).split(",")
+def getWeather():
+    try:
+        with open("app/locations", "r") as f:
+            lines = f.read().strip().splitlines()
+            city,lat,lon = random.choice(lines).split(",")
+        with open("app/keys/key_pirateWeather.txt", "r") as f:
+            key = f.read().strip()
+        with urllib.request.urlopen(f"https://api.pirateweather.net/forecast/{key}/{lat},{lon}") as response:
+            a = json.loads(response.read())
+            temperature = a["currently"]["temperature"]
+            weather = a["currently"]["precipType"]
+        
+        response = requests.get(endpoint, headers = headers)
+        data = response.json()
 
-with open("app/keys/key_pirateWeather.txt", "r") as f:
-    key = f.read().strip()
+        #gets all links about at pt (hourly daily etc)
+        links = data["properties"]["forecastGridData"]
+        print(links)
 
-with urllib.request.urlopen(f"https://api.pirateweather.net/forecast/{key}/{lat},{lon}") as response:
-    a = json.loads(response.read())
-    temperature = a["currently"]["temperature"]
-    weather = a["currently"]["precipType"]
+        #gets link relating to daily forecast at pt
+        forecast_link = data["properties"]["forecast"]
+        print(forecast_link)
+
+        #retrieves forecast data at coordinates
+        forecast_response = requests.get(forecast_link, headers = headers)
+        forecast_data = forecast_response.json()
+        print(forecast_data)
+
+        #gets most recently updated forecast for next period (for example: Monday, Monday Night, Tuesday, etc.)
+        forecast = forecast_data["properties"]["periods"][0]["shortForecast"]
+        print(forecast)
+        return forecast
+    except:
+        print("An error occured with getWeather")
+
+def bg_file():
+    basepath = './static/'
+    print(os.listdir(basepath))
+
+    currWeather = getWeather()
+
+    if "clear-day" in lower(currWeather):
+        basepath = './static/clear_day.png'
+    if "clear-night" in lower(currWeather):
+        basepath = './static/clear_night.png'
+    if "partly-cloudy-night" in lower(currWeather):
+        basepath = './static/background_images/cloudy_night.png'
+    if "partly-cloudy-day" in lower(currWeather) or "cloudy" in lower(currWeather):
+        basepath = './static/cloudy_day.png'
+    if "fog" in lower(currWeather) or "wind" in lower(currWeather):
+        basepath = './static/fog.png'
+    if "snow" in lower(currWeather) or "sleet" in lower(currWeather):
+        basepath = './static/snow.gif'
+    if "thunderstorm" in lower(currWeather) or "rain" in lower(currWeather):
+        basepath = './static/thunderstorm_rainy.gif'
+
+    print(basepath)
+
+    image = random.choice(os.listdir(basepath))
+    print(image)
+
+    path = basepath + "/" + os.path.basename(image)
+
+    return path
 '''
-
 db.commit()
 
 #Helper Functions
