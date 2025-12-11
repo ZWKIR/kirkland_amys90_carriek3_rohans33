@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS encounter_maps(
 	background TEXT,
 	num_cats INTEGER,
 	energy_lvl INTEGER,
-	weather TEXT
+	weather TEXT PRIMARY KEY
 );""")
 
 c.execute("""
@@ -136,6 +136,17 @@ try:
             c.execute(q, d)
 except:
     print("error with TRIVIA")
+
+weather = ["clear-day", "clear-night", "thunderstorm", "rain", "snow", "sleet", "wind", "fog", "cloudy", "partly-cloudy-day", "partly-cloudy-night"]
+bkg_links = ["/static/clear_day.png", "/static/clear_night.png", "/static/thunderstorm_rainy.gif", "/static/thunderstorm_rainy.gif", "/static/snow.gif", "/static/snow.gif", "/static/fog.png", "/static/fog.png", "/static/cloudy_day.png", "/static/cloudy_day.png", "/static/cloudy_night.png"]
+e_lvl = [5, 3, 1, 2, 5, 1, 3, 2, 3, 4, 2]
+n_cats = [4, 3, 2, 3, 3, 1, 3, 4, 3, 5, 3]
+
+for i in range(len(weather)):
+    q = "INSERT OR IGNORE INTO encounter_maps(background, num_cats, energy_lvl, weather) VALUES(?, ?, ?, ?)"
+    d = (bkg_links[i], n_cats[i], e_lvl[i], weather[i])
+    c.execute(q, d)
+
 '''
 def getWeather():
     try:
@@ -343,7 +354,62 @@ def settings():
 @app.route("/encounters", methods=['GET', 'POST'])
 def encounters():
     return encounterspage()
+    '''
+    if getWeather() == "clear-day":
+        d = c.execute("SELECT energy_lvl FROM encounter_maps WHERE weather = clear-day;")
+        q = "SELECT * FROM cats WHERE energy_lvl = ?"
+        cats = c.execute(d, q)
 
+    if getWeather() == "clear-night":
+        d = c.execute("SELECT energy_lvl FROM encounter_maps WHERE weather = clear-night;")
+        q = "SELECT * FROM cats WHERE energy_lvl = ?"
+        c.execute(d, q)
+
+    if getWeather() == "thunderstorm":
+        d = c.execute("SELECT energy_lvl FROM encounter_maps WHERE weather = thunderstorm;")
+        q = "SELECT * FROM cats WHERE energy_lvl = ?"
+        c.execute(d, q)
+
+    if getWeather() == "rain":
+        d = c.execute("SELECT energy_lvl FROM encounter_maps WHERE weather = rain;")
+        q = "SELECT * FROM cats WHERE energy_lvl = ?"
+        c.execute(d, q)
+
+    if getWeather() == "snow":
+        d = c.execute("SELECT energy_lvl FROM encounter_maps WHERE weather = snow;")
+        q = "SELECT * FROM cats WHERE energy_lvl = ?"
+        c.execute(d, q)
+
+    if getWeather() == "sleet":
+        d = c.execute("SELECT energy_lvl FROM encounter_maps WHERE weather = sleet;")
+        q = "SELECT * FROM cats WHERE energy_lvl = ?"
+        c.execute(d, q)
+
+    if getWeather() == "wind":
+        d = c.execute("SELECT energy_lvl FROM encounter_maps WHERE weather = wind;")
+        q = "SELECT * FROM cats WHERE energy_lvl = ?"
+        c.execute(d, q)
+
+    if getWeather() == "fog":
+        d = c.execute("SELECT energy_lvl FROM encounter_maps WHERE weather = fog;")
+        q = "SELECT * FROM cats WHERE energy_lvl = ?"
+        c.execute(d, q)
+
+    if getWeather() == "cloudy":
+        d = c.execute("SELECT energy_lvl FROM encounter_maps WHERE weather = cloudy;")
+        q = "SELECT * FROM cats WHERE energy_lvl = ?"
+        c.execute(d, q)
+
+    if getWeather() == "partly-cloudy-day":
+        d = c.execute("SELECT energy_lvl FROM encounter_maps WHERE weather = partly-cloudy-day;")
+        q = "SELECT * FROM cats WHERE energy_lvl = ?"
+        c.execute(d, q)
+
+    if getWeather() == "partly-cloudy-night":
+        d = c.execute("SELECT energy_lvl FROM encounter_maps WHERE weather = partly-cloudy-night;")
+        q = "SELECT * FROM cats WHERE energy_lvl = ?"
+        c.execute(d, q)
+'''
 @app.route("/encounters/<weather>", methods=['GET', 'POST'])
 def weatherencounters(weather):
     return weatherspage()
@@ -392,5 +458,5 @@ def weatherspage():
     return render_template('weatherencounters.html')
 #====================================================================================#
 if __name__ == "__main__":  # false if this file imported as module
-    #app.debug = True  # enable PSOD, auto-server-restart on code chg
+    app.debug = True  # enable PSOD, auto-server-restart on code chg
     app.run(port=8000)
