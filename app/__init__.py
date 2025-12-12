@@ -185,7 +185,7 @@ def bg_file():
     a, city = pick_city()
     currWeather = get_precip(a).lower()
     cloudCover = get_cloud_cover(a)
-
+    
     if currWeather == "none" and cloudCover < 0.6:
         if get_time(a) == "day":
             path = '/static/clear_day.png'
@@ -203,7 +203,7 @@ def bg_file():
             path = '/static/snowy_night.gif'
     elif "rain" in currWeather:
         if get_time(a) == "day":
-            path = '/static/rainy_day.gif'
+            path = '/static/rainy_day.jpg'
         else:
             path = '/static/rainy_night.gif'
     return path, city
