@@ -4,6 +4,7 @@
 # P01
 # 2025-12-08
 # time spent: 30.0
+import pickle
 
 from flask import Flask
 from flask import render_template  # facilitate jinja templating
@@ -15,6 +16,7 @@ import json
 import random
 from io import StringIO
 import os
+from datetime import datetime, timedelta
 
 #FLASK Declaration
 #====================================================================================#
@@ -58,6 +60,15 @@ c.execute("""CREATE TABLE IF NOT EXISTS jokes(
 	joke TEXT PRIMARY KEY,
 	difficulty INTEGER,
 	desired_response TEXT
+);""")
+
+c.execute("""
+CREATE TABLE IF NOT EXISTS encounter_maps(
+	background TEXT,
+	num_cats INTEGER,
+	energy_lvl INTEGER,
+	time TEXT,
+	weather TEXT PRIMARY KEY
 );""")
 
 c.execute("""CREATE TABLE IF NOT EXISTS trivia(
@@ -131,7 +142,7 @@ except:
     print("error with TRIVIA")
 
 weather = ["clear-day", "clear-night", "thunderstorm", "rain", "snow", "sleet", "wind", "fog", "cloudy", "partly-cloudy-day", "partly-cloudy-night"]
-bkg_links = ["/static/clear_day.png", "/static/clear_night.png", "/static/thunderstorm_rainy.gif", "/static/thunderstorm_rainy.gif", "/static/snow.gif", "/static/snow.gif", "/static/fog.png", "/static/fog.png", "/static/cloudy_day.png", "/static/cloudy_day.png", "/static/cloudy_night.png"]
+bkg_links = ["/static/clear_day.png", "/static/clear_night.png", "/static/rainy_night.gif", "/static/rainy_night.gif", "/static/snowy_day.gif", "/static/snowy_day.gif", "/static/fog.png", "/static/fog.png", "/static/cloudy_day.png", "/static/cloudy_day.png", "/static/cloudy_night.png"]
 e_lvl = [5, 3, 1, 2, 5, 1, 3, 2, 3, 4, 2]
 n_cats = [4, 3, 2, 3, 3, 1, 3, 4, 3, 5, 3]
 
@@ -140,7 +151,9 @@ for i in range(len(weather)):
     d = (bkg_links[i], n_cats[i], e_lvl[i], weather[i])
     c.execute(q, d)
 
-def getPrecip():
+
+
+def pick_city():
     with open("app/locations", "r") as f:
         lines = f.read().strip().splitlines()
         city,lat,lon = random.choice(lines).split(",")
@@ -148,35 +161,52 @@ def getPrecip():
         key = f.read().strip()
     with urllib.request.urlopen(f"https://api.pirateweather.net/forecast/{key}/{lat},{lon}") as response:
         a = json.loads(response.read())
-        weather = a["currently"]["precipType"]
+    return a, city
+
+def get_precip(a):
+    weather = a["currently"]["precipType"]
     return weather
 
-def getCloudCover():
-    with open("app/locations", "r") as f:
-        lines = f.read().strip().splitlines()
-        city,lat,lon = random.choice(lines).split(",")
-    with open("app/keys/key_pirateWeather.txt", "r") as f:
-        key = f.read().strip()
-    with urllib.request.urlopen(f"https://api.pirateweather.net/forecast/{key}/{lat},{lon}") as response:
-        a = json.loads(response.read())
-        weather = a["currently"]["cloudCover"]
+def get_cloud_cover(a):
+    weather = a["currently"]["cloudCover"]
     return weather
+
+def get_time(a):
+    sunrise = a["daily"]["data"][0]["sunriseTime"]
+    sunset = a["daily"]["data"][0]["sunsetTime"]
+    now = a["currently"]["time"]
+    if sunrise <= now <= sunset:
+        return "day"
+    else:
+        return "night"
 
 def bg_file():
     path = './static/'
-
-    currWeather = getPrecip().lower()
-    cloudCover = getCloudCover()
+    a, city = pick_city()
+    currWeather = get_precip(a).lower()
+    cloudCover = get_cloud_cover(a)
 
     if currWeather == "none" and cloudCover < 0.6:
-        path = '/static/clear_day.png'
+        if get_time(a) == "day":
+            path = '/static/clear_day.png'
+        elif get_time(a) == "night":
+            path = '/static/clear_night.png'
     elif currWeather == "none" and cloudCover >= 0.6:
-        path = 'app/static/cloudy_day.png'
+        if get_time(a) == "day":
+            path = '/static/cloudy_day.png'
+        elif get_time(a) == "night":
+            path = '/static/cloudy_night.png'
     elif "snow" in currWeather or "sleet" in currWeather:
-        path = '/static/snow.gif'
+        if get_time(a) == "day":
+            path = '/static/snowy_day.gif'
+        else:
+            path = '/static/snowy_night.gif'
     elif "rain" in currWeather:
-        path = '/static/thunderstorm_rainy.gif'
-    return path
+        if get_time(a) == "day":
+            path = '/static/rainy_day.gif'
+        else:
+            path = '/static/rainy_night.gif'
+    return path, city
 
 db.commit()
 
@@ -318,7 +348,13 @@ def settings():
 
 @app.route("/encounters", methods=['GET', 'POST'])
 def encounters():
-    return encounterspage(bg_file())
+    path, city = bg_file()
+    d = c.execute("SELECT * FROM encounter_maps WHERE weather = ?;", get_precip())
+    q = "SELECT * FROM cats WHERE energy_lvl = ?"
+    cats = c.execute(d[2], q)
+    random.shuffle(cats)
+    return encounterspage(d[0], d[1], cats)
+    return encounterspage(path, city)
 @app.route("/encounters/<weather>", methods=['GET', 'POST'])
 def weatherencounters(weather):
     return weatherspage()
@@ -360,8 +396,8 @@ def startpage():
 def settingspage(username='', error=''):
     return render_template('settings.html', username=username, error=error)
 
-def encounterspage(url):
-    return render_template('encounters.html', url=url)
+def encounterspage(url, city):
+    return render_template('encounters.html', url=url, city=city)
 
 def weatherspage():
     return render_template('weatherencounters.html')

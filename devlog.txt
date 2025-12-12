@@ -118,4 +118,8 @@ RohanS -- 2025-12-11 18:09:
 - Background system redone
 - Weather system replaced to match our api
 - debugged the encounters
-- removed unnecessary table from devlog
+
+RohanS -- 2025-12-11 21:51:
+- backgrounds properly working
+- cities passing through
+- city change on reload
