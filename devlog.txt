@@ -140,3 +140,7 @@ AmyS -- 2025-12-12 11:49
 AmyS -- 2025-12-12 12:28
 - fixed icon functions error
 - made buttons transparent
+
+CarrieK -- 2025-12-12 13:08
+- made amys code use the db
+  - its more concise! (yay)
