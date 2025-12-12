@@ -111,22 +111,29 @@ CarrieK -- 2025-12-11 13:18
 CarrieK -- 2025-12-11 14:50
 - more of the above 
 
-RohanS -- 2025-12-11 17:23:
+RohanS -- 2025-12-11 17:23
 - In the process of overhauling weather stuff
 
-RohanS -- 2025-12-11 18:09:
+RohanS -- 2025-12-11 18:09
 - Background system redone
 - Weather system replaced to match our api
 - debugged the encounters
 
-RohanS -- 2025-12-11 21:51:
+RohanS -- 2025-12-11 21:51
 - backgrounds properly working
 - cities passing through
 - city change on reload
 
-Carrie -- 2025-12-12 7:31:
+Carrie -- 2025-12-12 7:31
 - deleted rainy day because it doesn't work
   - need to find new img
 
-RohanS -- 2025-12-12 8:34:
+RohanS -- 2025-12-12 8:34
 - new rainy day :)
+
+CarrieK -- 2025-12-12 11:49
+- more img
+
+AmyS -- 2025-12-12 11:49
+- edited code to use icons
+  - not quite functional yet
