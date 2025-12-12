@@ -380,7 +380,7 @@ def settingspage(username='', error=''):
     return render_template('settings.html', username=username, error=error)
 
 def encounterspage(url, num, energy, city):
-    return render_template('encounters.html', url=url, city=city)
+    return render_template(f'/n_cats/encounters{num}.html', url=url, city=city)
 
 def weatherspage():
     return render_template('weatherencounters.html')
