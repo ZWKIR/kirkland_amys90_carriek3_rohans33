@@ -349,11 +349,13 @@ def settings():
 @app.route("/encounters", methods=['GET', 'POST'])
 def encounters():
     path, city = bg_file()
+    '''
     d = c.execute("SELECT * FROM encounter_maps WHERE weather = ?;", get_precip())
     q = "SELECT * FROM cats WHERE energy_lvl = ?"
     cats = c.execute(d[2], q)
     random.shuffle(cats)
     return encounterspage(d[0], d[1], cats)
+    '''
     return encounterspage(path, city)
 @app.route("/encounters/<weather>", methods=['GET', 'POST'])
 def weatherencounters(weather):
