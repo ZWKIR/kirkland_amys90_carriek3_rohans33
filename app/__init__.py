@@ -152,16 +152,6 @@ def pick_city():
         a = json.loads(response.read())
     return a, city
 
-'''
-def get_precip(a):
-    weather = a["currently"]["precipType"]
-    return weather
-
-def get_cloud_cover(a):
-    weather = a["currently"]["cloudCover"]
-    return weather
-'''
-
 def get_time(a):
     sunrise = a["daily"]["data"][0]["sunriseTime"]
     sunset = a["daily"]["data"][0]["sunsetTime"]
@@ -170,34 +160,6 @@ def get_time(a):
         return "day"
     else:
         return "night"
-'''
-def bg_file(a, city):
-    path = './static/'
-    currWeather = get_precip(a).lower()
-    cloudCover = get_cloud_cover(a)
-    
-    if currWeather == "none" and cloudCover < 0.6:
-        if get_time(a) == "day":
-            path = '/static/clear_day.png'
-        elif get_time(a) == "night":
-            path = '/static/clear_night.png'
-    elif currWeather == "none" and cloudCover >= 0.6:
-        if get_time(a) == "day":
-            path = '/static/cloudy_day.png'
-        elif get_time(a) == "night":
-            path = '/static/cloudy_night.png'
-    elif "snow" in currWeather or "sleet" in currWeather:
-        if get_time(a) == "day":
-            path = '/static/snowy_day.gif'
-        else:
-            path = '/static/snowy_night.gif'
-    elif "rain" in currWeather:
-        if get_time(a) == "day":
-            path = '/static/rainy_day.gif'
-        else:
-            path = '/static/rainy_night.gif'
-    return path, city
-'''
 
 weather = ["clear-day", "clear-night", "thunderstorm", "rain", "rain", "snow", "snow", "sleet", "sleet", "wind", "fog", "cloudy", "partly-cloudy-day", "partly-cloudy-night"]
 time = ["", "", "", "day", "night", "day", "night", "day", "night", "", "", "", "", ""]
@@ -214,28 +176,19 @@ def get_icon(a):
     weather = a["currently"]["icon"]
     return weather
 
-def bg_file(a, city):
-    path = './static/'
+def map_info(a):
     w = get_icon(a)
-    energy = 0
     print(w)
     t = c.execute("SELECT * FROM encounter_maps WHERE weather = ?", (w,))
     d = t.fetchall()
     print (d)
     if (len(d) > 1):
         if get_time(a) == "day":
-            path = d[0][0]
-            energy = d[0][2]
-            num = d[0][1]
+            return d[0]
         else:
-            path = d[1][0]
-            energy = d[1][2]
-            num = d[1][1]
+            return d[1]
     else:
-        path = d[0][0]
-        energy = d[0][2]
-        num = d[0][1]
-    return path, city
+        return d[0]
 
 db.commit()
 
@@ -380,10 +333,11 @@ def settings():
 @app.route("/encounters", methods=['GET', 'POST'])
 def encounters():
     a, city = pick_city()
-    path, city = bg_file(a, city)
-    #cats = c.execute("SELECT * FROM cats WHERE energy_lvl = ?", (d[2],))
-    #random.shuffle(cats)
-    return encounterspage(path, city)
+    info = map_info(a)
+    path = info[0]
+    n = info[2]
+    e = info[1]
+    return encounterspage(path, n, e, city)
 @app.route("/encounters/<weather>", methods=['GET', 'POST'])
 def weatherencounters(weather):
     return weatherspage()
@@ -425,7 +379,7 @@ def startpage():
 def settingspage(username='', error=''):
     return render_template('settings.html', username=username, error=error)
 
-def encounterspage(url, city):
+def encounterspage(url, num, energy, city):
     return render_template('encounters.html', url=url, city=city)
 
 def weatherspage():
