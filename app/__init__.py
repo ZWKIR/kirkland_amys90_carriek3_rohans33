@@ -28,7 +28,7 @@ app.secret_key = b'kirklandsignature'
 #====================================================================================#
 DB_FILE="catt.db"
 
-db = sqlite3.connect(DB_FILE) #open if file exists, otherwise create
+db = sqlite3.connect(DB_FILE, check_same_thread=False) #open if file exists, otherwise create
 c = db.cursor()
 
 #profile
@@ -180,9 +180,8 @@ def get_time(a):
     else:
         return "night"
 
-def bg_file():
+def bg_file(a, city):
     path = './static/'
-    a, city = pick_city()
     currWeather = get_precip(a).lower()
     cloudCover = get_cloud_cover(a)
     
@@ -348,14 +347,11 @@ def settings():
 
 @app.route("/encounters", methods=['GET', 'POST'])
 def encounters():
-    path, city = bg_file()
-    '''
-    d = c.execute("SELECT * FROM encounter_maps WHERE weather = ?;", get_precip())
-    q = "SELECT * FROM cats WHERE energy_lvl = ?"
-    cats = c.execute(d[2], q)
-    random.shuffle(cats)
-    return encounterspage(d[0], d[1], cats)
-    '''
+    a, city = pick_city()
+    path, city = bg_file(a, city)
+    d = c.execute("SELECT * FROM encounter_maps WHERE weather = ? AND time = ?;", (get_precip(a), get_time(a))).fetchone()
+    #cats = c.execute("SELECT * FROM cats WHERE energy_lvl = ?", (d[2],))
+    #random.shuffle(cats)
     return encounterspage(path, city)
 @app.route("/encounters/<weather>", methods=['GET', 'POST'])
 def weatherencounters(weather):
