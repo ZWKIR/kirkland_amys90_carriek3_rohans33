@@ -123,3 +123,7 @@ RohanS -- 2025-12-11 21:51:
 - backgrounds properly working
 - cities passing through
 - city change on reload
+
+Carrie -- 2025-12-12 7:31:
+- deleted rainy day because it doesn't work
+  - need to find new img
