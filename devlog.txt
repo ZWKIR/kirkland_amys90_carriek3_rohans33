@@ -147,3 +147,7 @@ CarrieK -- 2025-12-12 13:08
 
 CarrieK -- 2025-12-12 13:14
 - db file + fixing choose issue 
+
+RohanS -- 2025-12-12 14:42
+- encounters now display variance in cats
+- jinja 2 templating used to keep things clean
