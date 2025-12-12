@@ -203,7 +203,7 @@ def bg_file():
             path = '/static/snowy_night.gif'
     elif "rain" in currWeather:
         if get_time(a) == "day":
-            path = '/static/rainy_day.jpg'
+            path = '/static/rainy_day.gif'
         else:
             path = '/static/rainy_night.gif'
     return path, city
