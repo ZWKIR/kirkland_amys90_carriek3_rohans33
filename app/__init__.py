@@ -216,38 +216,38 @@ def bg_file(a, city):
     
     if "clear" in w:
         if get_time(a) == "day":
-            path = bkg_links[index('clear-day')]
-            energy = e_lvl[index('clear-day')]
-            num = n_cats[index('clear-day')]
+            path = bkg_links[weather.index('clear-day')]
+            energy = e_lvl[weather.index('clear-day')]
+            num = n_cats[weather.index('clear-day')]
         elif get_time(a) == "night":
-            path = bkg_links[index('clear-night')]
-            energy = e_lvl[index('clear-night')]
-            num = n_cats[index('clear-night')]
+            path = bkg_links[weather.index('clear-night')]
+            energy = e_lvl[weather.index('clear-night')]
+            num = n_cats[weather.index('clear-night')]
         
     elif "cloudy" in w:
         if get_time(a) == "day":
-            path = bkg_links[index('partly-cloudy-day')]
-            energy = e_lvl[index('partly-cloudy-day')]
-            num = n_cats[index('partly-cloudy-day')]
+            path = bkg_links[weather.index('partly-cloudy-day')]
+            energy = e_lvl[weather.index('partly-cloudy-day')]
+            num = n_cats[weather.index('partly-cloudy-day')]
         elif get_time(a) == "night":
-            path = bkg_links[index('partly-cloudy-night')]
-            energy = e_lvl[index('partly-cloudy-night')]
-            num = n_cats[index('partly-cloudy-night')]
+            path = bkg_links[weather.index('partly-cloudy-night')]
+            energy = e_lvl[weather.index('partly-cloudy-night')]
+            num = n_cats[weather.index('partly-cloudy-night')]
         
     elif "snow" in w or "sleet" in w:
-        path = bkg_links[index('snow')]
-        energy = e_lvl[index('snow')]
-        num = n_cats[index('snow')]
+        path = bkg_links[weather.index('snow')]
+        energy = e_lvl[weather.index('snow')]
+        num = n_cats[weather.index('snow')]
             
     elif "rain" in w or "thunderstorm" in w:
-        path = bkg_links[index('rain')]
-        energy = e_lvl[index('rain')]
-        num = n_cats[index('rain')]
+        path = bkg_links[weather.index('rain')]
+        energy = e_lvl[weather.index('rain')]
+        num = n_cats[weather.index('rain')]
         
     elif "fog" in w:
-        path = bkg_links[index('rain')]
-        energy = e_lvl[index('rain')]
-        num = n_cats[index('rain')]
+        path = bkg_links[weather.index('rain')]
+        energy = e_lvl[weather.index('rain')]
+        num = n_cats[weather.index('rain')]
         
     return path, city
 
