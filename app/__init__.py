@@ -141,18 +141,6 @@ try:
 except:
     print("error with TRIVIA")
 
-weather = ["clear-day", "clear-night", "thunderstorm", "rain", "snow", "sleet", "wind", "fog", "cloudy", "partly-cloudy-day", "partly-cloudy-night"]
-bkg_links = ["/static/clear_day.png", "/static/clear_night.png", "/static/rainy_night.gif", "/static/rainy_night.gif", "/static/snowy_day.gif", "/static/snowy_day.gif", "/static/fog.png", "/static/fog.png", "/static/cloudy_day.png", "/static/cloudy_day.png", "/static/cloudy_night.png"]
-e_lvl = [5, 3, 1, 2, 5, 1, 3, 2, 3, 4, 2]
-n_cats = [4, 3, 2, 3, 3, 1, 3, 4, 3, 5, 3]
-
-for i in range(len(weather)):
-    q = "INSERT OR IGNORE INTO encounter_maps(background, num_cats, energy_lvl, weather) VALUES(?, ?, ?, ?)"
-    d = (bkg_links[i], n_cats[i], e_lvl[i], weather[i])
-    c.execute(q, d)
-
-
-
 def pick_city():
     with open("app/locations", "r") as f:
         lines = f.read().strip().splitlines()
@@ -179,7 +167,7 @@ def get_time(a):
         return "day"
     else:
         return "night"
-
+'''
 def bg_file(a, city):
     path = './static/'
     currWeather = get_precip(a).lower()
@@ -205,6 +193,62 @@ def bg_file(a, city):
             path = '/static/rainy_day.gif'
         else:
             path = '/static/rainy_night.gif'
+    return path, city
+'''
+weather = ["clear-day", "clear-night", "thunderstorm", "rain", "snow", "sleet", "wind", "fog", "cloudy", "partly-cloudy-day", "partly-cloudy-night"]
+bkg_links = ["/static/clear_day.png", "/static/clear_night.png", "/static/rainy_night.gif", "/static/rainy_night.gif", "/static/snowy_day.gif", "/static/snowy_day.gif", "/static/fog.png", "/static/fog.png", "/static/cloudy_day.png", "/static/cloudy_day.png", "/static/cloudy_night.png"]
+e_lvl = [5, 3, 1, 2, 5, 1, 3, 2, 3, 4, 2]
+n_cats = [4, 3, 2, 3, 3, 1, 3, 4, 3, 5, 3]
+
+for i in range(len(weather)):
+    q = "INSERT OR IGNORE INTO encounter_maps(background, num_cats, energy_lvl, weather) VALUES(?, ?, ?, ?)"
+    d = (bkg_links[i], n_cats[i], e_lvl[i], weather[i])
+    c.execute(q, d)
+
+def get_icon(a):
+    weather = a["currently"]["icon"]
+    return weather
+
+def bg_file(a, city):
+    path = './static/'
+    w = get_icon(a)
+    energy = 0
+    
+    if "clear" in w:
+        if get_time(a) == "day":
+            path = bkg_links[index('clear-day')]
+            energy = e_lvl[index('clear-day')]
+            num = n_cats[index('clear-day')]
+        elif get_time(a) == "night":
+            path = bkg_links[index('clear-night')]
+            energy = e_lvl[index('clear-night')]
+            num = n_cats[index('clear-night')]
+        
+    elif "cloudy" in w:
+        if get_time(a) == "day":
+            path = bkg_links[index('partly-cloudy-day')]
+            energy = e_lvl[index('partly-cloudy-day')]
+            num = n_cats[index('partly-cloudy-day')]
+        elif get_time(a) == "night":
+            path = bkg_links[index('partly-cloudy-night')]
+            energy = e_lvl[index('partly-cloudy-night')]
+            num = n_cats[index('partly-cloudy-night')]
+        
+    elif "snow" in w or "sleet" in w:
+        path = bkg_links[index('snow')]
+        energy = e_lvl[index('snow')]
+        num = n_cats[index('snow')]
+            
+    elif "rain" in w or "thunderstorm" in w:
+        path = bkg_links[index('rain')]
+        energy = e_lvl[index('rain')]
+        num = n_cats[index('rain')]
+        
+    elif "fog" in w:
+        path = bkg_links[index('rain')]
+        energy = e_lvl[index('rain')]
+        num = n_cats[index('rain')]
+        
     return path, city
 
 db.commit()
@@ -401,5 +445,5 @@ def weatherspage():
     return render_template('weatherencounters.html')
 #====================================================================================#
 if __name__ == "__main__":  # false if this file imported as module
-    app.debug = True  # enable PSOD, auto-server-restart on code chg
-    app.run(port=8000)
+    #app.debug = True  # enable PSOD, auto-server-restart on code chg
+    app.run(port=8100)
