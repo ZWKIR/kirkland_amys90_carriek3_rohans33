@@ -68,7 +68,8 @@ CREATE TABLE IF NOT EXISTS encounter_maps(
 	num_cats INTEGER,
 	energy_lvl INTEGER,
 	time TEXT,
-	weather TEXT PRIMARY KEY
+	weather TEXT,
+    id INTEGER PRIMARY KEY
 );""")
 
 c.execute("""CREATE TABLE IF NOT EXISTS trivia(
@@ -151,6 +152,7 @@ def pick_city():
         a = json.loads(response.read())
     return a, city
 
+'''
 def get_precip(a):
     weather = a["currently"]["precipType"]
     return weather
@@ -158,6 +160,7 @@ def get_precip(a):
 def get_cloud_cover(a):
     weather = a["currently"]["cloudCover"]
     return weather
+'''
 
 def get_time(a):
     sunrise = a["daily"]["data"][0]["sunriseTime"]
@@ -195,14 +198,16 @@ def bg_file(a, city):
             path = '/static/rainy_night.gif'
     return path, city
 '''
-weather = ["clear-day", "clear-night", "thunderstorm", "rain", "snow", "sleet", "wind", "fog", "cloudy", "partly-cloudy-day", "partly-cloudy-night"]
-bkg_links = ["/static/clear_day.png", "/static/clear_night.png", "/static/rainy_night.gif", "/static/rainy_night.gif", "/static/snowy_day.gif", "/static/snowy_day.gif", "/static/fog.png", "/static/fog.png", "/static/cloudy_day.png", "/static/cloudy_day.png", "/static/cloudy_night.png"]
-e_lvl = [5, 3, 1, 2, 5, 1, 3, 2, 3, 4, 2]
-n_cats = [4, 3, 2, 3, 3, 1, 3, 4, 3, 5, 3]
+
+weather = ["clear-day", "clear-night", "thunderstorm", "rain", "rain", "snow", "snow", "sleet", "sleet", "wind", "fog", "cloudy", "partly-cloudy-day", "partly-cloudy-night"]
+time = ["", "", "", "day", "night", "day", "night", "day", "night", "", "", "", "", ""]
+bkg_links = ["/static/clear_day.png", "/static/clear_night.png", "/static/thunderstorm.gif", "/static/rainy_day.gif", "/static/rainy_night.gif", "/static/snowy_day.gif", "/static/snowy_night.gif", "/static/snowy_day.gif", "/static/snowy_night.gif", "/static/windy.png", "/static/fog.png", "/static/cloudy_day.png", "/static/cloudy_day.png", "/static/cloudy_night.png"]
+e_lvl = [5, 4, 1, 3, 2, 5, 3, 2, 1, 3, 2, 3, 4, 2]
+n_cats = [4, 3, 2, 3, 2, 3, 2, 2, 1, 3, 4, 3, 5, 3]
 
 for i in range(len(weather)):
-    q = "INSERT OR IGNORE INTO encounter_maps(background, num_cats, energy_lvl, weather) VALUES(?, ?, ?, ?)"
-    d = (bkg_links[i], n_cats[i], e_lvl[i], weather[i])
+    q = "INSERT OR IGNORE INTO encounter_maps(background, num_cats, energy_lvl, time, weather, id) VALUES(?, ?, ?, ?, ?, ?)"
+    d = (bkg_links[i], n_cats[i], e_lvl[i], time[i], weather[i], i)
     c.execute(q, d)
 
 def get_icon(a):
@@ -213,42 +218,23 @@ def bg_file(a, city):
     path = './static/'
     w = get_icon(a)
     energy = 0
-    
-    if "clear" in w:
+    print(w)
+    t = c.execute("SELECT * FROM encounter_maps WHERE weather = ?", (w,))
+    d = t.fetchall()
+    print (d)
+    if (len(d) > 1):
         if get_time(a) == "day":
-            path = bkg_links[index('clear-day')]
-            energy = e_lvl[index('clear-day')]
-            num = n_cats[index('clear-day')]
-        elif get_time(a) == "night":
-            path = bkg_links[index('clear-night')]
-            energy = e_lvl[index('clear-night')]
-            num = n_cats[index('clear-night')]
-        
-    elif "cloudy" in w:
-        if get_time(a) == "day":
-            path = bkg_links[index('partly-cloudy-day')]
-            energy = e_lvl[index('partly-cloudy-day')]
-            num = n_cats[index('partly-cloudy-day')]
-        elif get_time(a) == "night":
-            path = bkg_links[index('partly-cloudy-night')]
-            energy = e_lvl[index('partly-cloudy-night')]
-            num = n_cats[index('partly-cloudy-night')]
-        
-    elif "snow" in w or "sleet" in w:
-        path = bkg_links[index('snow')]
-        energy = e_lvl[index('snow')]
-        num = n_cats[index('snow')]
-            
-    elif "rain" in w or "thunderstorm" in w:
-        path = bkg_links[index('rain')]
-        energy = e_lvl[index('rain')]
-        num = n_cats[index('rain')]
-        
-    elif "fog" in w:
-        path = bkg_links[index('rain')]
-        energy = e_lvl[index('rain')]
-        num = n_cats[index('rain')]
-        
+            path = d[0][0]
+            energy = d[0][2]
+            num = d[0][1]
+        else:
+            path = d[1][0]
+            energy = d[1][2]
+            num = d[1][1]
+    else:
+        path = d[0][0]
+        energy = d[0][2]
+        num = d[0][1]
     return path, city
 
 db.commit()
@@ -393,7 +379,6 @@ def settings():
 def encounters():
     a, city = pick_city()
     path, city = bg_file(a, city)
-    d = c.execute("SELECT * FROM encounter_maps WHERE weather = ? AND time = ?;", (get_precip(a), get_time(a))).fetchone()
     #cats = c.execute("SELECT * FROM cats WHERE energy_lvl = ?", (d[2],))
     #random.shuffle(cats)
     return encounterspage(path, city)
@@ -445,5 +430,5 @@ def weatherspage():
     return render_template('weatherencounters.html')
 #====================================================================================#
 if __name__ == "__main__":  # false if this file imported as module
-    #app.debug = True  # enable PSOD, auto-server-restart on code chg
+    app.debug = True  # enable PSOD, auto-server-restart on code chg
     app.run(port=8100)
