@@ -34,7 +34,7 @@ source venv/bin/activate
 ```
 pip install -r requirements.txt
 ```  
-6) After running the launch codes, exit the virtual environment:
+6) After running the launch codes and utilizing the app, exit the virtual environment:
 ```
 deactivate
 ```
@@ -42,7 +42,7 @@ deactivate
 ## Launch codes
 1) Run the app through Flask:
 ```
-flask run
+python app/__init__.py
 ```
 2) Open the website at website:
 ```
