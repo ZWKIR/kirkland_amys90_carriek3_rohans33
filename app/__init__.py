@@ -260,6 +260,8 @@ def startscreen():
 
 @app.route("/choose", methods=['GET', 'POST'])
 def choose():
+    if loggedin():
+        return redirect(url_for('encounters'))
     return choosepage()
 
 @app.route("/signup", methods=['GET', 'POST'])
