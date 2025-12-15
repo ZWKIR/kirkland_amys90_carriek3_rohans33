@@ -162,3 +162,6 @@ CarrieK -- 2025-12-15 12:37
 - background for encounters is currently set to permanently be clear-day for html template testing purposes
   - clear-day template is done though so changes can be reverted (please comment out the testing code, will need it for future testing)
 - yeah
+
+CarrieK -- 2025-12-15 14:43
+- templates css
