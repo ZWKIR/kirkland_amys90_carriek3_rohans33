@@ -176,10 +176,23 @@ def get_icon(a):
     weather = a["currently"]["icon"]
     return weather
 
-def map_info(a):
-    w = get_icon(a)
-    print(w)
-    t = c.execute("SELECT * FROM encounter_maps WHERE weather = ?", (w,))
+#def map_info(a):
+#    w = get_icon(a)
+#    print(w)
+#    t = c.execute("SELECT * FROM encounter_maps WHERE weather = ?", (w,))
+#    d = t.fetchall()
+#    print (d)
+#    if (len(d) > 1):
+#        if get_time(a) == "day":
+#            return d[0]
+#        else:
+#            return d[1]
+#    else:
+#        return d[0]
+
+def map_info():
+    #t = c.execute("SELECT * FROM encounter_maps WHERE weather = ?", (w,))
+    t = c.execute("SELECT * FROM encounter_maps WHERE background = ?", ("/static/clear_day.png",))
     d = t.fetchall()
     print (d)
     if (len(d) > 1):
@@ -334,7 +347,8 @@ def settings():
 def encounters():
 	if loggedin():
 	    a, city = pick_city()
-	    info = map_info(a)
+	    #info = map_info(a)
+	    info = map_info()
 	    path = info[0]
 	    n = info[2]
 	    e = info[1]
@@ -382,7 +396,8 @@ def settingspage(username='', error=''):
     return render_template('settings.html', username=username, error=error)
 
 def encounterspage(url, num, energy, city):
-    return render_template(f'/n_cats/encounters{num}.html', url=url, city=city)
+    #return render_template(f'/n_cats/encounters{num}.html', url=url, city=city)
+    return render_template('/n_cats/clear-day.html', url=url, city=city)
 
 def weatherspage():
     return render_template('weatherencounters.html')
