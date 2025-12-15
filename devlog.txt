@@ -109,7 +109,7 @@ CarrieK -- 2025-12-11 13:18
   - hurts my head thinking about it ngl
 
 CarrieK -- 2025-12-11 14:50
-- more of the above 
+- more of the above
 
 RohanS -- 2025-12-11 17:23
 - In the process of overhauling weather stuff
@@ -146,8 +146,11 @@ CarrieK -- 2025-12-12 13:08
   - its more concise! (yay)
 
 CarrieK -- 2025-12-12 13:14
-- db file + fixing choose issue 
+- db file + fixing choose issue
 
 RohanS -- 2025-12-12 14:42
 - encounters now display variance in cats
 - jinja 2 templating used to keep things clean
+
+RohanS -- 2025-12-15 11:44
+- more work on encounters
