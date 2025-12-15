@@ -106,7 +106,7 @@ try:
 	    c.execute(q, d)
 except:
 	print("error with breeds")
-	
+
 try:
     for i in range(10):
         with urllib.request.urlopen("https://v2.jokeapi.dev/joke/Programming,Miscellaneous,Dark,Pun?blacklistFlags=nsfw,religious,political,racist,sexist,explicit&type=single&amount=10") as response:
@@ -128,7 +128,7 @@ try:
             c.execute(q, d)
 except:
     print("error with joke")
-    
+
 try:
     for i in range(10):
         with urllib.request.urlopen("https://the-trivia-api.com/v2/questions") as response:
@@ -332,12 +332,14 @@ def settings():
 
 @app.route("/encounters", methods=['GET', 'POST'])
 def encounters():
-    a, city = pick_city()
-    info = map_info(a)
-    path = info[0]
-    n = info[2]
-    e = info[1]
-    return encounterspage(path, n, e, city)
+	if loggedin():
+	    a, city = pick_city()
+	    info = map_info(a)
+	    path = info[0]
+	    n = info[2]
+	    e = info[1]
+	    return encounterspage(path, n, e, city)
+	return loginpage()
 @app.route("/encounters/<weather>", methods=['GET', 'POST'])
 def weatherencounters(weather):
     return weatherspage()
