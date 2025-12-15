@@ -192,7 +192,7 @@ def get_icon(a):
 
 def map_info():
     #t = c.execute("SELECT * FROM encounter_maps WHERE weather = ?", (w,))
-    t = c.execute("SELECT * FROM encounter_maps WHERE background = ?", ("/static/clear_day.png",))
+    t = c.execute("SELECT * FROM encounter_maps WHERE background = ?", ("/static/rainy_night.gif",))
     d = t.fetchall()
     print (d)
     if (len(d) > 1):
@@ -397,7 +397,7 @@ def settingspage(username='', error=''):
 
 def encounterspage(url, num, energy, city):
     #return render_template(f'/n_cats/encounters{num}.html', url=url, city=city)
-    return render_template('/n_cats/clear-day.html', url=url, city=city)
+    return render_template('/n_cats/rainnight.html', url=url, city=city)
 
 def weatherspage():
     return render_template('weatherencounters.html')
