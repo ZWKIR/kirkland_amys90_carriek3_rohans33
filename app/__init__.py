@@ -296,6 +296,10 @@ def profile():
         c = db.cursor()
         c.execute("SELECT * FROM user_profile WHERE username = ?", (session["username"],))
         user = c.fetchone()
+        
+        if user is None:
+            session.pop("username")
+            return redirect(url_for('login'))
 
         if request.method == 'POST':
             icon = request.form.get("profile_icon")
@@ -354,6 +358,7 @@ def encounters():
 	    e = info[1]
 	    return encounterspage(path, n, e, city)
 	return loginpage()
+
 @app.route("/encounters/<weather>", methods=['GET', 'POST'])
 def weatherencounters(weather):
     return weatherspage()
