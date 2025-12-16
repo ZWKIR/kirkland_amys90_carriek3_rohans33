@@ -34,47 +34,47 @@ c = db.cursor()
 #profile
 c.execute("""
 CREATE TABLE IF NOT EXISTS user_profile(
-	username TEXT PRIMARY KEY NOT NULL,
-	password TEXT NOT NULL,
-	sprite TEXT
+    username TEXT PRIMARY KEY NOT NULL,
+    password TEXT NOT NULL,
+    sprite TEXT
 );""")
 
 c.execute("""
 CREATE TABLE IF NOT EXISTS user_encounters(
-	username TEXT,
-	cat TEXT,
-	affection INTEGER,
-	level INTEGER
+    username TEXT,
+    cat TEXT,
+    affection INTEGER,
+    level INTEGER
 );""")
 
 c.execute("""CREATE TABLE IF NOT EXISTS dialogue(
-	encounter_type TEXT,
-	response1 TEXT,
-	response2 TEXT,
-	response3 TEXT,
-	response4 TEXT
+    encounter_type TEXT,
+    response1 TEXT,
+    response2 TEXT,
+    response3 TEXT,
+    response4 TEXT
 );""")
 
 c.execute("""CREATE TABLE IF NOT EXISTS jokes(
-	category TEXT,
-	joke TEXT PRIMARY KEY,
-	difficulty INTEGER,
-	desired_response TEXT
+    category TEXT,
+    joke TEXT PRIMARY KEY,
+    difficulty INTEGER,
+    desired_response TEXT
 );""")
 
 c.execute("""
 CREATE TABLE IF NOT EXISTS encounter_maps(
-	background TEXT,
-	num_cats INTEGER,
-	energy_lvl INTEGER,
-	time TEXT,
-	weather TEXT,
+    background TEXT,
+    num_cats INTEGER,
+    energy_lvl INTEGER,
+    time TEXT,
+    weather TEXT,
     id INTEGER PRIMARY KEY
 );""")
 
 c.execute("""CREATE TABLE IF NOT EXISTS trivia(
 	difficulty TEXT,
-    question TEXT,
+  question TEXT,
 	answer1 TEXT,
 	answer2 TEXT,
 	answer3 TEXT,
@@ -83,29 +83,29 @@ c.execute("""CREATE TABLE IF NOT EXISTS trivia(
 	);""")
 
 c.execute("""CREATE TABLE IF NOT EXISTS cats(
-	breed TEXT,
-	energy_lvl INTEGER,
-	difficulty INTEGER,
-	difficulty2 TEXT,
-	response_type INTEGER
+    breed TEXT PRIMARY KEY,
+    energy_lvl INTEGER,
+    difficulty INTEGER,
+    difficulty2 TEXT,
+    response_type INTEGER
 );""")
 
 try:
-	with urllib.request.urlopen("https://api.thecatapi.com/v1/breeds") as response:
-	    a = json.loads(response.read())
-	for b in a:
-	    t = ""
-	    if(b['stranger_friendly'] == 5):
-	        t = "easy"
-	    if(b['stranger_friendly'] == 4 or b['stranger_friendly'] == 3):
-	        t = "medium"
-	    if(b['stranger_friendly'] == 2 or b['stranger_friendly'] == 1):
-	        t = "hard"
-	    q = "INSERT OR REPLACE INTO cats(breed, energy_lvl, difficulty, difficulty2, response_type) VALUES(?, ?, ?, ?, ?)"
-	    d = (b['name'], b['energy_level'], b['stranger_friendly'], t, random.randint(0,1))
-	    c.execute(q, d)
+    with urllib.request.urlopen("https://api.thecatapi.com/v1/breeds") as response:
+        a = json.loads(response.read())
+    for b in a:
+        t = ""
+        if(b['stranger_friendly'] == 5):
+            t = "easy"
+        if(b['stranger_friendly'] == 4 or b['stranger_friendly'] == 3):
+            t = "medium"
+        if(b['stranger_friendly'] == 2 or b['stranger_friendly'] == 1):
+            t = "hard"
+        q = "INSERT OR REPLACE INTO cats(breed, energy_lvl, difficulty, difficulty2, response_type) VALUES(?, ?, ?, ?, ?)"
+        d = (b['name'], b['energy_level'], b['stranger_friendly'], t, random.randint(0,1))
+        c.execute(q, d)
 except:
-	print("error with breeds")
+    print("error with breeds")
 
 try:
     for i in range(10):
@@ -163,7 +163,7 @@ def get_time(a):
 
 weather = ["clear-day", "clear-night", "thunderstorm", "rain", "rain", "snow", "snow", "sleet", "sleet", "wind", "fog", "cloudy", "cloudy", "partly-cloudy-day", "partly-cloudy-night"]
 time = ["", "", "", "day", "night", "day", "night", "day", "night", "", "", "day", "night", "", ""]
-bkg_links = ["/static/clear_day.png", "/static/clear_night.png", "/static/thunderstorm.gif", "/static/rainy_day.gif", "/static/rainy_night.gif", "/static/snowy_day.gif", "/static/snowy_night.gif", "/static/snowy_day.gif", "/static/snowy_night.gif", "/static/windy.png", "/static/fog.png", "/static/cloudy_day.png", "/static/cloudy_night.png", "/static/cloudy_day.png", "/static/cloudy_night.png"]
+bkg_links = ["/static/clear_day.png", "/static/clear_night.png", "/static/thunderstorm.gif", "/static/rainy_day.gif", "/static/rainy_night.gif", "/static/snowy_day.gif", "/static/snowy_night.gif", "/static/snowy_day.gif", "/static/snowy_night.gif", "/static/windy.gif", "/static/fog.png", "/static/cloudy_day.png", "/static/cloudy_night.png", "/static/cloudy_day.png", "/static/cloudy_night.png"]
 e_lvl = [5, 4, 1, 3, 2, 5, 3, 2, 1, 3, 2, 3, 1, 4, 2]
 n_cats = [4, 3, 2, 3, 2, 3, 2, 2, 1, 3, 4, 3, 1, 5, 3]
 
@@ -351,18 +351,23 @@ encounterCount = 0
 
 @app.route("/encounters", methods=['GET', 'POST'])
 def encounters():
-	if loggedin():
-	    a, city = pick_city()
-	    #info = map_info(a)
-	    info = map_info()
-	    path = info[0]
-	    n = info[2]
-	    e = info[1]
-	    return encounterspage(path, n, e, city)
-	
-	# NEED TO ADD TO ENCOUNTER COUNT FOR EVERY ENCOUNTER THE USER GETS
-	
-	return loginpage()
+    if loggedin():
+        a, city = pick_city()
+        #info = map_info(a)
+        info = map_info()
+        path = info[0]
+        n = info[2]
+        e = info[1]
+        w = info[4]
+        with sqlite3.connect(DB_FILE) as db:
+                c = db.cursor()
+                t = c.execute("SELECT breed FROM cats WHERE energy_lvl = ?", (e,))
+                t2 = t.fetchall()
+                c = t2[0]
+        random.shuffle(c)
+        print(c)
+        return encounterspage(path, w, n, e, city, c)
+    return loginpage()
 
 @app.route("/encounters/<random>", methods=['GET', 'POST'])
 def weatherencounters(random):
@@ -459,9 +464,9 @@ def startpage():
 def settingspage(username='', error=''):
     return render_template('settings.html', username=username, error=error)
 
-def encounterspage(url, num, energy, city):
-    #return render_template(f'/n_cats/encounters{num}.html', url=url, city=city)
-    return render_template('/n_cats/rainnight.html', url=url, city=city)
+def encounterspage(url, weather, num, energy, city, breed):
+    #return render_template(f'/n_cats/{weather}.html', url=url, city=city)
+    return render_template('/n_cats/rainnight.html', url=url, city=city, breed=breed)
 
 def weatherspage(weather, random=encounterCount, currJoke, currTrivia, currCat):
     return render_template('weatherencounters.html', weather=weather, random=random, currJoke=currJoke, currTrivia=currTrivia, currCat=currCat)
