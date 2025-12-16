@@ -4,6 +4,8 @@
 # P01
 # 2025-12-08
 # time spent: 30.0
+import pickle
+
 from flask import Flask
 from flask import render_template  # facilitate jinja templating
 from flask import request, redirect, url_for  # facilitate form submission
@@ -13,6 +15,8 @@ import urllib.request
 import json
 import random
 from io import StringIO
+import os
+from datetime import datetime, timedelta
 
 #FLASK Declaration
 #====================================================================================#
@@ -30,47 +34,47 @@ c = db.cursor()
 #profile
 c.execute("""
 CREATE TABLE IF NOT EXISTS user_profile(
-    username TEXT PRIMARY KEY NOT NULL,
-    password TEXT NOT NULL,
-    sprite TEXT
+	username TEXT PRIMARY KEY NOT NULL,
+	password TEXT NOT NULL,
+	sprite TEXT
 );""")
 
 c.execute("""
 CREATE TABLE IF NOT EXISTS user_encounters(
-    username TEXT,
-    cat TEXT,
-    affection INTEGER,
-    level INTEGER
+	username TEXT,
+	cat TEXT,
+	affection INTEGER,
+	level INTEGER
 );""")
 
 c.execute("""CREATE TABLE IF NOT EXISTS dialogue(
-    encounter_type TEXT,
-    response1 TEXT,
-    response2 TEXT,
-    response3 TEXT,
-    response4 TEXT
+	encounter_type TEXT,
+	response1 TEXT,
+	response2 TEXT,
+	response3 TEXT,
+	response4 TEXT
 );""")
 
 c.execute("""CREATE TABLE IF NOT EXISTS jokes(
-    category TEXT,
-    joke TEXT PRIMARY KEY,
-    difficulty INTEGER,
-    desired_response TEXT
+	category TEXT,
+	joke TEXT PRIMARY KEY,
+	difficulty INTEGER,
+	desired_response TEXT
 );""")
 
 c.execute("""
 CREATE TABLE IF NOT EXISTS encounter_maps(
-    background TEXT,
-    num_cats INTEGER,
-    energy_lvl INTEGER,
-    time TEXT,
-    weather TEXT,
+	background TEXT,
+	num_cats INTEGER,
+	energy_lvl INTEGER,
+	time TEXT,
+	weather TEXT,
     id INTEGER PRIMARY KEY
 );""")
 
 c.execute("""CREATE TABLE IF NOT EXISTS trivia(
 	difficulty TEXT,
-  question TEXT,
+        question TEXT,
 	answer1 TEXT,
 	answer2 TEXT,
 	answer3 TEXT,
@@ -79,29 +83,29 @@ c.execute("""CREATE TABLE IF NOT EXISTS trivia(
 	);""")
 
 c.execute("""CREATE TABLE IF NOT EXISTS cats(
-    breed TEXT PRIMARY KEY,
-    energy_lvl INTEGER,
-    difficulty INTEGER,
-    difficulty2 TEXT,
-    response_type INTEGER
+	breed TEXT PRIMARY KEY,
+	energy_lvl INTEGER,
+	difficulty INTEGER,
+	difficulty2 TEXT,
+	response_type INTEGER
 );""")
 
 try:
-    with urllib.request.urlopen("https://api.thecatapi.com/v1/breeds") as response:
-        a = json.loads(response.read())
-    for b in a:
-        t = ""
-        if(b['stranger_friendly'] == 5):
-            t = "easy"
-        if(b['stranger_friendly'] == 4 or b['stranger_friendly'] == 3):
-            t = "medium"
-        if(b['stranger_friendly'] == 2 or b['stranger_friendly'] == 1):
-            t = "hard"
-        q = "INSERT OR REPLACE INTO cats(breed, energy_lvl, difficulty, difficulty2, response_type) VALUES(?, ?, ?, ?, ?)"
-        d = (b['name'], b['energy_level'], b['stranger_friendly'], t, random.randint(0,1))
-        c.execute(q, d)
+	with urllib.request.urlopen("https://api.thecatapi.com/v1/breeds") as response:
+	    a = json.loads(response.read())
+	for b in a:
+	    t = ""
+	    if(b['stranger_friendly'] == 5):
+	        t = "easy"
+	    if(b['stranger_friendly'] == 4 or b['stranger_friendly'] == 3):
+	        t = "medium"
+	    if(b['stranger_friendly'] == 2 or b['stranger_friendly'] == 1):
+	        t = "hard"
+	    q = "INSERT OR REPLACE INTO cats(breed, energy_lvl, difficulty, difficulty2, response_type) VALUES(?, ?, ?, ?, ?)"
+	    d = (b['name'], b['energy_level'], b['stranger_friendly'], t, random.randint(0,1))
+	    c.execute(q, d)
 except:
-    print("error with breeds")
+	print("error with breeds")
 
 try:
     for i in range(10):
@@ -159,7 +163,7 @@ def get_time(a):
 
 weather = ["clear-day", "clear-night", "thunderstorm", "rain", "rain", "snow", "snow", "sleet", "sleet", "wind", "fog", "cloudy", "cloudy", "partly-cloudy-day", "partly-cloudy-night"]
 time = ["", "", "", "day", "night", "day", "night", "day", "night", "", "", "day", "night", "", ""]
-bkg_links = ["/static/clear_day.png", "/static/clear_night.png", "/static/thunderstorm.gif", "/static/rainy_day.gif", "/static/rainy_night.gif", "/static/snowy_day.gif", "/static/snowy_night.gif", "/static/snowy_day.gif", "/static/snowy_night.gif", "/static/windy.gif", "/static/fog.png", "/static/cloudy_day.png", "/static/cloudy_night.png", "/static/cloudy_day.png", "/static/cloudy_night.png"]
+bkg_links = ["/static/clear_day.png", "/static/clear_night.png", "/static/thunderstorm.gif", "/static/rainy_day.gif", "/static/rainy_night.gif", "/static/snowy_day.gif", "/static/snowy_night.gif", "/static/snowy_day.gif", "/static/snowy_night.gif", "/static/windy.png", "/static/fog.png", "/static/cloudy_day.png", "/static/cloudy_night.png", "/static/cloudy_day.png", "/static/cloudy_night.png"]
 e_lvl = [5, 4, 1, 3, 2, 5, 3, 2, 1, 3, 2, 3, 1, 4, 2]
 n_cats = [4, 3, 2, 3, 2, 3, 2, 2, 1, 3, 4, 3, 1, 5, 3]
 
@@ -185,6 +189,19 @@ def map_info(a):
             return d[1]
     else:
         return d[0]
+
+#def map_info():
+#    t = c.execute("SELECT * FROM encounter_maps WHERE weather = ?", (w,))
+#    #t = c.execute("SELECT * FROM encounter_maps WHERE background = ?", ("/static/rainy_night.gif",))
+#    d = t.fetchall()
+#    print (d)
+#    if (len(d) > 1):
+#        if get_time(a) == "day":
+#            return d[0]
+#        else:
+#            return d[1]
+#    else:
+#        return d[0]
 
 db.commit()
 
@@ -279,7 +296,7 @@ def profile():
         c = db.cursor()
         c.execute("SELECT * FROM user_profile WHERE username = ?", (session["username"],))
         user = c.fetchone()
-
+        
         if user is None:
             session.pop("username")
             return redirect(url_for('login'))
@@ -330,82 +347,29 @@ def settings():
                 return render_template('settings.html', username=session['username'], error="Both fields must be filled")
     return settingspage(username=session['username'])
 
-encounterCount = 0
-
 @app.route("/encounters", methods=['GET', 'POST'])
 def encounters():
-    if loggedin():
-        a, city = pick_city()
-        info = map_info(a)
-        path = info[0]
-        e = info[1]
-        n = info[2]
-        w = info[4]
-        with sqlite3.connect(DB_FILE) as db:
+	if loggedin():
+	    a, city = pick_city()
+	    info = map_info(a)
+	    #info = map_info()
+	    path = info[0]
+	    n = info[2]
+	    e = info[1]
+	    w = info[4]
+	    time = info[3]
+	    with sqlite3.connect(DB_FILE) as db:
                 c = db.cursor()
-                t = c.execute("SELECT breed FROM cats WHERE energy_lvl = ?", (e,)).fetchone()
-        random.shuffle(t)
-        print(c)
-        return encounterspage(path, w, n, e, city, t)
-    return loginpage()
+                t = c.execute("SELECT breed FROM cats WHERE energy_lvl = ?", (e,))
+                d = t.fetchall()
+	    random.shuffle(d)
+	    print(d)
+	    return encounterspage(path, w, time, e, city, d)
+	return loginpage()
 
-@app.route("/encounters/<random>", methods=['GET', 'POST'])
-def weatherencounters(random):
-    if loggedin():
-        weather = map_info()
-        with sqlite3.connect(DB_FILE) as db:
-            c = db.cursor()
-            # get energy level for weather
-            c.execute("SELECT energy_lvl FROM encounter_maps WHERE weather = ?", (weather,))
-            row = c.fetchone()
-            
-            currNRG = row[0]
-            
-            # get cats for energy level
-            c.execute("SELECT * FROM cats WHERE energy_lvl = ?", (currNRG,))
-            cats = c.fetchall()
-            breed = cats[0]
-            
-            # get a random cat
-            myCatRow = random.choice(cats)
-            # get difficulty 1 and 
-            diff1 = myCatRow[2]
-            diff2 = myCatRow[3] # DO WE RLY NEED THIS?
-            
-            # breed, energy_lvl checkkk
-            print(myCatRow[0], myCatRow[1])
-            
-            # now pull from jokes tbl for response 1 and 2
-            # check difficulty or difficulty2 of cat for joke
-            c.execute("SELECT joke FROM jokes WHERE difficulty <= ? RANDOM() LIMIT 1", (diff1,))
-            # category, joke, difficulty, desired_response
-            joke1 = c.fetchone()
-            joke2 = c.fetchone()
-            joke3 = c.fetchone()
-            joke4 = c.fetchone()
-            currJokes = (joke1, joke2, joke3, joke4)
-    
-            # for responses, only correct answer or idk
-            # or js pull other repnoses from other jokes
-            
-            '''
-            what is response type for cats???
-            what is dialogues' encounter_type??
-            '''
-
-            # pull from trivia tbl for response 3 and 4
-            # check difficulty or difficulty2 of cat for trivia
-            
-            # for trivia options, pull from trivia tbl
-            c.execute("SELECT question FROM trivia WHERE difficulty <= ? RANDOM() LIMIT 1", (diff1,))
-            # difficulty, question, a1, a2, a3, a4, correct
-            currTrivia = c.fetchone()
-            
-            # if pressed answer == currTrivia[6], add affection
-            # leave encounter after clicking answer
-            
-            
-    return weatherspage(weather, encounterCount, currJokes, currTrivia, myCatRow)
+@app.route("/encounters/<weather>", methods=['GET', 'POST'])
+def weatherencounters(weather):
+    return weatherspage()
 
 @app.route("/")
 def index():
@@ -444,14 +408,12 @@ def startpage():
 def settingspage(username='', error=''):
     return render_template('settings.html', username=username, error=error)
 
-def encounterspage(url, weather, num, energy, city, breed):
-    try:
-        return render_template(f'/n_cats/{weather}.html', url=url, city=city, weather=weather)
-    except:
-        return render_template(f'/n_cats/encounters3.html', url=url, city=city, weather=weather)
+def encounterspage(url, weather, time, energy, city, breed):
+    return render_template(f'/n_cats/{weather}{time}.html', url=url, city=city)
+    return render_template('/n_cats/rainnight.html', url=url, city=city, breed=breed)
 
-def weatherspage(weather, random=encounterCount, currJoke, currTrivia, currCat):
-    return render_template('weatherencounters.html', weather=weather, random=random, currJoke=currJoke, currTrivia=currTrivia, currCat=currCat)
+def weatherspage():
+    return render_template('weather_encounters.html')
 #====================================================================================#
 if __name__ == "__main__":  # false if this file imported as module
     app.debug = True  # enable PSOD, auto-server-restart on code chg
