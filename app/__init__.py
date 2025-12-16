@@ -163,7 +163,7 @@ def get_time(a):
 
 weather = ["clear-day", "clear-night", "thunderstorm", "rain", "rain", "snow", "snow", "sleet", "sleet", "wind", "fog", "cloudy", "cloudy", "partly-cloudy-day", "partly-cloudy-night"]
 time = ["", "", "", "day", "night", "day", "night", "day", "night", "", "", "day", "night", "", ""]
-bkg_links = ["/static/clear_day.png", "/static/clear_night.png", "/static/thunderstorm.gif", "/static/rainy_day.gif", "/static/rainy_night.gif", "/static/snowy_day.gif", "/static/snowy_night.gif", "/static/snowy_day.gif", "/static/snowy_night.gif", "/static/windy.png", "/static/fog.png", "/static/cloudy_day.png", "/static/cloudy_night.png", "/static/cloudy_day.png", "/static/cloudy_night.png"]
+bkg_links = ["/static/clear_day.png", "/static/clear_night.png", "/static/thunderstorm.gif", "/static/rainy_day.gif", "/static/rainy_night.gif", "/static/snowy_day.gif", "/static/snowy_night.gif", "/static/snowy_day.gif", "/static/snowy_night.gif", "/static/windy.gif", "/static/fog.png", "/static/cloudy_day.png", "/static/cloudy_night.png", "/static/cloudy_day.png", "/static/cloudy_night.png"]
 e_lvl = [5, 4, 1, 3, 2, 5, 3, 2, 1, 3, 2, 3, 1, 4, 2]
 n_cats = [4, 3, 2, 3, 2, 3, 2, 2, 1, 3, 4, 3, 1, 5, 3]
 
