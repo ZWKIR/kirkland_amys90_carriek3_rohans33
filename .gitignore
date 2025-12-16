@@ -118,6 +118,7 @@ venv.bak/
 _*
 .Spotlight*
 .Trashes
+.idea
 
 # Windows Files #
 Thumbs.db
@@ -126,3 +127,6 @@ ehthumbs.db
 # Filenames with special characters
 **/*[\\/\:;*?!'"<>|$º•¶§∞¢£]*
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+#Team specific
+catt.db
