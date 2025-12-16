@@ -379,10 +379,11 @@ def weatherencounters(random):
             # get cats for energy level
             c.execute("SELECT * FROM cats WHERE energy_lvl = ?", (currNRG,))
             cats = c.fetchall()
+            breed = cats[0]
             
             # get a random cat
             myCatRow = random.choice(cats)
-            # get difficulty 1 and 2
+            # get difficulty 1 and 
             diff1 = myCatRow[2]
             diff2 = myCatRow[3] # DO WE RLY NEED THIS?
             
@@ -392,11 +393,12 @@ def weatherencounters(random):
             # now pull from jokes tbl for response 1 and 2
             # check difficulty or difficulty2 of cat for joke
             c.execute("SELECT joke FROM jokes WHERE difficulty <= ? RANDOM() LIMIT 1", (diff1,))
-            currJoke = c.fetchone()
             # category, joke, difficulty, desired_response
-            joke = currJoke[1]
-            answer = currJoke[3]
-            
+            joke1 = c.fetchone()
+            joke2 = c.fetchone()
+            joke3 = c.fetchone()
+            joke4 = c.fetchone()
+            currJokes = (joke1, joke2, joke3, joke4)
     
             # for responses, only correct answer or idk
             # or js pull other repnoses from other jokes
@@ -411,18 +413,14 @@ def weatherencounters(random):
             
             # for trivia options, pull from trivia tbl
             c.execute("SELECT question FROM trivia WHERE difficulty <= ? RANDOM() LIMIT 1", (diff1,))
-            currTrivia = c.fetchone()
             # difficulty, question, a1, a2, a3, a4, correct
-            opt1 = currTrivia[2]
-            opt2 = currTrivia[3]
-            opt3 = currTrivai[4]
-            opt4 = currTrivai[5]
+            currTrivia = c.fetchone()
             
             # if pressed answer == currTrivia[6], add affection
             # leave encounter after clicking answer
             
             
-    return weatherspage(weather, encounterCount)
+    return weatherspage(weather, encounterCount, currJokes, currTrivia, myCatRow)
 
 @app.route("/")
 def index():
@@ -465,8 +463,8 @@ def encounterspage(url, num, energy, city):
     #return render_template(f'/n_cats/encounters{num}.html', url=url, city=city)
     return render_template('/n_cats/rainnight.html', url=url, city=city)
 
-def weatherspage(random=encounterCount):
-    return render_template('weatherencounters.html', random=random)
+def weatherspage(weather, random=encounterCount, currJoke, currTrivia, currCat):
+    return render_template('weatherencounters.html', weather=weather, random=random, currJoke=currJoke, currTrivia=currTrivia, currCat=currCat)
 #====================================================================================#
 if __name__ == "__main__":  # false if this file imported as module
     app.debug = True  # enable PSOD, auto-server-restart on code chg
