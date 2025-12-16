@@ -165,3 +165,6 @@ CarrieK -- 2025-12-15 12:37
 
 CarrieK -- 2025-12-15 14:43
 - templates css
+
+RohanS -- 2025-12-16 00:58
+- updated the code to use bg specific templates
