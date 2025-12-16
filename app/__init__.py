@@ -1,3 +1,11 @@
+# Amy Shrestha, Carrie Ko, Rohan Sen
+# Kirkland
+# SoftDev
+# P01
+# 2025-12-08
+# time spent: 30.0
+import pickle
+
 from flask import Flask
 from flask import render_template  # facilitate jinja templating
 from flask import request, redirect, url_for  # facilitate form submission
@@ -7,6 +15,8 @@ import urllib.request
 import json
 import random
 from io import StringIO
+import os
+from datetime import datetime, timedelta
 
 #FLASK Declaration
 #====================================================================================#
@@ -18,7 +28,7 @@ app.secret_key = b'kirklandsignature'
 #====================================================================================#
 DB_FILE="catt.db"
 
-db = sqlite3.connect(DB_FILE) #open if file exists, otherwise create
+db = sqlite3.connect(DB_FILE, check_same_thread=False) #open if file exists, otherwise create
 c = db.cursor()
 
 #profile
@@ -27,14 +37,6 @@ CREATE TABLE IF NOT EXISTS user_profile(
 	username TEXT PRIMARY KEY NOT NULL,
 	password TEXT NOT NULL,
 	sprite TEXT
-);""")
-
-c.execute("""
-CREATE TABLE IF NOT EXISTS encounter_maps(
-	background TEXT,
-	num_cats INTEGER,
-	energy_lvl INTEGER,
-	weather TEXT
 );""")
 
 c.execute("""
@@ -54,10 +56,20 @@ c.execute("""CREATE TABLE IF NOT EXISTS dialogue(
 );""")
 
 c.execute("""CREATE TABLE IF NOT EXISTS jokes(
-	category TEXT, 
-	joke TEXT PRIMARY KEY, 
-	difficulty INTEGER, 
+	category TEXT,
+	joke TEXT PRIMARY KEY,
+	difficulty INTEGER,
 	desired_response TEXT
+);""")
+
+c.execute("""
+CREATE TABLE IF NOT EXISTS encounter_maps(
+	background TEXT,
+	num_cats INTEGER,
+	energy_lvl INTEGER,
+	time TEXT,
+	weather TEXT,
+    id INTEGER PRIMARY KEY
 );""")
 
 c.execute("""CREATE TABLE IF NOT EXISTS trivia(
@@ -78,48 +90,118 @@ c.execute("""CREATE TABLE IF NOT EXISTS cats(
 	response_type INTEGER
 );""")
 
-with urllib.request.urlopen("https://api.thecatapi.com/v1/breeds") as response:
-    a = json.loads(response.read())
-for b in a:
-    t = ""
-    if(b['stranger_friendly'] == 5):
-        t = "easy"
-    if(b['stranger_friendly'] == 4 or b['stranger_friendly'] == 3):
-        t = "medium"
-    if(b['stranger_friendly'] == 2 or b['stranger_friendly'] == 1):
-        t = "hard"
-    q = "INSERT OR REPLACE INTO cats(breed, energy_lvl, difficulty, difficulty2, response_type) VALUES(?, ?, ?, ?, ?)"
-    d = (b['name'], b['energy_level'], b['stranger_friendly'], t, random.randint(0,1))
+try:
+	with urllib.request.urlopen("https://api.thecatapi.com/v1/breeds") as response:
+	    a = json.loads(response.read())
+	for b in a:
+	    t = ""
+	    if(b['stranger_friendly'] == 5):
+	        t = "easy"
+	    if(b['stranger_friendly'] == 4 or b['stranger_friendly'] == 3):
+	        t = "medium"
+	    if(b['stranger_friendly'] == 2 or b['stranger_friendly'] == 1):
+	        t = "hard"
+	    q = "INSERT OR REPLACE INTO cats(breed, energy_lvl, difficulty, difficulty2, response_type) VALUES(?, ?, ?, ?, ?)"
+	    d = (b['name'], b['energy_level'], b['stranger_friendly'], t, random.randint(0,1))
+	    c.execute(q, d)
+except:
+	print("error with breeds")
+
+try:
+    for i in range(10):
+        with urllib.request.urlopen("https://v2.jokeapi.dev/joke/Programming,Miscellaneous,Dark,Pun?blacklistFlags=nsfw,religious,political,racist,sexist,explicit&type=single&amount=10") as response:
+            a = json.loads(response.read())
+        for b in a['jokes']:
+            t = 0
+            if(b['category'] == "Dark"):
+                t = 2
+            if(b['category'] == "Misc"):
+                t = 3
+            if(b['category'] == "Pun"):
+                t = 4
+            if(b['category'] == "Programming"):
+                t = 5
+            if(b['safe'] == False):
+                t = 1
+            q = "INSERT OR IGNORE INTO jokes(category, joke, difficulty, desired_response) VALUES(?, ?, ?, ?)"
+            d = (b['category'], b['joke'], t, "temp")
+            c.execute(q, d)
+except:
+    print("error with joke")
+
+try:
+    for i in range(10):
+        with urllib.request.urlopen("https://the-trivia-api.com/v2/questions") as response:
+            a = json.loads(response.read())
+        for b in a:
+            t = [b['incorrectAnswers'][0], b['incorrectAnswers'][1], b['incorrectAnswers'][2], b['correctAnswer']]
+            random.shuffle(t)
+            q = "INSERT OR IGNORE INTO trivia(difficulty, question, answer1, answer2, answer3, answer4, correct_answer) VALUES (?, ?, ?, ?, ?, ?, ?)"
+            d = (b['difficulty'], b['question']['text'], t[0], t[1], t[2], t[3], b['correctAnswer'])
+            c.execute(q, d)
+except:
+    print("error with TRIVIA")
+
+def pick_city():
+    with open("app/locations", "r") as f:
+        lines = f.read().strip().splitlines()
+        city,lat,lon = random.choice(lines).split(",")
+    with open("app/keys/key_pirateWeather.txt", "r") as f:
+        key = f.read().strip()
+    with urllib.request.urlopen(f"https://api.pirateweather.net/forecast/{key}/{lat},{lon}") as response:
+        a = json.loads(response.read())
+    return a, city
+
+def get_time(a):
+    sunrise = a["daily"]["data"][0]["sunriseTime"]
+    sunset = a["daily"]["data"][0]["sunsetTime"]
+    now = a["currently"]["time"]
+    if sunrise <= now <= sunset:
+        return "day"
+    else:
+        return "night"
+
+weather = ["clear-day", "clear-night", "thunderstorm", "rain", "rain", "snow", "snow", "sleet", "sleet", "wind", "fog", "cloudy", "cloudy", "partly-cloudy-day", "partly-cloudy-night"]
+time = ["", "", "", "day", "night", "day", "night", "day", "night", "", "", "day", "night", "", ""]
+bkg_links = ["/static/clear_day.png", "/static/clear_night.png", "/static/thunderstorm.gif", "/static/rainy_day.gif", "/static/rainy_night.gif", "/static/snowy_day.gif", "/static/snowy_night.gif", "/static/snowy_day.gif", "/static/snowy_night.gif", "/static/windy.png", "/static/fog.png", "/static/cloudy_day.png", "/static/cloudy_night.png", "/static/cloudy_day.png", "/static/cloudy_night.png"]
+e_lvl = [5, 4, 1, 3, 2, 5, 3, 2, 1, 3, 2, 3, 1, 4, 2]
+n_cats = [4, 3, 2, 3, 2, 3, 2, 2, 1, 3, 4, 3, 1, 5, 3]
+
+for i in range(len(weather)):
+    q = "INSERT OR REPLACE INTO encounter_maps(background, num_cats, energy_lvl, time, weather, id) VALUES(?, ?, ?, ?, ?, ?)"
+    d = (bkg_links[i], n_cats[i], e_lvl[i], time[i], weather[i], i)
     c.execute(q, d)
 
-for i in range(10):
-    with urllib.request.urlopen("https://v2.jokeapi.dev/joke/Programming,Miscellaneous,Dark,Pun?blacklistFlags=nsfw,religious,political,racist,sexist,explicit&type=single&amount=10") as response:
-        a = json.loads(response.read())
-    for b in a['jokes']:
-        t = 0
-        if(b['category'] == "Dark"):
-            t = 2
-        if(b['category'] == "Misc"):
-            t = 3
-        if(b['category'] == "Pun"):
-            t = 4
-        if(b['category'] == "Programming"):
-            t = 5
-        if(b['safe'] == False):
-            t = 1
-        q = "INSERT OR IGNORE INTO jokes(category, joke, difficulty, desired_response) VALUES(?, ?, ?, ?)"
-        d = (b['category'], b['joke'], t, "temp")
-        c.execute(q, d)
+def get_icon(a):
+    weather = a["currently"]["icon"]
+    return weather
 
-for i in range(10):
-    with urllib.request.urlopen("https://the-trivia-api.com/v2/questions") as response:
-        a = json.loads(response.read())
-    for b in a:
-        t = [b['incorrectAnswers'][0], b['incorrectAnswers'][1], b['incorrectAnswers'][2], b['correctAnswer']]
-        random.shuffle(t)
-        q = "INSERT OR IGNORE INTO trivia(difficulty, question, answer1, answer2, answer3, answer4, correct_answer) VALUES (?, ?, ?, ?, ?, ?, ?)"
-        d = (b['difficulty'], b['question']['text'], t[0], t[1], t[2], t[3], b['correctAnswer'])
-        c.execute(q, d)
+#def map_info(a):
+#    w = get_icon(a)
+#    print(w)
+#    t = c.execute("SELECT * FROM encounter_maps WHERE weather = ?", (w,))
+#    d = t.fetchall()
+#    print (d)
+#    if (len(d) > 1):
+#        if get_time(a) == "day":
+#            return d[0]
+#        else:
+#            return d[1]
+#    else:
+#        return d[0]
+
+def map_info():
+    #t = c.execute("SELECT * FROM encounter_maps WHERE weather = ?", (w,))
+    t = c.execute("SELECT * FROM encounter_maps WHERE background = ?", ("/static/rainy_night.gif",))
+    d = t.fetchall()
+    print (d)
+    if (len(d) > 1):
+        if get_time(a) == "day":
+            return d[0]
+        else:
+            return d[1]
+    else:
+        return d[0]
 
 db.commit()
 
@@ -138,6 +220,16 @@ def loggedin():
 
 #Webpage Sites
 #====================================================================================#
+@app.route("/startscreen", methods=['GET', 'POST'])
+def startscreen():
+    return startscreenpage()
+
+@app.route("/choose", methods=['GET', 'POST'])
+def choose():
+    if loggedin():
+        return redirect(url_for('encounters'))
+    return choosepage()
+
 @app.route("/signup", methods=['GET', 'POST'])
 def signup():
     if loggedin():
@@ -146,23 +238,22 @@ def signup():
         if request.method == 'POST':
             with sqlite3.connect(DB_FILE) as db:
                 c = db.cursor()
+                c.execute("SELECT username FROM user_profile WHERE username = ?", (request.form['username'],))
+                if c.fetchone():
+                    return registerpage(False, "Duplicate username")
                 session.permanent = True
-                
+
                 # for invalid requests / empty form responses
-                '''
                 t = ""
-                if(request.form['id'] == "" or request.form['pass'] == "" or request.form['email'] == ""):
+                if(request.form['username'] == "" or request.form['password'] == ""):
                     t = "Please enter a valid "
-                    if(request.form['id'] == ""):
+                    if(request.form['username'] == ""):
                         t = t + "username "
-                    if(request.form['email'] == ""):
-                        t = t + "email "
-                    if(request.form['pass'] == ""):
+                    if(request.form['password'] == ""):
                         t = t + "password "
                     return registerpage(False, t)
-                '''
-                
-                c.execute("INSERT INTO user_profile VALUES (?, ?, ?);", (request.form['username'], request.form['password'], None))
+
+                c.execute("INSERT INTO user_profile VALUES (?, ?, ?);", (request.form['username'], request.form['password'], "/static/placeholder.jpg"))
                 session['username'] = request.form['username']
                 session['password'] = request.form['password']
                 return redirect(url_for('start'))
@@ -190,7 +281,34 @@ def login():
 
 @app.route("/profile", methods=['GET', 'POST'])
 def profile():
-    return profilepage()
+    if not loggedin():
+        return redirect(url_for('login'))
+
+    profile_icons = [
+        "/static/cat1.jpg",
+        "/static/cat2.jpeg",
+        "/static/cat3.jpg",
+        "/static/cat4.jpg",
+        "/static/cat5.jpg"
+    ]
+
+    with sqlite3.connect(DB_FILE) as db:
+        c = db.cursor()
+        c.execute("SELECT * FROM user_profile WHERE username = ?", (session["username"],))
+        user = c.fetchone()
+        
+        if user is None:
+            session.pop("username")
+            return redirect(url_for('login'))
+
+        if request.method == 'POST':
+            icon = request.form.get("profile_icon")
+            c.execute("UPDATE user_profile SET sprite = ? WHERE username = ?", (icon, session["username"]))
+            db.commit()
+            return redirect(url_for('profile'))
+
+    sprite = user[2]
+    return profilepage(profile_icons, sprite, user[0])
 
 @app.route("/logout", methods=['GET', 'POST'])
 def logout():
@@ -202,24 +320,66 @@ def logout():
 @app.route("/start", methods=['GET', 'POST'])
 def start():
     if loggedin():
-        return startpage(session['username'])
+        return startpage()
     return redirect(url_for('login'))
 
 @app.route("/settings", methods=['GET', 'POST'])
 def settings():
-    return settingspage()
+    if not loggedin():
+        return redirect(url_for('login'))
+
+    with sqlite3.connect(DB_FILE) as db:
+        c = db.cursor()
+        c.execute("SELECT * FROM user_profile WHERE username = ?", (session["username"],))
+        user = c.fetchone()
+
+        if request.method == 'POST':
+            oldP = request.form.get('old_pass')
+            newP = request.form.get('new_pass')
+            # both fields are filled out
+            if oldP and newP:
+                if oldP == user[1]:
+                    c.execute("UPDATE user_profile SET password = ? WHERE username = ?", (newP, session['username']))
+                    db.commit()
+                else:
+                    return render_template('settings.html', username=session['username'], error="Incorrect old password")
+            else:
+                return render_template('settings.html', username=session['username'], error="Both fields must be filled")
+    return settingspage(username=session['username'])
 
 @app.route("/encounters", methods=['GET', 'POST'])
 def encounters():
-    return encounterspage()
+	if loggedin():
+	    a, city = pick_city()
+	    #info = map_info(a)
+	    info = map_info()
+	    path = info[0]
+	    n = info[2]
+	    e = info[1]
+	    return encounterspage(path, n, e, city)
+	return loginpage()
 
 @app.route("/encounters/<weather>", methods=['GET', 'POST'])
 def weatherencounters(weather):
     return weatherspage()
 
+@app.route("/")
+def index():
+    return startscreenpage()
+
 #HTML Pages
 #====================================================================================#
-def registerpage():
+def startscreenpage():
+    return render_template('startscreen.html')
+
+def choosepage():
+    return render_template('choose.html')
+
+def registerpage(valid=True, invalid=''):
+    if(valid==True):
+        return render_template('signup.html',invalid=invalid)
+    else:
+        return render_template('signup.html',invalid=invalid)
     return render_template('signup.html')
 
 def loginpage(valid=True):
@@ -228,24 +388,25 @@ def loginpage(valid=True):
     else:
         return render_template('login.html',invalid="Your username or password was incorrect")
 
-def profilepage():
-    return render_template('profile.html')
+def profilepage(profile_icons, icon, user=''):
+    return render_template('profile.html', profile_icons=profile_icons, icon=icon, username=user)
 
 def logoutpage():
     return render_template('logout.html')
 
-def startpage(user=''):
-    return render_template('start.html', username=user)
+def startpage():
+    return render_template('start.html')
 
-def settingspage():
-    return render_template('settings.html')
+def settingspage(username='', error=''):
+    return render_template('settings.html', username=username, error=error)
 
-def encounterspage():
-    return render_template('encounters.html')
+def encounterspage(url, num, energy, city):
+    #return render_template(f'/n_cats/encounters{num}.html', url=url, city=city)
+    return render_template('/n_cats/rainnight.html', url=url, city=city)
 
 def weatherspage():
     return render_template('weatherencounters.html')
 #====================================================================================#
 if __name__ == "__main__":  # false if this file imported as module
-    #app.debug = True  # enable PSOD, auto-server-restart on code chg
-    app.run()
+    app.debug = True  # enable PSOD, auto-server-restart on code chg
+    app.run(port=8100)

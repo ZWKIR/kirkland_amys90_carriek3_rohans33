@@ -35,7 +35,7 @@ AmyS - 2025-12-05 11:46
 - Fixed problems in functionality
 
 CarrieK -- 2025-12-05 13:07
-- did joke table 
+- did joke table
   - we will need to stock up on jokes beforehand which means we will need to commit a .db file
 - guh
 
@@ -46,3 +46,122 @@ CarrieK -- 2025-12-05 22:02
 - unfortunately, to get more jokes and trivia questions, i had to request the sites in a for loop
   - makes loading longer, don't be surprised when it takes a bit longer for the flask app to run
 - hopefully didnt mess anything up!!!!!! hahahahahahahha
+
+AmyS -- 2025-12-08 01:30
+- update HTML buttons and website features
+- fixed all flask webpages and links
+- finish profile page and picture
+- finished settings page (and editing password)
+- finshed register page errors (duplicate usernames, empty fields)
+
+RohanS -- 2025-12-08 02:22
+- Weather fetched for one of 10 random cities
+- Temperature displayed on start screen
+
+RohanS -- 2025-12-08 11:48
+- Encounters formatting to now look smattered accross the screen
+- Bootstrap added to all templates
+
+AmyS -- 2025-12-08 11:49
+- update profile placeholder
+- fix formatting of profile
+
+CarrieK -- 2025-12-08 13:16
+- cats cats cats
+
+CarrieK -- 2025-12-08 20:30
+- cats typing animation very cool very awesome :)
+
+RohanS -- 2025-12-09 11:47
+- additional work on weather logic
+- error handling for api
+- route changing to make runnable
+
+CarrieK -- 2025-12-09 11:49
+- html
+
+CarrieK -- 2025-12-09 13:19
+- js html js cats
+
+CarrieK -- 2025-12-09 14:50
+- js html buttons cool
+- encounter page is broken so pls fix
+- commented out code in py file that made it not work
+
+CarrieK -- 2025-12-09 22:35
+- CSS CSCSCc ssccscsmcs
+
+AmyS -- 2025-12-10 11:48
+- fix Encounters
+- trying to add weather api stuff
+
+CarrieK -- 2025-12-10 13:19
+- css for many pages + html
+
+AmyS -- 2025-12-11 11:45
+- adding functions for pulling weather data (credits to WheelOfFortune)
+- found rainy/thunderstorm and snow gif backdrops
+
+CarrieK -- 2025-12-11 13:18
+- was very unproductive
+- added questionable code for encounter page and also encounter.html (its commented out though so no breaking??? hopefully???)
+  - need to finish :(
+  - hurts my head thinking about it ngl
+
+CarrieK -- 2025-12-11 14:50
+- more of the above
+
+RohanS -- 2025-12-11 17:23
+- In the process of overhauling weather stuff
+
+RohanS -- 2025-12-11 18:09
+- Background system redone
+- Weather system replaced to match our api
+- debugged the encounters
+
+RohanS -- 2025-12-11 21:51
+- backgrounds properly working
+- cities passing through
+- city change on reload
+
+Carrie -- 2025-12-12 7:31
+- deleted rainy day because it doesn't work
+  - need to find new img
+
+RohanS -- 2025-12-12 8:34
+- new rainy day :)
+
+CarrieK -- 2025-12-12 11:49
+- more img
+
+AmyS -- 2025-12-12 11:49
+- edited code to use icons
+
+AmyS -- 2025-12-12 12:28
+- fixed icon functions error
+- made buttons transparent
+
+CarrieK -- 2025-12-12 13:08
+- made amys code use the db
+  - its more concise! (yay)
+
+CarrieK -- 2025-12-12 13:14
+- db file + fixing choose issue
+
+RohanS -- 2025-12-12 14:42
+- encounters now display variance in cats
+- jinja 2 templating used to keep things clean
+
+RohanS -- 2025-12-15 11:44
+- more work on encounters
+
+CarrieK -- 2025-12-15 11:46
+- html yay and the cloudy stuff yeah 
+
+CarrieK -- 2025-12-15 12:37
+- background for encounters is currently set to permanently be clear-day for html template testing purposes
+  - clear-day template is done though so changes can be reverted (please comment out the testing code, will need it for future testing)
+- yeah
+
+CarrieK -- 2025-12-15 14:43
+- templates css
