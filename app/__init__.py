@@ -4,8 +4,6 @@
 # P01
 # 2025-12-08
 # time spent: 30.0
-import pickle
-
 from flask import Flask
 from flask import render_template  # facilitate jinja templating
 from flask import request, redirect, url_for  # facilitate form submission
@@ -15,8 +13,6 @@ import urllib.request
 import json
 import random
 from io import StringIO
-import os
-from datetime import datetime, timedelta
 
 #FLASK Declaration
 #====================================================================================#
@@ -176,23 +172,10 @@ def get_icon(a):
     weather = a["currently"]["icon"]
     return weather
 
-#def map_info(a):
-#    w = get_icon(a)
-#    print(w)
-#    t = c.execute("SELECT * FROM encounter_maps WHERE weather = ?", (w,))
-#    d = t.fetchall()
-#    print (d)
-#    if (len(d) > 1):
-#        if get_time(a) == "day":
-#            return d[0]
-#        else:
-#            return d[1]
-#    else:
-#        return d[0]
-
-def map_info():
-    #t = c.execute("SELECT * FROM encounter_maps WHERE weather = ?", (w,))
-    t = c.execute("SELECT * FROM encounter_maps WHERE background = ?", ("/static/rainy_night.gif",))
+def map_info(a):
+    w = get_icon(a)
+    print(w)
+    t = c.execute("SELECT * FROM encounter_maps WHERE weather = ?", (w,))
     d = t.fetchall()
     print (d)
     if (len(d) > 1):
@@ -296,7 +279,7 @@ def profile():
         c = db.cursor()
         c.execute("SELECT * FROM user_profile WHERE username = ?", (session["username"],))
         user = c.fetchone()
-        
+
         if user is None:
             session.pop("username")
             return redirect(url_for('login'))
@@ -351,20 +334,17 @@ def settings():
 def encounters():
     if loggedin():
         a, city = pick_city()
-        #info = map_info(a)
-        info = map_info()
+        info = map_info(a)
         path = info[0]
-        n = info[2]
         e = info[1]
+        n = info[2]
         w = info[4]
         with sqlite3.connect(DB_FILE) as db:
                 c = db.cursor()
-                t = c.execute("SELECT breed FROM cats WHERE energy_lvl = ?", (e,))
-                t2 = t.fetchall()
-                c = t2[0]
-        random.shuffle(c)
+                t = c.execute("SELECT breed FROM cats WHERE energy_lvl = ?", (e,)).fetchone()
+        random.shuffle(t)
         print(c)
-        return encounterspage(path, w, n, e, city, c)
+        return encounterspage(path, w, n, e, city, t)
     return loginpage()
 
 @app.route("/encounters/<weather>", methods=['GET', 'POST'])
@@ -409,8 +389,10 @@ def settingspage(username='', error=''):
     return render_template('settings.html', username=username, error=error)
 
 def encounterspage(url, weather, num, energy, city, breed):
-    #return render_template(f'/n_cats/{weather}.html', url=url, city=city)
-    return render_template('/n_cats/rainnight.html', url=url, city=city, breed=breed)
+    try:
+        return render_template(f'/n_cats/{weather}.html', url=url, city=city, weather=weather)
+    except:
+        return render_template(f'/n_cats/encounters3.html', url=url, city=city, weather=weather)
 
 def weatherspage():
     return render_template('weather_encounters.html')
