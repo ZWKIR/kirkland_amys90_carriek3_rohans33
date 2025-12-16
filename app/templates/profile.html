@@ -74,9 +74,9 @@
    <body>
       <nav>
          <button class="c"> <a class="d" href="{{ url_for('start') }}">Start</a> </button>
-         <button class="c"> <a class="d" href="{{ url_for('profile') }}">Profile</a> </button>
-         <button class="c"> <a class="d" href="{{ url_for('logout') }}">Logout</a> </button>
+         <button class="c"> <a class="d" href="{{ url_for('settings') }}">Settings</a> </button>
          <button class="c"> <a class="d" href="{{url_for('encounters')}}">Encounters</a> </button>
+         <button class="c"> <a class="d" href="{{ url_for('logout') }}">Logout</a> </button>
       </nav>
       <div class= "text-center">
          <h2>User Information: {{username}}</h2>
