@@ -1,0 +1,25 @@
+<!--
+   Kirkland
+   Amy Shrestha, Carrie Ko, Rohan Sen
+   SoftDev 2025
+   time spent: 1.0 hrs
+   -->
+
+{% extends "encounters_template.html" %}
+{% block content %}
+{% set r = breed | random %}
+{% set breed = breed | reject("equalto", r) | list %}
+    <button type="image-button" class="btn btn-secondary" style="background-color: transparent; border: none; outline: none; position: absolute; margin-left: 9%; margin-top: 10%;" onclick="location.href='{{url_for('weatherencounters', weather = r[0])}}'"><img src="/static/cattttt.png" alt="pixelcat"></button>
+{% set r = breed | random %}
+{% set breed = breed | reject("equalto", r) | list %}
+    <button type="image-button" class="btn btn-secondary" style="background-color: transparent; border: none; outline: none; position: absolute; margin-left: 87%; margin-top: 18%;" onclick="location.href='{{url_for('weatherencounters', weather = r[0])}}'"><img src="/static/cattttt.png" alt="pixelcat"></button>
+{% set r = breed | random %}
+{% set breed = breed | reject("equalto", r) | list %}
+    <button type="image-button" class="btn btn-secondary" style="background-color: transparent; border: none; outline: none; position: absolute; margin-left: 32%; margin-top: 24%;" onclick="location.href='{{url_for('weatherencounters', weather = r[0])}}'"><img src="/static/cattttt.png" alt="pixelcat"></button>
+{% set r = breed | random %}
+{% set breed = breed | reject("equalto", r) | list %}
+    <button type="image-button" class="btn btn-secondary" style="background-color: transparent; border: none; outline: none; position: absolute; margin-left: 35%; margin-top: 14%;" onclick="location.href='{{url_for('weatherencounters', weather = r[0])}}'"><img src="/static/cattttt.png" alt="pixelcat"></button>
+{% set r = breed | random %}
+{% set breed = breed | reject("equalto", r) | list %}
+    <button type="image-button" class="btn btn-secondary" style="background-color: transparent; border: none; outline: none; position: absolute; margin-left: 71%; margin-top: 6%;" onclick="location.href='{{url_for('weatherencounters', weather = r[0])}}'"><img src="/static/cattttt.png" alt="pixelcat"></button>
+{% endblock %}
