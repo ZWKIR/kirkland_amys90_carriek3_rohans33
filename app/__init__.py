@@ -83,7 +83,7 @@ c.execute("""CREATE TABLE IF NOT EXISTS trivia(
 	);""")
 
 c.execute("""CREATE TABLE IF NOT EXISTS cats(
-	breed TEXT,
+	breed TEXT PRIMARY KEY,
 	energy_lvl INTEGER,
 	difficulty INTEGER,
 	difficulty2 TEXT,
@@ -356,7 +356,14 @@ def encounters():
 	    path = info[0]
 	    n = info[2]
 	    e = info[1]
-	    return encounterspage(path, n, e, city)
+	    with sqlite3.connect(DB_FILE) as db:
+                c = db.cursor()
+                t = c.execute("SELECT breed FROM cats WHERE energy_lvl = ?", (e,))
+                t2 = t.fetchall()
+                c = t2[0]
+	    random.shuffle(c)
+	    print(c)
+	    return encounterspage(path, n, e, city, c)
 	return loginpage()
 
 @app.route("/encounters/<weather>", methods=['GET', 'POST'])
@@ -400,12 +407,12 @@ def startpage():
 def settingspage(username='', error=''):
     return render_template('settings.html', username=username, error=error)
 
-def encounterspage(url, num, energy, city):
+def encounterspage(url, num, energy, city, breed):
     #return render_template(f'/n_cats/encounters{num}.html', url=url, city=city)
-    return render_template('/n_cats/rainnight.html', url=url, city=city)
+    return render_template('/n_cats/rainnight.html', url=url, city=city, breed=breed)
 
 def weatherspage():
-    return render_template('weatherencounters.html')
+    return render_template('weather_encounters.html')
 #====================================================================================#
 if __name__ == "__main__":  # false if this file imported as module
     app.debug = True  # enable PSOD, auto-server-restart on code chg
