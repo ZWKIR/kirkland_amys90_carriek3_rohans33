@@ -7,13 +7,13 @@
 
 {% extends "encounters_template.html" %}
 {% block content %}
+{% set r = breed | random %}
+{% set other = breed | reject("equalto", r) | list %}
+    <button type="image-button" class="btn btn-secondary" style="background-color: transparent; border: none; outline: none; position: absolute; margin-left: 50%; margin-top: 23.2%;" onclick="location.href='{{url_for('weatherencounters', breed = r)}}'"><img src="/static/cattttt.png" alt="pixelcat"></button>
 {% set r = (breed | random) if breed else "example" %}
-{% set breed = breed | reject("equalto", r) | list %}
-    <button type="image-button" class="btn btn-secondary" style="background-color: transparent; border: none; outline: none; position: absolute; margin-left: 50%; margin-top: 21.5%;" onclick="location.href='{{url_for('weatherencounters', breed = r)}}'"><img src="/static/cattttt.png" alt="pixelcat"></button>
+{% set other = breed | reject("equalto", r) | list %}
+    <button type="image-button" class="btn btn-secondary" style="background-color: transparent; border: none; outline: none; position: absolute; margin-left: 17%; margin-top: 27.5%;" onclick="location.href='{{url_for('weatherencounters', breed = r)}}'"><img src="/static/cattttt.png" alt="pixelcat"></button>
 {% set r = (breed | random) if breed else "example" %}
-{% set breed = breed | reject("equalto", r) | list %}
-    <button type="image-button" class="btn btn-secondary" style="background-color: transparent; border: none; outline: none; position: absolute; margin-left: 17%; margin-top: 25%;" onclick="location.href='{{url_for('weatherencounters', breed = r)}}'"><img src="/static/cattttt.png" alt="pixelcat"></button>
-{% set r = (breed | random) if breed else "example" %}
-{% set breed = breed | reject("equalto", r) | list %}
-    <button type="image-button" class="btn btn-secondary" style="background-color: transparent; border: none; outline: none; position: absolute; margin-left: 60%; margin-top: 27.5%;" onclick="location.href='{{url_for('weatherencounters', breed = r)}}'"><img src="/static/cattttt.png" alt="pixelcat"></button>
+{% set other = breed | reject("equalto", r) | list %}
+    <button type="image-button" class="btn btn-secondary" style="background-color: transparent; border: none; outline: none; position: absolute; margin-left: 60%; margin-top: 29%;" onclick="location.href='{{url_for('weatherencounters', breed = r)}}'"><img src="/static/cattttt.png" alt="pixelcat"></button>
 {% endblock %}

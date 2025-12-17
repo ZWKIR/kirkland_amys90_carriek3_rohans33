@@ -8,6 +8,6 @@
 {% extends "encounters_template.html" %}
 {% block content %}
 {% set r = breed | random %}
-{% set breed = breed | reject("equalto", r) | list %}
+{% set other = breed | reject("equalto", r) | list %}
     <button type="image-button" class="btn btn-secondary" style="background-color: transparent; border: none; outline: none; position: absolute; margin-left: 45%; margin-top: 15%;" onclick="location.href='{{url_for('weatherencounters', breed = r)}}'"><img src="/static/cattttt.png" alt="pixelcat"></button>
 {% endblock %}

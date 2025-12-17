@@ -377,7 +377,9 @@ def encounters():
         with sqlite3.connect(DB_FILE) as db:
             c = db.cursor()
             t = c.execute("SELECT breed FROM cats WHERE energy_lvl = ?", (e,))
-            d = t.fetchall()
+            d = []
+            for i in t.fetchall():
+                d.append(i)
         random.shuffle(d)
         print(d)
         return encounterspage(path, w, time, e, city, d, temperature)
@@ -400,7 +402,6 @@ def weatherencounters(breed):
             myCatRow = random.choice(cats)
 
             # get values
-            breed = myCatRow[0]
             jokeDiff = myCatRow[2] #difficulty in int for jokes
             trivDiff = myCatRow[3] #difficulty in text for trivia
 
@@ -508,7 +509,7 @@ def settingspage(username='', error=''):
     return render_template('settings.html', username=username, error=error)
 
 def encounterspage(url, weather, time, energy, city, breed, temperature):
-    return render_template(f'/backgrounds/{weather}{time}.html', url=url, city=city, breed=breed[0][0], weather=weather, temperature=temperature)
+    return render_template(f'/backgrounds/{weather}{time}.html', url=url, city=city, breed=breed[0], weather=weather, temperature=temperature)
 
 def weatherspage(r, currJoke, currTrivia, currCat, dialogue, breed, addedAffec, lvl):
     return render_template('weather_encounters.html', weather=r, currJoke=currJoke,

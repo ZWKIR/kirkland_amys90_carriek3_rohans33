@@ -8,9 +8,9 @@
 {% extends "encounters_template.html" %}
 {% block content %}
 {% set r = breed | random %}
-{% set breed = breed | reject("equalto", r) | list %}
+{% set other = breed | reject("equalto", r) | list %}
     <button type="image-button" class="btn btn-secondary" style="background-color: transparent; border: none; outline: none; position: absolute; margin-left: 18%; margin-top: 23%;" onclick="location.href='{{url_for('weatherencounters', breed = r)}}'"><img src="/static/cattttt.png" alt="pixelcat"></button>
 {% set r = breed | random %}
-{% set breed = breed | reject("equalto", r) | list %}
+{% set other = breed | reject("equalto", r) | list %}
     <button type="image-button" class="btn btn-secondary" style="background-color: transparent; border: none; outline: none; position: absolute; margin-left: 70%; margin-top: 10%;" onclick="location.href='{{url_for('weatherencounters', breed = r)}}'"><img src="/static/cattttt.png" alt="pixelcat"></button>
 {% endblock %}
