@@ -142,6 +142,10 @@ try:
 except:
     print("error with TRIVIA")
 
+# set up dialogues
+c.execute("INSERT OR IGNORE INTO dialogue(encounter_type, response1, response2, response3, response4) VALUES (?, ?, ?, ?, ?)", ("joke", "Hilarious!", "The cat thinks it's a good joke.", "Meh.", "The cat has heard better."))
+c.execute("INSERT OR IGNORE INTO dialogue(encounter_type, response1, response2, response3, response4) VALUES (?, ?, ?, ?, ?)", ("trivia", "Wow, the cat is impressed!", "The cat looks down on your knowledge bank.", "Amazing!", "Nope."))
+
 def pick_city():
     with open("app/locations", "r") as f:
         lines = f.read().strip().splitlines()
@@ -372,60 +376,85 @@ def encounters():
 @app.route("/encounters/<random>", methods=['GET', 'POST'])
 def weatherencounters(random):
     if loggedin():
-        weather = map_info()
         with sqlite3.connect(DB_FILE) as db:
             c = db.cursor()
+            encounter = map_info()
             # get energy level for weather
-            c.execute("SELECT energy_lvl FROM encounter_maps WHERE weather = ?", (weather,))
-            row = c.fetchone()
-            
-            currNRG = row[0]
+            currNRG = encounter[2]
             
             # get cats for energy level
             c.execute("SELECT * FROM cats WHERE energy_lvl = ?", (currNRG,))
             cats = c.fetchall()
-            breed = cats[0]
             
             # get a random cat
             myCatRow = random.choice(cats)
-            # get difficulty 1 and 
-            diff1 = myCatRow[2]
-            diff2 = myCatRow[3] # DO WE RLY NEED THIS?
             
-            # breed, energy_lvl checkkk
-            print(myCatRow[0], myCatRow[1])
+            # get values
+            breed = myCatRow[0]
+            jokeDiff = myCatRow[2] #difficulty in int for jokes
+            trivDiff = myCatRow[3] #difficulty in text for trivia
             
-            # now pull from jokes tbl for response 1 and 2
-            # check difficulty or difficulty2 of cat for joke
-            c.execute("SELECT joke FROM jokes WHERE difficulty <= ? RANDOM() LIMIT 1", (diff1,))
-            # category, joke, difficulty, desired_response
-            joke1 = c.fetchone()
-            joke2 = c.fetchone()
-            joke3 = c.fetchone()
-            joke4 = c.fetchone()
-            currJokes = (joke1, joke2, joke3, joke4)
-    
-            # for responses, only correct answer or idk
-            # or js pull other repnoses from other jokes
+            # set default vals for joke and triv
+            currJoke = None
+            currTriv = None
             
-            '''
-            what is response type for cats???
-            what is dialogues' encounter_type??
-            '''
-
-            # pull from trivia tbl for response 3 and 4
-            # check difficulty or difficulty2 of cat for trivia
+            # 0 for joke
+            # 1 for trivia
+            if myCatRow[4] == 0:
+                # now pull from jokes tbl for response 1 and 2
+                # check difficulty or difficulty2 of cat for joke
+                c.execute("SELECT joke FROM jokes WHERE difficulty <= ? RANDOM() LIMIT 1", (jokeDiff,))
+                
+                # category, joke, difficulty, desired_response
+                currJoke = c.fetchone()
+                
+                # get dialogue
+                c.execute("SELECT response1, response2, response3, response4 FROM dialogue WHERE encounter_type = ?", ("joke",))
+                dialogue = c.fetchone()
+                
+            else: #elif myCatRow[4] == 1:
+                # for trivia options, pull from trivia tbl
+                # check difficulty or difficulty2 of cat for trivia
+                c.execute("SELECT question FROM trivia WHERE difficulty <= ? RANDOM() LIMIT 1", (trivDiff,))
+                
+                # difficulty, question, a1, a2, a3, a4, correct
+                currTrivia = c.fetchone()
+                
+                # get dialogue
+                c.execute("SELECT response1, response2, response3, response4 FROM dialogue WHERE encounter_type = ?", ("trivia",))
+                dialogue = c.fetchone()
             
-            # for trivia options, pull from trivia tbl
-            c.execute("SELECT question FROM trivia WHERE difficulty <= ? RANDOM() LIMIT 1", (diff1,))
-            # difficulty, question, a1, a2, a3, a4, correct
-            currTrivia = c.fetchone()
+            # ------CHECKING AFFECTION-----
+            # using breed for now, but may need ID for each cat***(NEEDS FIX)
+            cat = myCatRow[0]
             
             # if pressed answer == currTrivia[6], add affection
             # leave encounter after clicking answer
+            c.execute("SELECT affection, level FROM user_encounters WHERE username = ? AND cat = ?", (session["username"], breed))
+
+            thisEncounter = c.fetchone()
+            # check for 1st encounter without row
+            if thisEncounter == None:
+                newAffec = 0
+                lvl = 1
+            else:
+                newAffec = thisEncounter[0]
+                lvl = thisEncounter[1]
             
+            # if get the answer right in trivia (use buttons for prompts)
+            # add 10 extra points from interaction
+            # newAffec += 10
+            # ------INCOMPLETE-------
             
-    return weatherspage(weather, encounterCount, currJokes, currTrivia, myCatRow)
+            # if interact, get affectoin thru energy_lvl
+            newAffec += myCatRow[1] * random.randint(1,6)
+            
+            if newAffec >= 100:
+                lvl++
+                newAffec -= 100
+            
+            c.execute("INSERT OR REPLACE INTO user_encounters(username, cat, affection, level) VALUES (?, ?, ?, ?)", (session["username"], breed, newAffec, lvl))
+    return weatherspage(weather, encounterCount, currJoke, currTrivia, myCatRow, dialogue)
 
 @app.route("/")
 def index():
@@ -468,8 +497,8 @@ def encounterspage(url, weather, num, energy, city, breed):
     #return render_template(f'/n_cats/{weather}.html', url=url, city=city)
     return render_template('/n_cats/rainnight.html', url=url, city=city, breed=breed)
 
-def weatherspage(weather, random=encounterCount, currJoke, currTrivia, currCat):
-    return render_template('weatherencounters.html', weather=weather, random=random, currJoke=currJoke, currTrivia=currTrivia, currCat=currCat)
+def weatherspage(r, random=encounterCount, currJoke, currTrivia, currCat):
+    return render_template('weatherencounters.html', weather=r, random=random, currJoke=currJoke, currTrivia=currTrivia, currCat=currCat)
 #====================================================================================#
 if __name__ == "__main__":  # false if this file imported as module
     app.debug = True  # enable PSOD, auto-server-restart on code chg
