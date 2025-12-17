@@ -34,78 +34,78 @@ c = db.cursor()
 #profile
 c.execute("""
 CREATE TABLE IF NOT EXISTS user_profile(
-	username TEXT PRIMARY KEY NOT NULL,
-	password TEXT NOT NULL,
-	sprite TEXT
+    username TEXT PRIMARY KEY NOT NULL,
+    password TEXT NOT NULL,
+    sprite TEXT
 );""")
 
 c.execute("""
 CREATE TABLE IF NOT EXISTS user_encounters(
-	username TEXT,
-	cat TEXT,
-	affection INTEGER,
-	level INTEGER
+    username TEXT,
+    cat TEXT,
+    affection INTEGER,
+    level INTEGER
 );""")
 
 c.execute("""CREATE TABLE IF NOT EXISTS dialogue(
-	encounter_type TEXT,
-	response1 TEXT,
-	response2 TEXT,
-	response3 TEXT,
-	response4 TEXT
+    encounter_type TEXT,
+    response1 TEXT,
+    response2 TEXT,
+    response3 TEXT,
+    response4 TEXT
 );""")
 
 c.execute("""CREATE TABLE IF NOT EXISTS jokes(
-	category TEXT,
-	joke TEXT PRIMARY KEY,
-	difficulty INTEGER,
-	desired_response TEXT
+    category TEXT,
+    joke TEXT PRIMARY KEY,
+    difficulty INTEGER,
+    desired_response TEXT
 );""")
 
 c.execute("""
 CREATE TABLE IF NOT EXISTS encounter_maps(
-	background TEXT,
-	num_cats INTEGER,
-	energy_lvl INTEGER,
-	time TEXT,
-	weather TEXT,
+    background TEXT,
+    num_cats INTEGER,
+    energy_lvl INTEGER,
+    time TEXT,
+    weather TEXT,
     id INTEGER PRIMARY KEY
 );""")
 
 c.execute("""CREATE TABLE IF NOT EXISTS trivia(
-	difficulty TEXT,
+    difficulty TEXT,
         question TEXT,
-	answer1 TEXT,
-	answer2 TEXT,
-	answer3 TEXT,
-	answer4 TEXT,
-	correct_answer TEXT
-	);""")
+    answer1 TEXT,
+    answer2 TEXT,
+    answer3 TEXT,
+    answer4 TEXT,
+    correct_answer TEXT
+    );""")
 
 c.execute("""CREATE TABLE IF NOT EXISTS cats(
-	breed TEXT PRIMARY KEY,
-	energy_lvl INTEGER,
-	difficulty INTEGER,
-	difficulty2 TEXT,
-	response_type INTEGER
+    breed TEXT PRIMARY KEY,
+    energy_lvl INTEGER,
+    difficulty INTEGER,
+    difficulty2 TEXT,
+    response_type INTEGER
 );""")
 
 try:
-	with urllib.request.urlopen("https://api.thecatapi.com/v1/breeds") as response:
-	    a = json.loads(response.read())
-	for b in a:
-	    t = ""
-	    if(b['stranger_friendly'] == 5):
-	        t = "easy"
-	    if(b['stranger_friendly'] == 4 or b['stranger_friendly'] == 3):
-	        t = "medium"
-	    if(b['stranger_friendly'] == 2 or b['stranger_friendly'] == 1):
-	        t = "hard"
-	    q = "INSERT OR REPLACE INTO cats(breed, energy_lvl, difficulty, difficulty2, response_type) VALUES(?, ?, ?, ?, ?)"
-	    d = (b['name'], b['energy_level'], b['stranger_friendly'], t, random.randint(0,1))
-	    c.execute(q, d)
+    with urllib.request.urlopen("https://api.thecatapi.com/v1/breeds") as response:
+        a = json.loads(response.read())
+    for b in a:
+        t = ""
+        if(b['stranger_friendly'] == 5):
+            t = "easy"
+        if(b['stranger_friendly'] == 4 or b['stranger_friendly'] == 3):
+            t = "medium"
+        if(b['stranger_friendly'] == 2 or b['stranger_friendly'] == 1):
+            t = "hard"
+        q = "INSERT OR REPLACE INTO cats(breed, energy_lvl, difficulty, difficulty2, response_type) VALUES(?, ?, ?, ?, ?)"
+        d = (b['name'], b['energy_level'], b['stranger_friendly'], t, random.randint(0,1))
+        c.execute(q, d)
 except:
-	print("error with breeds")
+    print("error with breeds")
 
 try:
     for i in range(10):
@@ -175,6 +175,9 @@ for i in range(len(weather)):
 def get_icon(a):
     weather = a["currently"]["icon"]
     return weather
+
+def get_temp(a):
+    return a["currently"]["temperature"]
 
 def map_info(a):
     w = get_icon(a)
@@ -349,23 +352,22 @@ def settings():
 
 @app.route("/encounters", methods=['GET', 'POST'])
 def encounters():
-	if loggedin():
-	    a, city = pick_city()
-	    info = map_info(a)
-	    #info = map_info()
-	    path = info[0]
-	    n = info[2]
-	    e = info[1]
-	    w = info[4]
-	    time = info[3]
-	    with sqlite3.connect(DB_FILE) as db:
+    if loggedin():
+        a, city = pick_city()
+        info = map_info(a)
+        temperature = get_temp(a)
+        path = info[0]
+        e = info[1]
+        w = info[4]
+        time = info[3]
+        with sqlite3.connect(DB_FILE) as db:
                 c = db.cursor()
                 t = c.execute("SELECT breed FROM cats WHERE energy_lvl = ?", (e,))
                 d = t.fetchall()
-	    random.shuffle(d)
-	    print(d)
-	    return encounterspage(path, w, time, e, city, d)
-	return loginpage()
+        random.shuffle(d)
+        print(d)
+        return encounterspage(path, w, time, e, city, d, temperature)
+    return loginpage()
 
 @app.route("/encounters/<weather>", methods=['GET', 'POST'])
 def weatherencounters(weather):
@@ -408,13 +410,12 @@ def startpage():
 def settingspage(username='', error=''):
     return render_template('settings.html', username=username, error=error)
 
-def encounterspage(url, weather, time, energy, city, breed):
-    return render_template(f'/n_cats/{weather}{time}.html', url=url, city=city)
-    return render_template('/n_cats/rainnight.html', url=url, city=city, breed=breed)
+def encounterspage(url, weather, time, energy, city, breed, temperature):
+    return render_template(f'/backgrounds/{weather}{time}.html', url=url, city=city, breed=breed, weather=weather, temperature=temperature)
 
 def weatherspage():
     return render_template('weather_encounters.html')
 #====================================================================================#
 if __name__ == "__main__":  # false if this file imported as module
     app.debug = True  # enable PSOD, auto-server-restart on code chg
-    app.run(port=8100)
+    app.run(port=6767)

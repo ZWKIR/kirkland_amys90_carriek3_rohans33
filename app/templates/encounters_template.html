@@ -90,7 +90,8 @@
       <h2>
          You encountered a cat!
       </h2>
-      <p>Weather set to {{city}} - {{weather}}</p>
+      <!-- icons credit to https://www.amcharts.com/free-animated-svg-weather-icons/ -->
+      <p>Weather set to {{city}} - {{weather}} <img src="/static/animated/{{ weather }}.svg" alt="icon"> {{ temperature }}˚F</p>
       {% block content %} {% endblock %}
    </body>
 </html>
