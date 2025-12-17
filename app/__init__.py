@@ -310,9 +310,12 @@ def profile():
             c.execute("UPDATE user_profile SET sprite = ? WHERE username = ?", (icon, session["username"]))
             db.commit()
             return redirect(url_for('profile'))
+        
+        c.execute("SELECT cat, affection, level FROM user_encounters WHERE username = ?", (session["username"],))
+        infoRow = c.fetchall()
 
     sprite = user[2]
-    return profilepage(profile_icons, sprite, user[0])
+    return profilepage(profile_icons, sprite, infoRow, user[0])
 
 @app.route("/logout", methods=['GET', 'POST'])
 def logout():
@@ -484,8 +487,8 @@ def loginpage(valid=True):
     else:
         return render_template('login.html',invalid="Your username or password was incorrect")
 
-def profilepage(profile_icons, icon, user=''):
-    return render_template('profile.html', profile_icons=profile_icons, icon=icon, username=user)
+def profilepage(profile_icons, icon, infoRow, user=''):
+    return render_template('profile.html', profile_icons=profile_icons, icon=icon, infoRow=infoRow, username=user)
 
 def logoutpage():
     return render_template('logout.html')

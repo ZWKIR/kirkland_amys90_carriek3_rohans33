@@ -95,5 +95,14 @@
             {% endfor %}
          </div>
       </details>
+      <div>
+      {% for row in infoRow %}
+      <ul>
+        <li>Cat: {{ row[0] }}</li>
+        <li>Affection: {{ row[1] }}</li>
+        <li>Level: {{ row[2] }}</li>
+      </ul>
+      {% endfor %}
+     </div>
    </body>
 </html>
