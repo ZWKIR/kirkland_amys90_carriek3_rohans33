@@ -139,9 +139,29 @@
    <script>
       document.addEventListener("DOMContentLoaded", function () {
           let letter = 0;
-          const text = "Affection +{{ addedAffec }} Level: {{ lvl }}"
+          const joke = "{{ currJoke }}";
+          const trivia = "{{ currTrivia }}";
+          const text = "Affection +{{ addedAffec }} Level: {{ lvl }}";
           function uh(){
               document.getElementById("first").innerHTML = "";
+          }
+          function typeDialogue() {
+              if ({{ currCat[4] }} == 0){
+                if (letter < joke.length) {
+                    document.getElementById("first").innerHTML += joke.charAt(letter);
+                    letter++;
+                    let speed = 25;
+                    setTimeout(typeDialogue, speed);
+                }
+              }
+              if ({{ currCat[4] }} == 1){
+                if (letter < trivia.length) {
+                    document.getElementById("first").innerHTML += trivia.charAt(letter);
+                    letter++;
+                    let speed = 25;
+                    setTimeout(typeDialogue, speed);
+                }
+              }
           }
           function typeText() {
               if (letter < text.length) {
@@ -151,7 +171,7 @@
                   setTimeout(typeText, speed);
               }
           }
-          document.getElementById("play").onclick = function() {this.style.display = 'none'; document.getElementById("continue").style.display = 'inline'; uh(); typeText(); setTimeout(show, 7000);};
+          document.getElementById("play").onclick = function() {this.style.display = 'none'; document.getElementById("continue").style.display = 'inline'; uh(); typeDialogue(); setTimeout(show, 7000);};
 
           function response1() {
             /* do smth */
