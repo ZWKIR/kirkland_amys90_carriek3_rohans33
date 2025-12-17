@@ -373,8 +373,8 @@ def encounters():
         return encounterspage(path, w, n, e, city, c)
     return loginpage()
 
-@app.route("/encounters/<random>", methods=['GET', 'POST'])
-def weatherencounters(random):
+@app.route("/encounters/<breed1>", methods=['GET', 'POST'])
+def weatherencounters(breed1):
     if loggedin():
         with sqlite3.connect(DB_FILE) as db:
             c = db.cursor()
@@ -403,7 +403,7 @@ def weatherencounters(random):
             if myCatRow[4] == 0:
                 # now pull from jokes tbl for response 1 and 2
                 # check difficulty or difficulty2 of cat for joke
-                c.execute("SELECT joke FROM jokes WHERE difficulty <= ? RANDOM() LIMIT 1", (jokeDiff,))
+                c.execute("SELECT joke FROM jokes WHERE difficulty <= ? ORDER BY RANDOM() LIMIT 1", (jokeDiff,))
                 
                 # category, joke, difficulty, desired_response
                 currJoke = c.fetchone()
@@ -415,10 +415,10 @@ def weatherencounters(random):
             else: #elif myCatRow[4] == 1:
                 # for trivia options, pull from trivia tbl
                 # check difficulty or difficulty2 of cat for trivia
-                c.execute("SELECT question FROM trivia WHERE difficulty <= ? RANDOM() LIMIT 1", (trivDiff,))
+                c.execute("SELECT question FROM trivia WHERE difficulty <= ? ORDER BY RANDOM() LIMIT 1", (trivDiff,))
                 
                 # difficulty, question, a1, a2, a3, a4, correct
-                currTrivia = c.fetchone()
+                currTriv = c.fetchone()
                 
                 # get dialogue
                 c.execute("SELECT response1, response2, response3, response4 FROM dialogue WHERE encounter_type = ?", ("trivia",))
@@ -447,14 +447,17 @@ def weatherencounters(random):
             # ------INCOMPLETE-------
             
             # if interact, get affectoin thru energy_lvl
-            newAffec += myCatRow[1] * random.randint(1,6)
+            addedAffec = myCatRow[1] * random.randint(1,6)
+            newAffec += addedAffec
             
+            # keep track of whether or not level updates
+            lev = False
             if newAffec >= 100:
-                lvl++
+                lvl += 1
                 newAffec -= 100
             
             c.execute("INSERT OR REPLACE INTO user_encounters(username, cat, affection, level) VALUES (?, ?, ?, ?)", (session["username"], breed, newAffec, lvl))
-    return weatherspage(weather, encounterCount, currJoke, currTrivia, myCatRow, dialogue)
+    return weatherspage(weather, currJoke, currTriv, myCatRow, dialogue, breed1, addedAffec, lvl)
 
 @app.route("/")
 def index():
@@ -497,8 +500,10 @@ def encounterspage(url, weather, num, energy, city, breed):
     #return render_template(f'/n_cats/{weather}.html', url=url, city=city)
     return render_template('/n_cats/rainnight.html', url=url, city=city, breed=breed)
 
-def weatherspage(r, random=encounterCount, currJoke, currTrivia, currCat):
-    return render_template('weatherencounters.html', weather=r, random=random, currJoke=currJoke, currTrivia=currTrivia, currCat=currCat)
+def weatherspage(r, currJoke, currTrivia, currCat, dialogue, random, addedAffec, lvl):
+    return render_template('weather_encounters.html', weather=r, currJoke=currJoke,
+                           currTrivia=currTrivia, currCat=currCat, dialogue=dialogue,
+                           random=random, addedAffec=addedAffec, lvl=lvl)
 #====================================================================================#
 if __name__ == "__main__":  # false if this file imported as module
     app.debug = True  # enable PSOD, auto-server-restart on code chg
