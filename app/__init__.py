@@ -375,9 +375,9 @@ def encounters():
         w = info[4]
         time = info[3]
         with sqlite3.connect(DB_FILE) as db:
-                c = db.cursor()
-                t = c.execute("SELECT breed FROM cats WHERE energy_lvl = ?", (e,))
-                d = t.fetchall()
+            c = db.cursor()
+            t = c.execute("SELECT breed FROM cats WHERE energy_lvl = ?", (e,))
+            d = t.fetchall()
         random.shuffle(d)
         print(d)
         return encounterspage(path, w, time, e, city, d, temperature)
@@ -447,6 +447,7 @@ def weatherencounters(breed):
             if thisEncounter == None:
                 newAffec = 0
                 lvl = 1
+                c.execute("INSERT OR REPLACE INTO user_encounters(username, cat, affection, level) VALUES (?, ?, ?, ?)", (session["username"], breed, newAffec, lvl))
             else:
                 newAffec = thisEncounter[0]
                 lvl = thisEncounter[1]
@@ -466,7 +467,7 @@ def weatherencounters(breed):
                 lvl += 1
                 newAffec -= 100
 
-            c.execute("INSERT OR REPLACE INTO user_encounters(username, cat, affection, level) VALUES (?, ?, ?, ?)", (session["username"], breed, newAffec, lvl))
+            c.execute("UPDATE user_encounters SET affection = ?, level = ? WHERE username = ? AND cat = ?", (newAffec, lvl, session["username"], breed))
     return weatherspage(weather, currJoke, currTriv, myCatRow, dialogue, breed, addedAffec, lvl)
 
 @app.route("/")
