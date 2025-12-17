@@ -383,8 +383,8 @@ def encounters():
         return encounterspage(path, w, time, e, city, d, temperature)
     return loginpage()
 
-@app.route("/encounters/<breed>", methods=['GET', 'POST'])
-def weatherencounters(breed):
+@app.route("/encounters/<b>", methods=['GET', 'POST'])
+def weatherencounters(b):
     if loggedin():
         with sqlite3.connect(DB_FILE) as db:
             c = db.cursor()
@@ -400,7 +400,7 @@ def weatherencounters(breed):
             myCatRow = random.choice(cats)
 
             # get values
-            breed = myCatRow[0]
+            breed1 = myCatRow[0]
             jokeDiff = myCatRow[2] #difficulty in int for jokes
             trivDiff = myCatRow[3] #difficulty in text for trivia
 
@@ -440,7 +440,7 @@ def weatherencounters(breed):
 
             # if pressed answer == currTrivia[6], add affection
             # leave encounter after clicking answer
-            c.execute("SELECT affection, level FROM user_encounters WHERE username = ? AND cat = ?", (session["username"], breed))
+            c.execute("SELECT affection, level FROM user_encounters WHERE username = ? AND cat = ?", (session["username"], breed1))
 
             thisEncounter = c.fetchone()
             # check for 1st encounter without row
@@ -466,8 +466,8 @@ def weatherencounters(breed):
                 lvl += 1
                 newAffec -= 100
 
-            c.execute("INSERT OR REPLACE INTO user_encounters(username, cat, affection, level) VALUES (?, ?, ?, ?)", (session["username"], breed, newAffec, lvl))
-    return weatherspage(weather, currJoke, currTriv, myCatRow, dialogue, breed, addedAffec, lvl)
+            c.execute("INSERT OR REPLACE INTO user_encounters(username, cat, affection, level) VALUES (?, ?, ?, ?)", (session["username"], breed1, newAffec, lvl))
+    return weatherspage(weather, currJoke, currTriv, myCatRow, dialogue, breed1, addedAffec, lvl)
 
 @app.route("/")
 def index():
@@ -507,7 +507,7 @@ def settingspage(username='', error=''):
     return render_template('settings.html', username=username, error=error)
 
 def encounterspage(url, weather, time, energy, city, breed, temperature):
-    return render_template(f'/backgrounds/{weather}{time}.html', url=url, city=city, breed=breed[0][0], weather=weather, temperature=temperature)
+    return render_template(f'/backgrounds/{weather}{time}.html', url=url, city=city, breed=breed, weather=weather, temperature=temperature)
 
 def weatherspage(r, currJoke, currTrivia, currCat, dialogue, breed, addedAffec, lvl):
     return render_template('weather_encounters.html', weather=r, currJoke=currJoke,
