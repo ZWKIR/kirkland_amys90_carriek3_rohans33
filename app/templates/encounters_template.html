@@ -44,8 +44,6 @@
          font-family: "Silkscreen", sans-serif;
          }
          .b, p{
-         padding-top: 0.5vh;
-         padding-bottom: 0.5vh;
          padding-left: 1vw;
          padding-right: 1vw;
          background-color: white;
@@ -58,24 +56,33 @@
          color: black;
          }
          nav{
-         padding-bottom: 2vh;
          padding-left: 2vw;
          padding-right: 2vw;
+         padding-top: 0.5vw;
+         padding-bottom: 0.5vw;
+         background-color: white;
+         border: none;
+         border-radius: 6px;
+         color: black;
          }
          .c{
          color: #ffffff;
          padding-top: 1.5vh;
+         padding-bottom: 1.5vh;
          padding-right: 2vw;
          border: none;
          font-size: 130%;
          background-color: rgba(0, 0, 0, 0);
          }
          .d{
-         color: #ffffff;
+         color: black;
          text-decoration: none;
          }
          .d:hover{
          color: #C7C7C7;
+         }
+         h2 {
+           padding-bottom: 2vh;
          }
       </style>
       <title> You encountered a cat! </title>
@@ -86,12 +93,12 @@
          <button class="c"> <a class="d" href="{{ url_for('profile') }}">Profile</a> </button>
          <button class="c"> <a class="d" href="{{url_for('settings')}}">Settings</a> </button>
          <button class="c"> <a class="d" href="{{ url_for('logout') }}">Logout</a> </button>
+         <!-- icons credit to https://www.amcharts.com/free-animated-svg-weather-icons/ -->
+         Weather set to {{city}} - {{weather}} <img src="/static/animated/{{ weather }}.svg" alt="icon"> {{ temperature }}˚F
       </nav>
       <h2>
          You encountered a cat!
       </h2>
-      <!-- icons credit to https://www.amcharts.com/free-animated-svg-weather-icons/ -->
-      <p>Weather set to {{city}} - {{weather}} <img src="/static/animated/{{ weather }}.svg" alt="icon"> {{ temperature }}˚F</p>
       {% block content %} {% endblock %}
    </body>
 </html>
