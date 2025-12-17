@@ -440,7 +440,7 @@ def weatherencounters(b):
 
             # if pressed answer == currTrivia[6], add affection
             # leave encounter after clicking answer
-            c.execute("SELECT affection, level FROM user_encounters WHERE username = ? AND cat = ?", (session["username"], breed1))
+            c.execute("SELECT affection, level FROM user_encounters WHERE username = ? AND cat = ?", (session["username"], b))
 
             thisEncounter = c.fetchone()
             # check for 1st encounter without row
@@ -466,8 +466,8 @@ def weatherencounters(b):
                 lvl += 1
                 newAffec -= 100
 
-            c.execute("INSERT OR REPLACE INTO user_encounters(username, cat, affection, level) VALUES (?, ?, ?, ?)", (session["username"], breed1, newAffec, lvl))
-    return weatherspage(weather, currJoke, currTriv, myCatRow, dialogue, breed1, addedAffec, lvl)
+            c.execute("INSERT OR REPLACE INTO user_encounters(username, cat, affection, level) VALUES (?, ?, ?, ?)", (session["username"], b, newAffec, lvl))
+    return weatherspage(weather, currJoke, currTriv, myCatRow, dialogue, b, addedAffec, lvl)
 
 @app.route("/")
 def index():
