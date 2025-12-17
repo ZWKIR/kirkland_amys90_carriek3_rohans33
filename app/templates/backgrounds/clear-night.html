@@ -9,11 +9,9 @@
 {% block content %}
 {% set r = (breed | random) if breed else "example" %}
 {% set breed = breed | reject("equalto", r) | list %}
-<p> {{r}} </p>
     <button type="image-button" class="btn btn-secondary" style="background-color: transparent; border: none; outline: none; position: absolute; margin-left: 25%; margin-top: 33%;" onclick="location.href='{{url_for('weatherencounters', breed = r)}}'"><img src="/static/cattttt.png" alt="pixelcat"></button>
 {% set r = (breed | random) if breed else "example" %}
 {% set breed = breed | reject("equalto", r) | list %}
-<p> {{r}} </p>
     <button type="image-button" class="btn btn-secondary" style="background-color: transparent; border: none; outline: none; position: absolute; margin-left: 10%; margin-top: 2.8%;" onclick="location.href='{{url_for('weatherencounters', breed = r)}}'"><img src="/static/cattttt.png" alt="pixelcat"></button>
 {% set r = (breed | random) if breed else "example" %}
 {% set breed = breed | reject("equalto", r) | list %}
