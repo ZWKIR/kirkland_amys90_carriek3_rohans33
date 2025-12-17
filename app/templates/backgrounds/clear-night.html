@@ -7,13 +7,15 @@
 
 {% extends "encounters_template.html" %}
 {% block content %}
-{% set r = breed | random %}
+{% set r = (breed | random) if breed else "example" %}
 {% set breed = breed | reject("equalto", r) | list %}
-    <button type="image-button" class="btn btn-secondary" style="background-color: transparent; border: none; outline: none; position: absolute; margin-left: 1%; margin-top: 1%;" onclick="location.href='{{url_for('weatherencounters', weather = r[0])}}'"><img src="/static/cattttt.png" alt="pixelcat"></button>
-{% set r = breed | random %}
+<p> {{r}} </p>
+    <button type="image-button" class="btn btn-secondary" style="background-color: transparent; border: none; outline: none; position: absolute; margin-left: 25%; margin-top: 33%;" onclick="location.href='{{url_for('weatherencounters', breed = r)}}'"><img src="/static/cattttt.png" alt="pixelcat"></button>
+{% set r = (breed | random) if breed else "example" %}
 {% set breed = breed | reject("equalto", r) | list %}
-    <button type="image-button" class="btn btn-secondary" style="background-color: transparent; border: none; outline: none; position: absolute; margin-left: 60%; margin-top: 30%;" onclick="location.href='{{url_for('weatherencounters', weather = r[0])}}'"><img src="/static/cattttt.png" alt="pixelcat"></button>
-{% set r = breed | random %}
+<p> {{r}} </p>
+    <button type="image-button" class="btn btn-secondary" style="background-color: transparent; border: none; outline: none; position: absolute; margin-left: 10%; margin-top: 2.8%;" onclick="location.href='{{url_for('weatherencounters', breed = r)}}'"><img src="/static/cattttt.png" alt="pixelcat"></button>
+{% set r = (breed | random) if breed else "example" %}
 {% set breed = breed | reject("equalto", r) | list %}
-    <button type="image-button" class="btn btn-secondary" style="background-color: transparent; border: none; outline: none; position: absolute; margin-left: 45%; margin-top: 28%;" onclick="location.href='{{url_for('weatherencounters', weather = r[0])}}'"><img src="/static/cattttt.png" alt="pixelcat"></button>
+    <button type="image-button" class="btn btn-secondary" style="background-color: transparent; border: none; outline: none; position: absolute; margin-left: 80%; margin-top: 16%;" onclick="location.href='{{url_for('weatherencounters', breed = r)}}'"><img src="/static/cattttt.png" alt="pixelcat"></button>
 {% endblock %}

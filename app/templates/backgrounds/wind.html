@@ -9,11 +9,11 @@
 {% block content %}
 {% set r = breed | random %}
 {% set breed = breed | reject("equalto", r) | list %}
-    <button type="image-button" class="btn btn-secondary" style="background-color: transparent; border: none; outline: none; position: absolute; margin-left: 7%; margin-top: 5%;" onclick="location.href='{{url_for('weatherencounters', weather = r[0])}}'"><img src="/static/cattttt.png" alt="pixelcat"></button>
+    <button type="image-button" class="btn btn-secondary" style="background-color: transparent; border: none; outline: none; position: absolute; margin-left: 7%; margin-top: 5%;" onclick="location.href='{{url_for('weatherencounters', breed = r)}}'"><img src="/static/cattttt.png" alt="pixelcat"></button>
 {% set r = breed | random %}
 {% set breed = breed | reject("equalto", r) | list %}
-    <button type="image-button" class="btn btn-secondary" style="background-color: transparent; border: none; outline: none; position: absolute; margin-left: 74%; margin-top: 21.3%;" onclick="location.href='{{url_for('weatherencounters', weather = r[0])}}'"><img src="/static/cattttt.png" alt="pixelcat"></button>
+    <button type="image-button" class="btn btn-secondary" style="background-color: transparent; border: none; outline: none; position: absolute; margin-left: 74%; margin-top: 21.3%;" onclick="location.href='{{url_for('weatherencounters', breed = r)}}'"><img src="/static/cattttt.png" alt="pixelcat"></button>
 {% set r = breed | random %}
 {% set breed = breed | reject("equalto", r) | list %}
-    <button type="image-button" class="btn btn-secondary" style="background-color: transparent; border: none; outline: none; position: absolute; margin-left: 65%; margin-top: 0%;" onclick="location.href='{{url_for('weatherencounters', weather = r[0])}}'"><img src="/static/cattttt.png" alt="pixelcat"></button>
+    <button type="image-button" class="btn btn-secondary" style="background-color: transparent; border: none; outline: none; position: absolute; margin-left: 65%; margin-top: 0%;" onclick="location.href='{{url_for('weatherencounters', breed = r)}}'"><img src="/static/cattttt.png" alt="pixelcat"></button>
 {% endblock %}

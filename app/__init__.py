@@ -142,6 +142,10 @@ try:
 except:
     print("error with TRIVIA")
 
+# set up dialogues
+c.execute("INSERT OR IGNORE INTO dialogue(encounter_type, response1, response2, response3, response4) VALUES (?, ?, ?, ?, ?)", ("joke", "Hilarious!", "The cat thinks it's a good joke.", "Meh.", "The cat has heard better."))
+c.execute("INSERT OR IGNORE INTO dialogue(encounter_type, response1, response2, response3, response4) VALUES (?, ?, ?, ?, ?)", ("trivia", "Wow, the cat is impressed!", "The cat looks down on your knowledge bank.", "Amazing!", "Nope."))
+
 def pick_city():
     with open("app/locations", "r") as f:
         lines = f.read().strip().splitlines()
@@ -309,9 +313,12 @@ def profile():
             c.execute("UPDATE user_profile SET sprite = ? WHERE username = ?", (icon, session["username"]))
             db.commit()
             return redirect(url_for('profile'))
+        
+        c.execute("SELECT cat, affection, level FROM user_encounters WHERE username = ?", (session["username"],))
+        infoRow = c.fetchall()
 
     sprite = user[2]
-    return profilepage(profile_icons, sprite, user[0])
+    return profilepage(profile_icons, sprite, infoRow, user[0])
 
 @app.route("/logout", methods=['GET', 'POST'])
 def logout():
@@ -353,6 +360,7 @@ def settings():
 @app.route("/encounters", methods=['GET', 'POST'])
 def encounters():
     if loggedin():
+        global a
         a, city = pick_city()
         info = map_info(a)
         temperature = get_temp(a)
@@ -369,9 +377,91 @@ def encounters():
         return encounterspage(path, w, time, e, city, d, temperature)
     return loginpage()
 
-@app.route("/encounters/<weather>", methods=['GET', 'POST'])
-def weatherencounters(weather):
-    return weatherspage()
+@app.route("/encounters/<breed>", methods=['GET', 'POST'])
+def weatherencounters(breed):
+    if loggedin():
+        with sqlite3.connect(DB_FILE) as db:
+            c = db.cursor()
+            encounter = map_info(a)
+            # get energy level for weather
+            currNRG = encounter[2]
+            
+            # get cats for energy level
+            c.execute("SELECT * FROM cats WHERE energy_lvl = ?", (currNRG,))
+            cats = c.fetchall()
+            
+            # get a random cat
+            myCatRow = random.choice(cats)
+            
+            # get values
+            breed = myCatRow[0]
+            jokeDiff = myCatRow[2] #difficulty in int for jokes
+            trivDiff = myCatRow[3] #difficulty in text for trivia
+            
+            # set default vals for joke and triv
+            currJoke = None
+            currTriv = None
+            
+            # 0 for joke
+            # 1 for trivia
+            if myCatRow[4] == 0:
+                # now pull from jokes tbl for response 1 and 2
+                # check difficulty or difficulty2 of cat for joke
+                c.execute("SELECT joke FROM jokes WHERE difficulty <= ? ORDER BY RANDOM() LIMIT 1", (jokeDiff,))
+                
+                # category, joke, difficulty, desired_response
+                currJoke = c.fetchone()
+                
+                # get dialogue
+                c.execute("SELECT response1, response2, response3, response4 FROM dialogue WHERE encounter_type = ?", ("joke",))
+                dialogue = c.fetchone()
+                
+            else: #elif myCatRow[4] == 1:
+                # for trivia options, pull from trivia tbl
+                # check difficulty or difficulty2 of cat for trivia
+                c.execute("SELECT question FROM trivia WHERE difficulty <= ? ORDER BY RANDOM() LIMIT 1", (trivDiff,))
+                
+                # difficulty, question, a1, a2, a3, a4, correct
+                currTriv = c.fetchone()
+                
+                # get dialogue
+                c.execute("SELECT response1, response2, response3, response4 FROM dialogue WHERE encounter_type = ?", ("trivia",))
+                dialogue = c.fetchone()
+            
+            # ------CHECKING AFFECTION-----
+            # using breed for now, but may need ID for each cat***(NEEDS FIX)
+            cat = myCatRow[0]
+            
+            # if pressed answer == currTrivia[6], add affection
+            # leave encounter after clicking answer
+            c.execute("SELECT affection, level FROM user_encounters WHERE username = ? AND cat = ?", (session["username"], breed))
+
+            thisEncounter = c.fetchone()
+            # check for 1st encounter without row
+            if thisEncounter == None:
+                newAffec = 0
+                lvl = 1
+            else:
+                newAffec = thisEncounter[0]
+                lvl = thisEncounter[1]
+            
+            # if get the answer right in trivia (use buttons for prompts)
+            # add 10 extra points from interaction
+            # newAffec += 10
+            # ------INCOMPLETE-------
+            
+            # if interact, get affectoin thru energy_lvl
+            addedAffec = myCatRow[1] * random.randint(1,6)
+            newAffec += addedAffec
+            
+            # keep track of whether or not level updates
+            lev = False
+            if newAffec >= 100:
+                lvl += 1
+                newAffec -= 100
+            
+            c.execute("INSERT OR REPLACE INTO user_encounters(username, cat, affection, level) VALUES (?, ?, ?, ?)", (session["username"], breed, newAffec, lvl))
+    return weatherspage(weather, currJoke, currTriv, myCatRow, dialogue, breed, addedAffec, lvl)
 
 @app.route("/")
 def index():
@@ -398,8 +488,8 @@ def loginpage(valid=True):
     else:
         return render_template('login.html',invalid="Your username or password was incorrect")
 
-def profilepage(profile_icons, icon, user=''):
-    return render_template('profile.html', profile_icons=profile_icons, icon=icon, username=user)
+def profilepage(profile_icons, icon, infoRow, user=''):
+    return render_template('profile.html', profile_icons=profile_icons, icon=icon, infoRow=infoRow, username=user)
 
 def logoutpage():
     return render_template('logout.html')
@@ -411,10 +501,12 @@ def settingspage(username='', error=''):
     return render_template('settings.html', username=username, error=error)
 
 def encounterspage(url, weather, time, energy, city, breed, temperature):
-    return render_template(f'/backgrounds/{weather}{time}.html', url=url, city=city, breed=breed, weather=weather, temperature=temperature)
+    return render_template(f'/backgrounds/{weather}{time}.html', url=url, city=city, breed=breed[0][0], weather=weather, temperature=temperature)
 
-def weatherspage():
-    return render_template('weather_encounters.html')
+def weatherspage(r, currJoke, currTrivia, currCat, dialogue, breed, addedAffec, lvl):
+    return render_template('weather_encounters.html', weather=r, currJoke=currJoke,
+                           currTrivia=currTrivia, currCat=currCat, dialogue=dialogue,
+                           breed=breed, addedAffec=addedAffec, lvl=lvl)
 #====================================================================================#
 if __name__ == "__main__":  # false if this file imported as module
     app.debug = True  # enable PSOD, auto-server-restart on code chg
