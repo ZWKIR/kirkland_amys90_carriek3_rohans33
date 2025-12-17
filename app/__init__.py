@@ -144,7 +144,7 @@ except:
 
 # set up dialogues
 c.execute("INSERT OR IGNORE INTO dialogue(encounter_type, response1, response2, response3, response4) VALUES (?, ?, ?, ?, ?)", ("joke", "Hilarious!", "The cat thinks it's a good joke.", "Meh.", "The cat has heard better."))
-c.execute("INSERT OR IGNORE INTO dialogue(encounter_type, response1, response2, response3, response4) VALUES (?, ?, ?, ?, ?)", ("trivia", "Wow, the cat is impressed!", "The cat looks down on your knowledge bank.", "Amazing!", "Nope."))
+c.execute("INSERT OR IGNORE INTO dialogue(encounter_type, response1, response2, response3, response4) VALUES (?, ?, ?, ?, ?)", ("trivia", "Wow, the cat is impressed!", "Beautiful.", "The cat looks down on your knowledge bank.", "Nope."))
 
 def pick_city():
     while True:
@@ -426,7 +426,7 @@ def weatherencounters(breed):
             else: #elif myCatRow[4] == 1:
                 # for trivia options, pull from trivia tbl
                 # check difficulty or difficulty2 of cat for trivia
-                c.execute("SELECT question FROM trivia WHERE difficulty <= ? ORDER BY RANDOM() LIMIT 1", (trivDiff,))
+                c.execute("SELECT question FROM trivia WHERE difficulty = ? ORDER BY RANDOM() LIMIT 1", (trivDiff,))
 
                 # difficulty, question, a1, a2, a3, a4, correct
                 currTriv = c.fetchone()

@@ -139,6 +139,7 @@
    <script>
       document.addEventListener("DOMContentLoaded", function () {
           let letter = 0;
+          /* currently tuples, need to fix symbols */
           const joke = "{{ currJoke }}";
           const trivia = "{{ currTrivia }}";
           const text = "Affection +{{ addedAffec }} Level: {{ lvl }}";
@@ -174,16 +175,17 @@
           document.getElementById("play").onclick = function() {this.style.display = 'none'; document.getElementById("continue").style.display = 'inline'; uh(); typeDialogue(); setTimeout(show, 7000);};
 
           function response1() {
-            /* do smth */
+            /* happiest response */
+            document.getElementById("play").onclick = function() {this.style.display = 'none'; document.getElementById("continue").style.display = 'inline'; uh(); typeText(); setTimeout(show, 7000);};
           }
           function response2() {
-            /* do smth */
+            /* 2nd happiest response */
           }
           function response3() {
-            /* do smth */
+            /* 2nd negative response */
           }
           function response4() {
-            /* do smth */
+            /* most negative response */
           }
       });
    </script>
