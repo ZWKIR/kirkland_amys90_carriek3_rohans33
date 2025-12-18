@@ -40,42 +40,62 @@
          font-size: 600%
          }
          .a{
-         color: black;
+         color: white;
          font-family: "Silkscreen", sans-serif;
          }
          .b, p{
-         padding-top: 0.5vh;
-         padding-bottom: 0.5vh;
          padding-left: 1vw;
          padding-right: 1vw;
          background-color: white;
          border: none;
          border-radius: 6px;
-         color: black;
+         color: white;
          }
          .b:hover{
          background-color: #C7C7C7;
-         color: black;
+         color: white;
          }
          nav{
-         padding-bottom: 2vh;
          padding-left: 2vw;
          padding-right: 2vw;
+         padding-top: 0.5vw;
+         padding-bottom: 0.5vw;
+         border: none;
+         border-radius: 6px;
+         color: white;
          }
          .c{
          color: #ffffff;
          padding-top: 1.5vh;
+         padding-bottom: 1.5vh;
          padding-right: 2vw;
          border: none;
          font-size: 130%;
          background-color: rgba(0, 0, 0, 0);
          }
          .d{
-         color: #ffffff;
+         color: white;
          text-decoration: none;
          }
          .d:hover{
          color: #C7C7C7;
+         }
+         h2 {
+           padding-bottom: 2vh;
+           padding-left: 2.3vw;
+         }
+         .w{
+           background-color: rgba(255, 255, 255, 0.3);
+           margin-top: 0.7vh;
+           padding-top: 2vh;
+           padding-bottom: 2vh;
+           border-radius: 30px;
+           display: inline;
+           font-size: 92%;
+           position: fixed;
+           right: 14px;
+           padding-right: 5vh;
+           padding-left: 5vh;
          }
       </style>
       <title> You encountered a cat! </title>
@@ -86,11 +106,14 @@
          <button class="c"> <a class="d" href="{{ url_for('profile') }}">Profile</a> </button>
          <button class="c"> <a class="d" href="{{url_for('settings')}}">Settings</a> </button>
          <button class="c"> <a class="d" href="{{ url_for('logout') }}">Logout</a> </button>
+         <div class="w">
+         <!-- icons credit to https://www.amcharts.com/free-animated-svg-weather-icons/ -->
+         Weather set to {{city}} - {{weather}} <img src="/static/animated/{{ weather }}.svg" alt="icon"> {{ temperature }}˚F
+         </div>
       </nav>
       <h2>
          You encountered a cat!
       </h2>
-      <p>Weather set to {{city}}</p>
       {% block content %} {% endblock %}
    </body>
 </html>

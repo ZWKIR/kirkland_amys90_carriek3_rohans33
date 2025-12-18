@@ -1,0 +1,16 @@
+<!--
+   Kirkland
+   Amy Shrestha, Carrie Ko, Rohan Sen
+   SoftDev 2025
+   time spent: 1.0 hrs
+   -->
+
+{% extends "encounters_template.html" %}
+{% block content %}
+{% set r = breed | random %}
+{% set other = breed | reject("equalto", r) | list %}
+    <button type="image-button" class="btn btn-secondary" style="background-color: transparent; border: none; outline: none; position: absolute; margin-left: 22%; margin-top: 9.7%;" onclick="location.href='{{url_for('weatherencounters', breed = r)}}'"><img src="/static/cattttt.png" alt="pixelcat"></button>
+{% set r = breed | random %}
+{% set other = breed | reject("equalto", r) | list %}
+    <button type="image-button" class="btn btn-secondary" style="background-color: transparent; border: none; outline: none; position: absolute; margin-left: 50%; margin-top: 24.5%;" onclick="location.href='{{url_for('weatherencounters', breed = r)}}'"><img src="/static/cattttt.png" alt="pixelcat"></button>
+{% endblock %}

@@ -73,14 +73,14 @@ CREATE TABLE IF NOT EXISTS encounter_maps(
 );""")
 
 c.execute("""CREATE TABLE IF NOT EXISTS trivia(
-	difficulty TEXT,
-  question TEXT,
-	answer1 TEXT,
-	answer2 TEXT,
-	answer3 TEXT,
-	answer4 TEXT,
-	correct_answer TEXT
-	);""")
+    difficulty TEXT,
+        question TEXT,
+    answer1 TEXT,
+    answer2 TEXT,
+    answer3 TEXT,
+    answer4 TEXT,
+    correct_answer TEXT
+    );""")
 
 c.execute("""CREATE TABLE IF NOT EXISTS cats(
     breed TEXT PRIMARY KEY,
@@ -144,16 +144,22 @@ except:
 
 # set up dialogues
 c.execute("INSERT OR IGNORE INTO dialogue(encounter_type, response1, response2, response3, response4) VALUES (?, ?, ?, ?, ?)", ("joke", "Hilarious!", "The cat thinks it's a good joke.", "Meh.", "The cat has heard better."))
-c.execute("INSERT OR IGNORE INTO dialogue(encounter_type, response1, response2, response3, response4) VALUES (?, ?, ?, ?, ?)", ("trivia", "Wow, the cat is impressed!", "The cat looks down on your knowledge bank.", "Amazing!", "Nope."))
+c.execute("INSERT OR IGNORE INTO dialogue(encounter_type, response1, response2, response3, response4) VALUES (?, ?, ?, ?, ?)", ("trivia", "Wow, the cat is impressed!", "Beautiful.", "The cat looks down on your knowledge bank.", "Nope."))
 
 def pick_city():
-    with open("app/locations", "r") as f:
-        lines = f.read().strip().splitlines()
-        city,lat,lon = random.choice(lines).split(",")
-    with open("app/keys/key_pirateWeather.txt", "r") as f:
-        key = f.read().strip()
-    with urllib.request.urlopen(f"https://api.pirateweather.net/forecast/{key}/{lat},{lon}") as response:
-        a = json.loads(response.read())
+    while True:
+        try:
+            with open("app/locations", "r") as f:
+                lines = f.read().strip().splitlines()
+                city,lat,lon = random.choice(lines).split(",")
+                print(city)
+            with open("app/keys/key_pirateWeather.txt", "r") as f:
+                key = f.read().strip()
+            with urllib.request.urlopen(f"https://api.pirateweather.net/forecast/{key}/{lat},{lon}") as response:
+                a = json.loads(response.read())
+            break
+        except:
+            print("error fetching weather")
     return a, city
 
 def get_time(a):
@@ -167,7 +173,7 @@ def get_time(a):
 
 weather = ["clear-day", "clear-night", "thunderstorm", "rain", "rain", "snow", "snow", "sleet", "sleet", "wind", "fog", "cloudy", "cloudy", "partly-cloudy-day", "partly-cloudy-night"]
 time = ["", "", "", "day", "night", "day", "night", "day", "night", "", "", "day", "night", "", ""]
-bkg_links = ["/static/clear_day.png", "/static/clear_night.png", "/static/thunderstorm.gif", "/static/rainy_day.gif", "/static/rainy_night.gif", "/static/snowy_day.gif", "/static/snowy_night.gif", "/static/snowy_day.gif", "/static/snowy_night.gif", "/static/windy.gif", "/static/fog.png", "/static/cloudy_day.png", "/static/cloudy_night.png", "/static/cloudy_day.png", "/static/cloudy_night.png"]
+bkg_links = ["/static/clear_day.png", "/static/clear_night.png", "/static/thunderstorm.gif", "/static/rainy_day.gif", "/static/rainy_night.gif", "/static/snowy_day.gif", "/static/snowy_night.gif", "/static/snowy_day.gif", "/static/snowy_night.gif", "/static/windy.png", "/static/fog.png", "/static/cloudy_day.png", "/static/cloudy_night.png", "/static/cloudy_day.png", "/static/cloudy_night.png"]
 e_lvl = [5, 4, 1, 3, 2, 5, 3, 2, 1, 3, 2, 3, 1, 4, 2]
 n_cats = [4, 3, 2, 3, 2, 3, 2, 2, 1, 3, 4, 3, 1, 5, 3]
 
@@ -180,23 +186,13 @@ def get_icon(a):
     weather = a["currently"]["icon"]
     return weather
 
-#def map_info(a):
-#    w = get_icon(a)
-#    print(w)
-#    t = c.execute("SELECT * FROM encounter_maps WHERE weather = ?", (w,))
-#    d = t.fetchall()
-#    print (d)
-#    if (len(d) > 1):
-#        if get_time(a) == "day":
-#            return d[0]
-#        else:
-#            return d[1]
-#    else:
-#        return d[0]
+def get_temp(a):
+    return a["currently"]["temperature"]
 
-def map_info():
-    #t = c.execute("SELECT * FROM encounter_maps WHERE weather = ?", (w,))
-    t = c.execute("SELECT * FROM encounter_maps WHERE background = ?", ("/static/rainy_night.gif",))
+def map_info(a):
+    w = get_icon(a)
+    print(w)
+    t = c.execute("SELECT * FROM encounter_maps WHERE weather = ?", (w,))
     d = t.fetchall()
     print (d)
     if (len(d) > 1):
@@ -206,6 +202,19 @@ def map_info():
             return d[1]
     else:
         return d[0]
+
+#def map_info():
+#    t = c.execute("SELECT * FROM encounter_maps WHERE weather = ?", (w,))
+#    #t = c.execute("SELECT * FROM encounter_maps WHERE background = ?", ("/static/rainy_night.gif",))
+#    d = t.fetchall()
+#    print (d)
+#    if (len(d) > 1):
+#        if get_time(a) == "day":
+#            return d[0]
+#        else:
+#            return d[1]
+#    else:
+#        return d[0]
 
 db.commit()
 
@@ -300,7 +309,7 @@ def profile():
         c = db.cursor()
         c.execute("SELECT * FROM user_profile WHERE username = ?", (session["username"],))
         user = c.fetchone()
-        
+
         if user is None:
             session.pop("username")
             return redirect(url_for('login'))
@@ -310,7 +319,7 @@ def profile():
             c.execute("UPDATE user_profile SET sprite = ? WHERE username = ?", (icon, session["username"]))
             db.commit()
             return redirect(url_for('profile'))
-        
+
         c.execute("SELECT cat, affection, level FROM user_encounters WHERE username = ?", (session["username"],))
         infoRow = c.fetchall()
 
@@ -354,83 +363,82 @@ def settings():
                 return render_template('settings.html', username=session['username'], error="Both fields must be filled")
     return settingspage(username=session['username'])
 
-encounterCount = 0
-
 @app.route("/encounters", methods=['GET', 'POST'])
 def encounters():
     if loggedin():
+        global a
         a, city = pick_city()
-        #info = map_info(a)
-        info = map_info()
+        info = map_info(a)
+        temperature = get_temp(a)
         path = info[0]
-        n = info[2]
         e = info[1]
         w = info[4]
+        time = info[3]
         with sqlite3.connect(DB_FILE) as db:
-                c = db.cursor()
-                t = c.execute("SELECT breed FROM cats WHERE energy_lvl = ?", (e,))
-                t2 = t.fetchall()
-                c = t2[0]
-        random.shuffle(c)
-        print(c)
-        return encounterspage(path, w, n, e, city, c)
+            c = db.cursor()
+            t = c.execute("SELECT breed FROM cats WHERE energy_lvl = ?", (e,))
+            d = []
+            for i in t.fetchall():
+                d.append(i)
+        random.shuffle(d)
+        print(d)
+        return encounterspage(path, w, time, e, city, d, temperature)
     return loginpage()
 
-@app.route("/encounters/<breed1>", methods=['GET', 'POST'])
-def weatherencounters(breed1):
+@app.route("/encounters/<breed>", methods=['GET', 'POST'])
+def weatherencounters(breed):
     if loggedin():
         with sqlite3.connect(DB_FILE) as db:
             c = db.cursor()
-            encounter = map_info()
+            encounter = map_info(a)
             # get energy level for weather
             currNRG = encounter[2]
-            
+
             # get cats for energy level
             c.execute("SELECT * FROM cats WHERE energy_lvl = ?", (currNRG,))
             cats = c.fetchall()
-            
+
             # get a random cat
             myCatRow = random.choice(cats)
-            
+
             # get values
-            breed = myCatRow[0]
             jokeDiff = myCatRow[2] #difficulty in int for jokes
             trivDiff = myCatRow[3] #difficulty in text for trivia
-            
+
             # set default vals for joke and triv
             currJoke = None
             currTriv = None
-            
+
             # 0 for joke
             # 1 for trivia
             if myCatRow[4] == 0:
                 # now pull from jokes tbl for response 1 and 2
                 # check difficulty or difficulty2 of cat for joke
                 c.execute("SELECT joke FROM jokes WHERE difficulty <= ? ORDER BY RANDOM() LIMIT 1", (jokeDiff,))
-                
+
                 # category, joke, difficulty, desired_response
                 currJoke = c.fetchone()
-                
+
                 # get dialogue
                 c.execute("SELECT response1, response2, response3, response4 FROM dialogue WHERE encounter_type = ?", ("joke",))
                 dialogue = c.fetchone()
-                
+
             else: #elif myCatRow[4] == 1:
                 # for trivia options, pull from trivia tbl
                 # check difficulty or difficulty2 of cat for trivia
-                c.execute("SELECT question FROM trivia WHERE difficulty <= ? ORDER BY RANDOM() LIMIT 1", (trivDiff,))
-                
+                c.execute("SELECT question FROM trivia WHERE difficulty = ? ORDER BY RANDOM() LIMIT 1", (trivDiff,))
+
                 # difficulty, question, a1, a2, a3, a4, correct
                 currTriv = c.fetchone()
-                
+
                 # get dialogue
                 c.execute("SELECT response1, response2, response3, response4 FROM dialogue WHERE encounter_type = ?", ("trivia",))
                 dialogue = c.fetchone()
-            
+
             # ------CHECKING AFFECTION-----
             # using breed for now, but may need ID for each cat***(NEEDS FIX)
             cat = myCatRow[0]
-            
+
             # if pressed answer == currTrivia[6], add affection
             # leave encounter after clicking answer
             c.execute("SELECT affection, level FROM user_encounters WHERE username = ? AND cat = ?", (session["username"], breed))
@@ -440,27 +448,28 @@ def weatherencounters(breed1):
             if thisEncounter == None:
                 newAffec = 0
                 lvl = 1
+                c.execute("INSERT OR REPLACE INTO user_encounters(username, cat, affection, level) VALUES (?, ?, ?, ?)", (session["username"], breed, newAffec, lvl))
             else:
                 newAffec = thisEncounter[0]
                 lvl = thisEncounter[1]
-            
+
             # if get the answer right in trivia (use buttons for prompts)
             # add 10 extra points from interaction
             # newAffec += 10
             # ------INCOMPLETE-------
-            
+
             # if interact, get affectoin thru energy_lvl
             addedAffec = myCatRow[1] * random.randint(1,6)
             newAffec += addedAffec
-            
+
             # keep track of whether or not level updates
             lev = False
             if newAffec >= 100:
                 lvl += 1
                 newAffec -= 100
-            
-            c.execute("INSERT OR REPLACE INTO user_encounters(username, cat, affection, level) VALUES (?, ?, ?, ?)", (session["username"], breed, newAffec, lvl))
-    return weatherspage(weather, currJoke, currTriv, myCatRow, dialogue, breed1, addedAffec, lvl)
+
+            c.execute("UPDATE user_encounters SET affection = ?, level = ? WHERE username = ? AND cat = ?", (newAffec, lvl, session["username"], breed))
+    return weatherspage(weather, currJoke, currTriv, myCatRow, dialogue, breed, addedAffec, lvl)
 
 @app.route("/")
 def index():
@@ -499,15 +508,14 @@ def startpage():
 def settingspage(username='', error=''):
     return render_template('settings.html', username=username, error=error)
 
-def encounterspage(url, weather, num, energy, city, breed):
-    #return render_template(f'/n_cats/{weather}.html', url=url, city=city)
-    return render_template('/n_cats/rainnight.html', url=url, city=city, breed=breed)
+def encounterspage(url, weather, time, energy, city, breed, temperature):
+    return render_template(f'/backgrounds/{weather}{time}.html', url=url, city=city, breed=breed[0], weather=weather, temperature=temperature)
 
-def weatherspage(r, currJoke, currTrivia, currCat, dialogue, random, addedAffec, lvl):
+def weatherspage(r, currJoke, currTrivia, currCat, dialogue, breed, addedAffec, lvl):
     return render_template('weather_encounters.html', weather=r, currJoke=currJoke,
                            currTrivia=currTrivia, currCat=currCat, dialogue=dialogue,
-                           random=random, addedAffec=addedAffec, lvl=lvl)
+                           breed=breed, addedAffec=addedAffec, lvl=lvl)
 #====================================================================================#
 if __name__ == "__main__":  # false if this file imported as module
     app.debug = True  # enable PSOD, auto-server-restart on code chg
-    app.run(port=8100)
+    app.run(port=6767)
