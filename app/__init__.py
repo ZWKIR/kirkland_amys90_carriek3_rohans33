@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS user_encounters(
 );""")
 
 c.execute("""CREATE TABLE IF NOT EXISTS dialogue(
-    encounter_type TEXT,
+    encounter_type TEXT PRIMARY KEY,
     response1 TEXT,
     response2 TEXT,
     response3 TEXT,
@@ -136,15 +136,17 @@ try:
         for b in a:
             t = [b['incorrectAnswers'][0], b['incorrectAnswers'][1], b['incorrectAnswers'][2], b['correctAnswer']]
             random.shuffle(t)
-            q = "INSERT OR IGNORE INTO trivia(difficulty, question, answer1, answer2, answer3, answer4, correct_answer) VALUES (?, ?, ?, ?, ?, ?, ?)"
+            q = "INSERT OR REPLACE INTO trivia(difficulty, question, answer1, answer2, answer3, answer4, correct_answer) VALUES (?, ?, ?, ?, ?, ?, ?)"
             d = (b['difficulty'], b['question']['text'], t[0], t[1], t[2], t[3], b['correctAnswer'])
             c.execute(q, d)
 except:
     print("error with TRIVIA")
 
 # set up dialogues
-c.execute("INSERT OR IGNORE INTO dialogue(encounter_type, response1, response2, response3, response4) VALUES (?, ?, ?, ?, ?)", ("joke", "Hilarious!", "The cat thinks it's a good joke.", "Meh.", "The cat has heard better."))
-c.execute("INSERT OR IGNORE INTO dialogue(encounter_type, response1, response2, response3, response4) VALUES (?, ?, ?, ?, ?)", ("trivia", "Wow, the cat is impressed!", "Beautiful.", "The cat looks down on your knowledge bank.", "Nope."))
+c.execute("INSERT OR IGNORE INTO dialogue(encounter_type, response1, response2, response3, response4) VALUES (?, ?, ?, ?, ?)", ("joke", "Hilarious!", "That's a great joke!", "Meh.", "I've heard better..."))
+c.execute("INSERT OR REPLACE INTO dialogue(encounter_type, response1, response2, response3, response4) VALUES (?, ?, ?, ?, ?)", ("trivia", "1", "2", "3", "4"))
+
+#("trivia", "Wow, the cat is impressed!", "Beautiful.", "The cat looks down on your knowledge bank.", "Nope."))
 
 def pick_city():
     while True:
@@ -414,10 +416,11 @@ def weatherencounters(breed):
             else: #elif myCatRow[4] == 1:
                 # for trivia options, pull from trivia tbl
                 # check difficulty or difficulty2 of cat for trivia
-                c.execute("SELECT question FROM trivia WHERE difficulty = ? ORDER BY RANDOM() LIMIT 1", (trivDiff,))
+                c.execute("SELECT * FROM trivia WHERE difficulty = ? ORDER BY RANDOM() LIMIT 1", (trivDiff,))
 
                 # difficulty, question, a1, a2, a3, a4, correct
                 currTriv = c.fetchone()
+                print(currTriv)
 
                 # get dialogue
                 c.execute("SELECT response1, response2, response3, response4 FROM dialogue WHERE encounter_type = ?", ("trivia",))

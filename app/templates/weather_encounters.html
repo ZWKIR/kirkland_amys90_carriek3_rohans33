@@ -108,6 +108,9 @@
          #play{
          margin-left: 90vw;
          }
+         #hold{
+         margin-left: 90vw;
+         }
          #continue{
          margin-left: 90vw;
          }
@@ -127,12 +130,41 @@
          <div class="box">
             <p> &lt; {{ breed }} &gt;</p>
             <p id="first"><br></p>
+            <button onclick="response1()" id = "second"> 
+                {% if currCat[4] == 0 %}
+                    {{ dialogue[0] }}
+                {% else %}
+                    {% set n = dialogue[0] | int %}
+                    {{currTrivia[n + 1]}}
+                {% endif %}            
+            </button>
+            <button onclick="response2()" id = "third">
+                {% if currCat[4] == 0 %}
+                    {{ dialogue[1] }}
+                {% else %}
+                    {% set n = dialogue[1] | int %}
+                    {{currTrivia[n + 1]}}
+                {% endif %}         
+            </button>
+            <button onclick="response3()" id = "fourth">
+                {% if currCat[4] == 0 %}
+                    {{ dialogue[2] }}
+                {% else %}
+                    {% set n = dialogue[2] | int %}
+                    {{currTrivia[n + 1]}}
+                {% endif %}         
+            </button>
+            <button onclick="response4()" id = "fifth">
+                {% if currCat[4] == 0 %}
+                    {{ dialogue[3] }}
+                {% else %}
+                    {% set n = dialogue[3] | int %}
+                    {{currTrivia[n + 1]}}
+                {% endif %}         
+            </button>
             <button class="button1" id="play"> <img class="img" src="/static/play.png" alt="play"> </button>
-            <a href="/encounters"> <button class="button1" id="continue" style="display: none;"> <img class="img" src="/static/play.png" alt="continue"> </button> </a>
-            <button onclick="response1()" id = "second"> {{ dialogue[0] }} </button>
-            <button onclick="response2()" id = "third"> {{ dialogue[1] }} </button>
-            <button onclick="response3()" id = "fourth"> {{ dialogue[2] }} </button>
-            <button onclick="response4()" id = "fifth"> {{ dialogue[3] }} </button>
+            <button class="button1" id="hold" style="display: none;"> <img class="img" src="/static/play.png" alt="hold"> </button>
+            <a href="/encounters"> <button class="button1" id="hold" style="display: none;"> <img class="img" src="/static/play.png" alt="continue"> </button> </a>
         </div>
       </div>
    </body>
@@ -141,7 +173,7 @@
           let letter = 0;
           /* currently tuples, need to fix symbols */
           const joke = "{{ currJoke }}";
-          const trivia = "{{ currTrivia }}";
+          const trivia = "{{ currTrivia[1] }}";
           const text = "Affection +{{ addedAffec }} Level: {{ lvl }}";
           document.getElementById("second").style.visibility = "hidden";
           document.getElementById("third").style.visibility = "hidden";
@@ -195,19 +227,19 @@
               t = trivia.length
           }
           t2 = 25 * t + 500;
-          document.getElementById("play").onclick = function() {this.style.display = 'none'; document.getElementById("continue").style.display = 'inline'; uh(); typeDialogue(); setTimeout(show, t2);};
+          document.getElementById("play").onclick = function() {this.style.display = 'none'; document.getElementById("hold").style.display = 'inline'; uh(); typeDialogue(); setTimeout(show, t2);};
 
-          function response1() {
+          function response() {
             /* happiest response */
             document.getElementById("play").onclick = function() {this.style.display = 'none'; document.getElementById("continue").style.display = 'inline'; uh(); typeText(); setTimeout(show, 7000);};
           }
-          function response2() {
+          function happy() {
             /* 2nd happiest response */
           }
-          function response3() {
+          function eh() {
             /* 2nd negative response */
           }
-          function response4() {
+          function boo() {
             /* most negative response */
           }
       });
