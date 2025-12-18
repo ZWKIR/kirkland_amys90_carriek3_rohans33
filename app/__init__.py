@@ -173,7 +173,7 @@ def get_time(a):
 
 weather = ["clear-day", "clear-night", "thunderstorm", "rain", "rain", "snow", "snow", "sleet", "sleet", "wind", "fog", "cloudy", "cloudy", "partly-cloudy-day", "partly-cloudy-night"]
 time = ["", "", "", "day", "night", "day", "night", "day", "night", "", "", "day", "night", "", ""]
-bkg_links = ["/static/clear_day.png", "/static/clear_night.png", "/static/thunderstorm.gif", "/static/rainy_day.gif", "/static/rainy_night.gif", "/static/snowy_day.gif", "/static/snowy_night.gif", "/static/snowy_day.gif", "/static/snowy_night.gif", "/static/windy.png", "/static/fog.png", "/static/cloudy_day.png", "/static/cloudy_night.png", "/static/cloudy_day.png", "/static/cloudy_night.png"]
+bkg_links = ["/static/clear_day.png", "/static/clear_night.png", "/static/thunderstorm.gif", "/static/rainy_day.gif", "/static/rainy_night.gif", "/static/snowy_day.gif", "/static/snowy_night.gif", "/static/snowy_day.gif", "/static/snowy_night.gif", "/static/windy.gif", "/static/fog.png", "/static/cloudy_day.png", "/static/cloudy_night.png", "/static/cloudy_day.png", "/static/cloudy_night.png"]
 e_lvl = [5, 4, 1, 3, 2, 5, 3, 2, 1, 3, 2, 3, 1, 4, 2]
 n_cats = [4, 3, 2, 3, 2, 3, 2, 2, 1, 3, 4, 3, 1, 5, 3]
 
@@ -203,18 +203,6 @@ def map_info(a):
     else:
         return d[0]
 
-#def map_info():
-#    t = c.execute("SELECT * FROM encounter_maps WHERE weather = ?", (w,))
-#    #t = c.execute("SELECT * FROM encounter_maps WHERE background = ?", ("/static/rainy_night.gif",))
-#    d = t.fetchall()
-#    print (d)
-#    if (len(d) > 1):
-#        if get_time(a) == "day":
-#            return d[0]
-#        else:
-#            return d[1]
-#    else:
-#        return d[0]
 
 db.commit()
 
@@ -467,7 +455,6 @@ def weatherencounters(breed):
             if newAffec >= 100:
                 lvl += 1
                 newAffec -= 100
-
             c.execute("UPDATE user_encounters SET affection = ?, level = ? WHERE username = ? AND cat = ?", (newAffec, lvl, session["username"], breed))
     return weatherspage(weather, currJoke, currTriv, myCatRow, dialogue, breed, addedAffec, lvl)
 
