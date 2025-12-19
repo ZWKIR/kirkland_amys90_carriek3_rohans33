@@ -70,7 +70,12 @@
          color: #C7C7C7;
          }
          .progress{
-           margin: 5vw;
+           margin-left: 5vw;
+           margin-right: 5vw;
+           margin-top: 1vh;
+         }
+         .profile-select{
+           margin-left: 5vw;
          }
       </style>
    </head>
@@ -85,22 +90,19 @@
          <h2>User Information: {{username}}</h2>
          <img src= "{{ icon }}" class= "img-fluid" alt= "profilepic" style="width:150px; height:150px; object-fit:cover;">
       </div>
+      <br>
+      <br>
+      <br>
+      <h4 style="margin-left: 5vw;">
+         Encounter progress!: {{currCats}} / {{totalCats}}
+      </h4>
       <div class="progress">
         <div class="progress-bar progress-bar-striped bg-info progress-bar-animated" role="progressbar" style="width: {{ "%.1f"|format(100*((currCats/totalCats))|float) }}%;" aria-valuenow="{{ currCats }}" aria-valuemin="0" aria-valuemax="{{ totalCats }}">{{ "%.1f"|format(100*((currCats/totalCats))|float) }}%</div>
       </div>
-      <details class = "profile-select" style="padding:10px;">
-         <summary class="button">Change Profile Picture</summary>
-         <div class = "profile-icons">
-            {% for icon in profile_icons %}
-            <form action = "/profile" method = "POST">
-               <input type = "hidden" name = "profile_icon" value = "{{ icon }}">
-               <button type = "submit" class = "icon-button">
-               <img src = "{{ icon }}" class = "profile-icon" alt = "Profile Icon {{ loop.index }}" style="width:150px; height:150px; object-fit:cover;">
-               </button>
-            </form>
-            {% endfor %}
-         </div>
-      </details>
+      <br>
+      <br>
+      <details>
+      <summary class="button" style="font-size: 150%; margin-left: 5vw;"> Encountered cats: </summary>
       <div class="container">
         <div class="row">
       {% for row in infoRow %}
@@ -114,5 +116,19 @@
       {% endfor %}
     </div>
      </div>
+     </details>
+      <details class = "profile-select">
+         <summary class="button" style="font-size: 150%;">Change Profile Picture</summary>
+         <div class = "profile-icons">
+            {% for icon in profile_icons %}
+            <form action = "/profile" method = "POST" style="display: inline;">
+               <input type = "hidden" name = "profile_icon" value = "{{ icon }}">
+               <button type = "submit" class = "icon-button">
+               <img src = "{{ icon }}" class = "profile-icon" alt = "Profile Icon {{ loop.index }}" style="width:150px; height:150px; object-fit:cover;">
+               </button>
+            </form>
+            {% endfor %}
+         </div>
+      </details>
    </body>
 </html>
