@@ -2,7 +2,7 @@
 # Kirkland
 # SoftDev
 # P01
-# 2025-12-08
+# 2025-12-18
 # time spent: 30.0
 import pickle
 
@@ -147,6 +147,9 @@ c.execute("INSERT OR IGNORE INTO dialogue(encounter_type, response1, response2, 
 c.execute("INSERT OR REPLACE INTO dialogue(encounter_type, response1, response2, response3, response4) VALUES (?, ?, ?, ?, ?)", ("trivia", "1", "2", "3", "4"))
 
 #("trivia", "Wow, the cat is impressed!", "Beautiful.", "The cat looks down on your knowledge bank.", "Nope."))
+
+totalCount = c.execute("SELECT COUNT(DISTINCT breed) FROM cats").fetchone()[0]
+currCount = 0
 
 def pick_city():
     while True:
@@ -312,9 +315,11 @@ def profile():
 
         c.execute("SELECT cat, affection, level FROM user_encounters WHERE username = ?", (session["username"],))
         infoRow = c.fetchall()
+        
+        currCount = c.execute("SELECT COUNT(DISTINCT cat) FROM user_encounters WHERE username = ?", (session["username"],)).fetchone()[0]
 
     sprite = user[2]
-    return profilepage(profile_icons, sprite, infoRow, user[0])
+    return profilepage(profile_icons, sprite, infoRow, currCount, totalCount, user[0])
 
 @app.route("/logout", methods=['GET', 'POST'])
 def logout():
@@ -486,8 +491,8 @@ def loginpage(valid=True):
     else:
         return render_template('login.html',invalid="Your username or password was incorrect")
 
-def profilepage(profile_icons, icon, infoRow, user=''):
-    return render_template('profile.html', profile_icons=profile_icons, icon=icon, infoRow=infoRow, username=user)
+def profilepage(profile_icons, icon, infoRow, currCats, totalCats, user=''):
+    return render_template('profile.html', profile_icons=profile_icons, icon=icon, infoRow=infoRow, currCats=currCats, totalCats=totalCats, username=user)
 
 def logoutpage():
     return render_template('logout.html')

@@ -69,6 +69,9 @@
          .d:hover{
          color: #C7C7C7;
          }
+         .progress{
+           margin: 5vw;
+         }
       </style>
    </head>
    <body>
@@ -81,6 +84,9 @@
       <div class= "text-center">
          <h2>User Information: {{username}}</h2>
          <img src= "{{ icon }}" class= "img-fluid" alt= "profilepic" style="width:150px; height:150px; object-fit:cover;">
+      </div>
+      <div class="progress">
+        <div class="progress-bar progress-bar-striped bg-info progress-bar-animated" role="progressbar" style="width: {{ "%.1f"|format(100*((currCats/totalCats))|float) }}%;" aria-valuenow="{{ currCats }}" aria-valuemin="0" aria-valuemax="{{ totalCats }}">{{ "%.1f"|format(100*((currCats/totalCats))|float) }}%</div>
       </div>
       <details class = "profile-select" style="padding:10px;">
          <summary class="button">Change Profile Picture</summary>
