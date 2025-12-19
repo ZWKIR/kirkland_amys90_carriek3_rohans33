@@ -106,13 +106,16 @@
       <div class="container">
         <div class="row">
       {% for row in infoRow %}
-      <div class="col">
-      <ul>
-        <li>Cat: {{ row[0] }}</li>
-        <li>Affection: {{ row[1] }}</li>
-        <li>Level: {{ row[2] }}</li>
-      </ul>
-    </div>
+<div class="card" style="width: 18rem;">
+  <img src="..." class="card-img-top" alt="...">
+  <div class="card-body">
+    <h5 class="card-title">{{ row[0] }}</h5>
+  </div>
+  <ul class="list-group list-group-flush">
+    <li class="list-group-item">Affection: {{ row[1] }}</li>
+    <li class="list-group-item">Level: {{ row[2] }}</li>
+  </ul>
+</div>
       {% endfor %}
     </div>
      </div>

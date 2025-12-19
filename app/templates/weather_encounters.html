@@ -133,13 +133,13 @@
 	    <br>
 	    <br>
 	    <div style="margin: 10px;">
-            <button onclick="response1()" id = "second"> 
+            <button onclick="response1()" id = "second">
                 {% if currCat[4] == 0 %}
                     {{ dialogue[0] }}
                 {% else %}
                     {% set n = dialogue[0] | int %}
                     {{currTrivia[n + 1]}}
-                {% endif %}            
+                {% endif %}
             </button>
             <button onclick="response2()" id = "third">
                 {% if currCat[4] == 0 %}
@@ -147,7 +147,7 @@
                 {% else %}
                     {% set n = dialogue[1] | int %}
                     {{currTrivia[n + 1]}}
-                {% endif %}         
+                {% endif %}
             </button>
             <button onclick="response3()" id = "fourth">
                 {% if currCat[4] == 0 %}
@@ -155,7 +155,7 @@
                 {% else %}
                     {% set n = dialogue[2] | int %}
                     {{currTrivia[n + 1]}}
-                {% endif %}         
+                {% endif %}
             </button>
             <button onclick="response4()" id = "fifth">
                 {% if currCat[4] == 0 %}
@@ -163,7 +163,7 @@
                 {% else %}
                     {% set n = dialogue[3] | int %}
                     {{currTrivia[n + 1]}}
-                {% endif %}         
+                {% endif %}
             </button>
 	    </div>
             <button class="button1" id="play"> <img class="img" src="/static/play.png" alt="play"> </button>
@@ -203,7 +203,7 @@
           function typeDialogue() {
               if ({{ currCat[4] }} == 0){
                 if (letter < joke.length) {
-                  if (!("(,)&#394;".includes(joke.charAt(letter)))) {
+                  if (!("&#394;".includes(joke.charAt(letter)))) {
                     document.getElementById("first").innerHTML += joke.charAt(letter);
                   }
                     letter++;
@@ -213,7 +213,7 @@
               }
               if ({{ currCat[4] }} == 1){
                 if (letter < trivia.length) {
-                  if (!("(,)&#394;".includes(trivia.charAt(letter)))) {
+                  if (!("&#394;".includes(trivia.charAt(letter)))) {
                     document.getElementById("first").innerHTML += trivia.charAt(letter);
                   }
                     letter++;
