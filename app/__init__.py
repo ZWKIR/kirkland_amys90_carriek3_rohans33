@@ -58,8 +58,7 @@ c.execute("""CREATE TABLE IF NOT EXISTS dialogue(
 c.execute("""CREATE TABLE IF NOT EXISTS jokes(
     category TEXT,
     joke TEXT PRIMARY KEY,
-    difficulty INTEGER,
-    desired_response TEXT
+    difficulty INTEGER
 );""")
 
 c.execute("""
@@ -123,8 +122,8 @@ try:
                 t = 5
             if(b['safe'] == False):
                 t = 1
-            q = "INSERT OR IGNORE INTO jokes(category, joke, difficulty, desired_response) VALUES(?, ?, ?, ?)"
-            d = (b['category'], b['joke'], t, "temp")
+            q = "INSERT OR IGNORE INTO jokes(category, joke, difficulty) VALUES(?, ?, ?)"
+            d = (b['category'], b['joke'], t)
             c.execute(q, d)
 except:
     print("error with joke")
