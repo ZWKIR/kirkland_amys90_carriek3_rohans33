@@ -218,8 +218,15 @@ AmyS -- 2025-12-19 00:14
 CarrieK -- 2025-12-19 11:45
 - profile
 
+AmyS -- 2025-12-19 11:45
+- profile styling stuff
+
 CarrieK -- 2025-12-20 18:18
 - cat.
 
-RohanS --2025-12-20 21:12
+RohanS -- 2025-12-20 21:12
 - cats load into interactions now
+
+AmyS -- 2025-12-20 21:19
+- alerts for cat encounter affection up
+- alerts for level ups
