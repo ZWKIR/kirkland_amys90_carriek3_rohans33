@@ -322,9 +322,12 @@ def profile():
         infoRow = c.fetchall()
         
         currCount = c.execute("SELECT COUNT(DISTINCT cat) FROM user_encounters WHERE username = ?", (session["username"],)).fetchone()[0]
+        if (currCount == totalCount):
+            showPrize = True
 
     sprite = user[2]
-    return profilepage(profile_icons, sprite, infoRow, currCount, totalCount, user[0])
+    return profilepage(profile_icons, sprite, infoRow, currCount, totalCount,
+                       showPrize, user[0])
 
 @app.route("/logout", methods=['GET', 'POST'])
 def logout():
@@ -358,9 +361,11 @@ def settings():
                     c.execute("UPDATE user_profile SET password = ? WHERE username = ?", (newP, session['username']))
                     db.commit()
                 else:
-                    return render_template('settings.html', username=session['username'], error="Incorrect old password")
+                    return render_template('settings.html', username=session['username'],
+                                           error="Incorrect old password")
             else:
-                return render_template('settings.html', username=session['username'], error="Both fields must be filled")
+                return render_template('settings.html', username=session['username'],
+                                       error="Both fields must be filled")
     return settingspage(username=session['username'])
 
 @app.route("/encounters", methods=['GET', 'POST'])
@@ -490,7 +495,8 @@ def weatherencounters(breed):
             
             session["alert"] = {"cat":breed,"addedAffec":addedAffec,"level":lvl, "levelUp":levelUp}
             alert = session.get("alert")
-    return weatherspage(weather, currJoke, currTriv, myCatRow, dialogue, breed, addedAffec, lvl, alert)
+    return weatherspage(weather, currJoke, currTriv, myCatRow, dialogue, breed,
+                        addedAffec, lvl, alert)
 
 @app.route('/endprize', methods=['POST'])
 def endprize():
@@ -532,8 +538,10 @@ def loginpage(valid=True, invalid='', endalert=False):
     else:
         return render_template('login.html',invalid=invalid, endalert=endalert)
 
-def profilepage(profile_icons, icon, infoRow, currCats, totalCats, user=''):
-    return render_template('profile.html', profile_icons=profile_icons, icon=icon, infoRow=infoRow, currCats=currCats, totalCats=totalCats, username=user)
+def profilepage(profile_icons, icon, infoRow, currCats, totalCats, showPrize, user=''):
+    return render_template('profile.html', profile_icons=profile_icons, icon=icon, 
+                           infoRow=infoRow, currCats=currCats, totalCats=totalCats,
+                           showPrize=showPrize, username=user)
 
 def logoutpage():
     return render_template('logout.html')
@@ -545,7 +553,9 @@ def settingspage(username='', error=''):
     return render_template('settings.html', username=username, error=error)
 
 def encounterspage(url, weather, time, energy, city, breed, temperature, alert):
-    return render_template(f'/backgrounds/{weather}{time}.html', url=url, city=city, breed=breed[0], weather=weather, temperature=temperature, alert=alert)
+    return render_template(f'/backgrounds/{weather}{time}.html', url=url, city=city,
+                           breed=breed[0], weather=weather, temperature=temperature,
+                           alert=alert)
 
 def weatherspage(r, currJoke, currTrivia, currCat, dialogue, breed, addedAffec, lvl, alert):
     return render_template('weather_encounters.html', weather=r, currJoke=currJoke,

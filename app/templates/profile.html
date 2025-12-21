@@ -66,8 +66,8 @@
          background-color: rgba(0, 0, 0, 0);
          }
          .end{
-           padding-left: 1.5vh;
-           text-align: center;
+         padding-left: 1.5vh;
+         text-align: center;
          }
          .d{
          color: #ffffff;
@@ -77,18 +77,18 @@
          color: #C7C7C7;
          }
          .progress{
-           margin-left: 5vw;
-           margin-right: 5vw;
-           margin-top: 1vh;
+         margin-left: 5vw;
+         margin-right: 5vw;
+         margin-top: 1vh;
          }
          .profile-select{
-           margin-left: 5vw;
+         margin-left: 5vw;
          }
          .modal-content{
-           color:black;
+         color:black;
          }
          .end{
-           color:white;
+         color:white;
          }
       </style>
    </head>
@@ -105,55 +105,59 @@
       </div>
       <br>
       <br>
+      {% if showPrize %}
       <div class="end">
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModalCenter">
-    Get all cats prize!!
-  </button>
-  <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalCenterTitle">Are you sure?</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModalCenter">
+         Get all cats prize!!
+         </button>
       </div>
-      <div class="modal-footer">
-        <form action="{{ url_for('endprize') }}" method="POST">
-          <button type="submit" class="btn btn-primary">Yes</button>
-        </form>
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+      {% endif %}
+      <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+         <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+               <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalCenterTitle">Are you sure?</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+               </div>
+               <div class="modal-footer">
+                  <form action="{{ url_for('endprize') }}" method="POST">
+                     <button type="submit" class="btn btn-primary">Yes</button>
+                  </form>
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+               </div>
+            </div>
+         </div>
       </div>
-    </div>
-  </div>
-</div>
-    </div>
+      </div>
       <br>
       <h4 style="margin-left: 5vw;">
          Encounter progress!: {{currCats}} / {{totalCats}}
       </h4>
       <div class="progress">
-        <div class="progress-bar progress-bar-striped bg-info progress-bar-animated" role="progressbar" style="width: {{ "%.1f"|format(100*((currCats/totalCats))|float) }}%;" aria-valuenow="{{ currCats }}" aria-valuemin="0" aria-valuemax="{{ totalCats }}">{{ "%.1f"|format(100*((currCats/totalCats))|float) }}%</div>
+         <div class="progress-bar progress-bar-striped bg-info progress-bar-animated" role="progressbar" style="width: {{ "%.1f"|format(100*((currCats/totalCats))|float) }}%;" aria-valuenow="{{ currCats }}" aria-valuemin="0" aria-valuemax="{{ totalCats }}">{{ "%.1f"|format(100*((currCats/totalCats))|float) }}%
+      </div>
       </div>
       <br>
       <br>
       <details>
-      <summary class="button" style="font-size: 150%; margin-left: 5vw;"> Encountered cats: </summary>
-      <div class="container">
-        <div class="row">
-      {% for row in infoRow %}
-<div class="card" style="width: 18rem;">
-  <img src="/static/cats/{{ row[0] }}.png" class="card-img-top" alt="...">
-  <div class="card-body">
-    <h5 class="card-title">{{ row[0] }}</h5>
-  </div>
-  <ul class="list-group list-group-flush">
-    <li class="list-group-item">Affection: {{ row[1] }}</li>
-    <li class="list-group-item">Level: {{ row[2] }}</li>
-  </ul>
-</div>
-      {% endfor %}
-    </div>
-     </div>
-     </details>
+         <summary class="button" style="font-size: 150%; margin-left: 5vw;"> Encountered cats: </summary>
+         <div class="container">
+            <div class="row">
+               {% for row in infoRow %}
+               <div class="card" style="width: 18rem;">
+                  <img src="/static/cats/{{ row[0] }}.png" class="card-img-top" alt="...">
+                  <div class="card-body">
+                     <h5 class="card-title">{{ row[0] }}</h5>
+                  </div>
+                  <ul class="list-group list-group-flush">
+                     <li class="list-group-item">Affection: {{ row[1] }}</li>
+                     <li class="list-group-item">Level: {{ row[2] }}</li>
+                  </ul>
+               </div>
+               {% endfor %}
+            </div>
+         </div>
+      </details>
       <details class = "profile-select">
          <summary class="button" style="font-size: 150%;">Change Profile Picture</summary>
          <div class = "profile-icons">
