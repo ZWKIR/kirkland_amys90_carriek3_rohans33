@@ -241,8 +241,9 @@ def signup():
                 c = db.cursor()
                 session["alert"] = None
                 
-                c.execute("SELECT username FROM user_profile WHERE username = ?", (request.form['username'],))
-                if c.fetchone():
+                rows = c.execute("SELECT username FROM user_profile WHERE username = ?", (request.form['username'],))
+                result = rows.fetchone()
+                if result:
                     return registerpage(False, "Duplicate username")
                 session.permanent = True
 
@@ -257,6 +258,7 @@ def signup():
                     return registerpage(False, t)
 
                 c.execute("INSERT INTO user_profile VALUES (?, ?, ?);", (request.form['username'], request.form['password'], "/static/placeholder.jpg"))
+                db.commit()
                 session['username'] = request.form['username']
                 session['password'] = request.form['password']
                 return redirect(url_for('start'))
@@ -272,17 +274,24 @@ def login():
         with sqlite3.connect(DB_FILE) as db:
                 c = db.cursor()
                 session["alert"] = None
+                rows = c.execute("SELECT * FROM user_profile WHERE username LIKE ?;", (request.form['username'],))
+                result = rows.fetchone()
+                
+                if result is None:
+                    return loginpage(False, "Username does not exist")
+                if (request.form['password'] != result[1]):
+                    return loginpage(False, "Your password was incorrect")
 
-                for row in c.execute("SELECT * FROM user_profile WHERE username LIKE ?;", (request.form['username'],)):
+                for row in rows:                    
                     if(row[1] == request.form['password']):
                         session['username'] = request.form['username']
                         session['password'] = request.form['password']
                         return redirect(url_for('start'))
                     else:
-                        return loginpage(valid=False)
-        return loginpage(valid=False)
+                        return loginpage(False)
+        return loginpage(False)
     else:
-        return loginpage(valid=True)
+        return loginpage(True)
 
 @app.route("/profile", methods=['GET', 'POST'])
 def profile():
@@ -420,6 +429,8 @@ def weatherencounters(breed):
                 currJoke = c.fetchone()
                 if currJoke:
                     currJoke = currJoke[0]
+                else:
+                    currJoke = "I don't have a joke for you right now..."
 
                 # get dialogue
                 c.execute("SELECT response1, response2, response3, response4 FROM dialogue WHERE encounter_type = ?", ("joke",))
@@ -478,12 +489,23 @@ def weatherencounters(breed):
                 levelUp = True
                 
             c.execute("UPDATE user_encounters SET affection = ?, level = ? WHERE username = ? AND cat = ?", (newAffec, lvl, session["username"], breed))
+            db.commit()
             
             session["alert"] = {"cat":breed,"addedAffec":addedAffec,"level":lvl, "levelUp":levelUp}
             alert = session.get("alert")
-            db.commit()
     return weatherspage(weather, currJoke, currTriv, myCatRow, dialogue, breed, addedAffec, lvl, alert)
 
+@app.route('/endprize', methods=['POST'])
+def endprize():
+    if loggedin():
+        username = session.get("username")
+        with sqlite3.connect(DB_FILE) as db:
+            c = db.cursor()
+            c.execute("DELETE FROM user_profile WHERE username = ?", (username,))
+            db.commit()
+            session.clear()
+    return redirect(url_for('login'))
+        
 @app.route("/")
 def index():
     return startscreenpage()
@@ -503,11 +525,11 @@ def registerpage(valid=True, invalid=''):
         return render_template('signup.html',invalid=invalid)
     return render_template('signup.html')
 
-def loginpage(valid=True):
+def loginpage(valid=True, invalid=''):
     if(valid==True):
-        return render_template('login.html',invalid='')
+        return render_template('login.html',invalid=invalid)
     else:
-        return render_template('login.html',invalid="Your username or password was incorrect")
+        return render_template('login.html',invalid=invalid)
 
 def profilepage(profile_icons, icon, infoRow, currCats, totalCats, user=''):
     return render_template('profile.html', profile_icons=profile_icons, icon=icon, infoRow=infoRow, currCats=currCats, totalCats=totalCats, username=user)
