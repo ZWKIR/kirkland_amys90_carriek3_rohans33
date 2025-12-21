@@ -383,6 +383,7 @@ def encounters():
 @app.route("/encounters/<breed>", methods=['GET', 'POST'])
 def weatherencounters(breed):
     if loggedin():
+        alert = None
         with sqlite3.connect(DB_FILE) as db:
             c = db.cursor()
             encounter = map_info(a)
@@ -393,8 +394,12 @@ def weatherencounters(breed):
             c.execute("SELECT * FROM cats WHERE energy_lvl = ?", (currNRG,))
             cats = c.fetchall()
 
-            # get a random cat
-            myCatRow = random.choice(cats)
+            if request.method == "GET":
+                # get a random cat
+                myCatRow = random.choice(cats)
+            else:
+                c.execute("SELECT * FROM cats WHERE breed = ?", (breed,))
+                myCatRow = c.fetchone()
 
             # get values
             jokeDiff = myCatRow[2] #difficulty in int for jokes
@@ -433,7 +438,7 @@ def weatherencounters(breed):
                 dialogue = c.fetchone()
 
             # ------CHECKING AFFECTION-----
-            # using breed for now, but may need ID for each cat***(NEEDS FIX)
+            # using breed for cat name
             cat = myCatRow[0]
 
             # if pressed answer == currTrivia[6], add affection
@@ -450,26 +455,34 @@ def weatherencounters(breed):
                 newAffec = thisEncounter[0]
                 lvl = thisEncounter[1]
 
-            # if get the answer right in trivia (use buttons for prompts)
-            # add 10 extra points from interaction
-            if request.method == "POST" and currTrivia is not None:
-                userChoice = request.form.get("answer")
-                if userChoice == currTriv[6]:
-                    newAffec += 10
-
+            addedAffec = 0
+            # keep track of whether or not level updates
+            levelUp = False
+            
             # if interact, get affectoin thru energy_lvl
             addedAffec = myCatRow[1] * random.randint(1,6)
+            
+            '''
+            # if get the answer right in trivia (use buttons for prompts)
+            # add 10 extra points from interaction
+            if currTriv is not None:
+                if userChoice == currTriv[6]:
+                    addedAffec += myCatRow[1]*10
+            '''
+
             newAffec += addedAffec
-            # keep track of whether or not level updates
-            lev = False
-            if newAffec >= 50:
+            
+            while newAffec >= 50:
                 lvl += 1
                 newAffec -= 50
+                levelUp = True
+                
             c.execute("UPDATE user_encounters SET affection = ?, level = ? WHERE username = ? AND cat = ?", (newAffec, lvl, session["username"], breed))
             
-            session["alert"] = {"cat":breed,"addedAffec":addedAffec,"level":lvl}
+            session["alert"] = {"cat":breed,"addedAffec":addedAffec,"level":lvl, "levelUp":levelUp}
+            alert = session.get("alert")
             db.commit()
-    return weatherspage(weather, currJoke, currTriv, myCatRow, dialogue, breed, addedAffec, lvl, session.get("alert"))
+    return weatherspage(weather, currJoke, currTriv, myCatRow, dialogue, breed, addedAffec, lvl, alert)
 
 @app.route("/")
 def index():

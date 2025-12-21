@@ -185,7 +185,6 @@
           /* currently tuples, need to fix symbols */
           const joke = "{{ currJoke }}";
           const trivia = "{{ currTrivia[1] }}";
-          const text = "Affection +{{ addedAffec }} Level: {{ lvl }}";
           document.getElementById("second").style.visibility = "hidden";
           document.getElementById("third").style.visibility = "hidden";
           document.getElementById("fourth").style.visibility = "hidden";
@@ -226,14 +225,6 @@
                     let speed = 25;
                     setTimeout(typeDialogue, speed);
                 }
-              }
-          }
-          function typeText() {
-              if (letter < text.length) {
-                  document.getElementById("first").innerHTML += text.charAt(letter);
-                  letter++;
-                  let speed = 25;
-                  setTimeout(typeText, speed);
               }
           }
           function process(a){
