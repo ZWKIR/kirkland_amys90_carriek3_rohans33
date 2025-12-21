@@ -442,7 +442,7 @@ def weatherencounters(breed):
 
             thisEncounter = c.fetchone()
             # check for 1st encounter without row
-            if thisEncounter == None:
+            if thisEncounter is None:
                 newAffec = 0
                 lvl = 1
                 c.execute("INSERT OR REPLACE INTO user_encounters(username, cat, affection, level) VALUES (?, ?, ?, ?)", (session["username"], breed, newAffec, lvl))
@@ -460,12 +460,11 @@ def weatherencounters(breed):
             # if interact, get affectoin thru energy_lvl
             addedAffec = myCatRow[1] * random.randint(1,6)
             newAffec += addedAffec
-            print()
             # keep track of whether or not level updates
             lev = False
-            if newAffec >= 100:
+            if newAffec >= 50:
                 lvl += 1
-                newAffec -= 100
+                newAffec -= 50
             c.execute("UPDATE user_encounters SET affection = ?, level = ? WHERE username = ? AND cat = ?", (newAffec, lvl, session["username"], breed))
             
             session["alert"] = {"cat":breed,"addedAffec":addedAffec,"level":lvl}
