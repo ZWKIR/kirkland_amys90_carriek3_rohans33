@@ -235,3 +235,6 @@ AmyS -- 2025-12-20 00:10
 - add alert on login for endprize (only appears after clicking button)
 - fixed some login stuff
 - finished cheat button for endprize
+
+AmyS -- 2025-12-20 14:42
+- complete password for using the cheat
