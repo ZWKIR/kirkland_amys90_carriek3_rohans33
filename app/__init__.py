@@ -4,7 +4,6 @@
 # P01
 # 2025-12-22
 # time spent: 30.0
-import pickle
 
 from flask import Flask
 from flask import render_template  # facilitate jinja templating
@@ -14,9 +13,6 @@ import sqlite3   #enable control of an sqlite database
 import urllib.request
 import json
 import random
-from io import StringIO
-import os
-from datetime import datetime, timedelta
 
 #FLASK Declaration
 #====================================================================================#
@@ -417,6 +413,8 @@ def weatherencounters(breed):
 
                 # category, joke, difficulty, desired_response
                 currJoke = c.fetchone()
+                if currJoke:
+                    currJoke = currJoke[0]
 
                 # get dialogue
                 c.execute("SELECT response1, response2, response3, response4 FROM dialogue WHERE encounter_type = ?", ("joke",))
@@ -462,7 +460,7 @@ def weatherencounters(breed):
             # if interact, get affectoin thru energy_lvl
             addedAffec = myCatRow[1] * random.randint(1,6)
             newAffec += addedAffec
-
+            print()
             # keep track of whether or not level updates
             lev = False
             if newAffec >= 100:

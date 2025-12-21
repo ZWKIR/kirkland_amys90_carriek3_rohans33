@@ -125,6 +125,7 @@
       <h2>
          You encountered a cat!
       </h2>
+      <img height="500" src="/static/cats/{{ currCat[0] }}.png" style="transform: rotateY(180deg);" alt="cat">
       <div class="container">
          <div class="box">
             <p> &lt; {{ breed }} &gt;</p>
@@ -254,7 +255,7 @@
 		          r = "Wow! You got it right! That's amazing :)";
                       }
 	              else if({{currCat[2]}} == 4){
-		          r = "It's correct! Good job.";
+		          r = "Correct! Good job.";
                       }
 	              else if({{currCat[2]}} == 3){
 		          r = "Nice, you got it right.";
