@@ -220,3 +220,6 @@ CarrieK -- 2025-12-19 11:45
 
 CarrieK -- 2025-12-20 18:18
 - cat.
+
+RohanS --2025-12-20 21:12
+- cats load into interactions now
