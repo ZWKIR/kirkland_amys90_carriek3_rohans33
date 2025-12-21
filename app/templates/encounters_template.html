@@ -81,22 +81,22 @@
          color: #C7C7C7;
          }
          h2 {
-           padding-bottom: 2vh;
-           padding-left: 2.3vw;
-           visibility: hidden;
+         padding-bottom: 2vh;
+         padding-left: 2.3vw;
+         visibility: hidden;
          }
          .w{
-           background-color: rgba(255, 255, 255, 0.3);
-           margin-top: 0.7vh;
-           padding-top: 0.5vh;
-           padding-bottom: 0.5vh;
-           border-radius: 30px;
-           display: inline;
-           font-size: 92%;
-           position: fixed;
-           right: 14px;
-           padding-right: 5vh;
-           padding-left: 5vh;
+         background-color: rgba(255, 255, 255, 0.3);
+         margin-top: 0.7vh;
+         padding-top: 0.5vh;
+         padding-bottom: 0.5vh;
+         border-radius: 30px;
+         display: inline;
+         font-size: 92%;
+         position: fixed;
+         right: 14px;
+         padding-right: 5vh;
+         padding-left: 5vh;
          }
       </style>
       <title> You encountered a cat! </title>
@@ -108,8 +108,8 @@
          <button class="c"> <a class="d" href="{{url_for('settings')}}">Settings</a> </button>
          <button class="c"> <a class="d" href="{{ url_for('logout') }}">Logout</a> </button>
          <div class="w">
-         <!-- icons credit to https://www.amcharts.com/free-animated-svg-weather-icons/ -->
-         Weather set to {{city}} - {{weather}} <img src="/static/animated/{{ weather }}.svg" alt="icon"> {{ temperature }}˚F
+            <!-- icons credit to https://www.amcharts.com/free-animated-svg-weather-icons/ -->
+            Weather set to {{city}} - {{weather}} <img src="/static/animated/{{ weather }}.svg" alt="icon"> {{ temperature }}˚F
          </div>
       </nav>
       <h2>
@@ -118,13 +118,13 @@
       {% block content %} {% endblock %}
       {% if alert %}
       <div class="alert alert-success alert-dismissible fade show w-25 ms-4" role="alert">
-<strong>{{ alert["cat"] }}</strong><br> Affection +{{alert["addedAffec"]}}<br>
-{% if alert["levelUp"] %}
-<br><strong>Level Up!</strong>
-{% endif %}
-<br>Level: {{alert["level"]}}
-  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
-{% endif %}
+         <strong>{{ alert["cat"] }}</strong><br> Affection +{{alert["addedAffec"]}}<br>
+         {% if alert["levelUp"] %}
+         <br><strong>Level Up!</strong>
+         {% endif %}
+         <br>Level: {{alert["level"]}}
+         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      {% endif %}
    </body>
 </html>

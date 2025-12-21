@@ -266,6 +266,8 @@ def signup():
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
+    endalert = session.pop("endalert", None)
+    
     if loggedin():
         return redirect(url_for('start'))
 
@@ -282,16 +284,11 @@ def login():
                 if (request.form['password'] != result[1]):
                     return loginpage(False, "Your password was incorrect")
 
-                for row in rows:                    
-                    if(row[1] == request.form['password']):
-                        session['username'] = request.form['username']
-                        session['password'] = request.form['password']
-                        return redirect(url_for('start'))
-                    else:
-                        return loginpage(False)
-        return loginpage(False)
+                session['username'] = request.form['username']
+                session['password'] = request.form['password']
+                return redirect(url_for('start'))
     else:
-        return loginpage(True)
+        return loginpage(True, endalert=endalert)
 
 @app.route("/profile", methods=['GET', 'POST'])
 def profile():
@@ -503,7 +500,11 @@ def endprize():
             c = db.cursor()
             c.execute("DELETE FROM user_profile WHERE username = ?", (username,))
             db.commit()
-            session.clear()
+        
+        session["endalert"] = True
+        session.pop("username", None)
+        session.pop("password", None)
+        session.pop("sprite", None)
     return redirect(url_for('login'))
         
 @app.route("/")
@@ -525,11 +526,11 @@ def registerpage(valid=True, invalid=''):
         return render_template('signup.html',invalid=invalid)
     return render_template('signup.html')
 
-def loginpage(valid=True, invalid=''):
+def loginpage(valid=True, invalid='', endalert=False):
     if(valid==True):
-        return render_template('login.html',invalid=invalid)
+        return render_template('login.html',invalid=invalid, endalert=endalert)
     else:
-        return render_template('login.html',invalid=invalid)
+        return render_template('login.html',invalid=invalid, endalert=endalert)
 
 def profilepage(profile_icons, icon, infoRow, currCats, totalCats, user=''):
     return render_template('profile.html', profile_icons=profile_icons, icon=icon, infoRow=infoRow, currCats=currCats, totalCats=totalCats, username=user)
