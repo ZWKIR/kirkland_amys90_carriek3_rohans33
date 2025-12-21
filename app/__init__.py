@@ -2,7 +2,7 @@
 # Kirkland
 # SoftDev
 # P01
-# 2025-12-18
+# 2025-12-22
 # time spent: 30.0
 import pickle
 
@@ -73,7 +73,7 @@ CREATE TABLE IF NOT EXISTS encounter_maps(
 
 c.execute("""CREATE TABLE IF NOT EXISTS trivia(
     difficulty TEXT,
-        question TEXT,
+    question TEXT,
     answer1 TEXT,
     answer2 TEXT,
     answer3 TEXT,
@@ -243,6 +243,8 @@ def signup():
         if request.method == 'POST':
             with sqlite3.connect(DB_FILE) as db:
                 c = db.cursor()
+                session["alert"] = None
+                
                 c.execute("SELECT username FROM user_profile WHERE username = ?", (request.form['username'],))
                 if c.fetchone():
                     return registerpage(False, "Duplicate username")
@@ -273,6 +275,8 @@ def login():
         session.permanent = True
         with sqlite3.connect(DB_FILE) as db:
                 c = db.cursor()
+                session["alert"] = None
+
                 for row in c.execute("SELECT * FROM user_profile WHERE username LIKE ?;", (request.form['username'],)):
                     if(row[1] == request.form['password']):
                         session['username'] = request.form['username']
@@ -361,6 +365,7 @@ def settings():
 def encounters():
     if loggedin():
         global a
+        alert = session.pop("alert", None)
         a, city = pick_city()
         info = map_info(a)
         temperature = get_temp(a)
@@ -376,7 +381,7 @@ def encounters():
                 d.append(i)
         random.shuffle(d)
         print(d)
-        return encounterspage(path, w, time, e, city, d, temperature)
+        return encounterspage(path, w, time, e, city, d, temperature, alert)
     return loginpage()
 
 @app.route("/encounters/<breed>", methods=['GET', 'POST'])
@@ -424,7 +429,6 @@ def weatherencounters(breed):
 
                 # difficulty, question, a1, a2, a3, a4, correct
                 currTriv = c.fetchone()
-                print(currTriv)
 
                 # get dialogue
                 c.execute("SELECT response1, response2, response3, response4 FROM dialogue WHERE encounter_type = ?", ("trivia",))
@@ -450,8 +454,10 @@ def weatherencounters(breed):
 
             # if get the answer right in trivia (use buttons for prompts)
             # add 10 extra points from interaction
-            # newAffec += 10
-            # ------INCOMPLETE-------
+            if request.method == "POST" and currTrivia is not None:
+                userChoice = request.form.get("answer")
+                if userChoice == currTriv[6]:
+                    newAffec += 10
 
             # if interact, get affectoin thru energy_lvl
             addedAffec = myCatRow[1] * random.randint(1,6)
@@ -463,7 +469,10 @@ def weatherencounters(breed):
                 lvl += 1
                 newAffec -= 100
             c.execute("UPDATE user_encounters SET affection = ?, level = ? WHERE username = ? AND cat = ?", (newAffec, lvl, session["username"], breed))
-    return weatherspage(weather, currJoke, currTriv, myCatRow, dialogue, breed, addedAffec, lvl)
+            
+            session["alert"] = {"cat":breed,"addedAffec":addedAffec,"level":lvl}
+            db.commit()
+    return weatherspage(weather, currJoke, currTriv, myCatRow, dialogue, breed, addedAffec, lvl, session.get("alert"))
 
 @app.route("/")
 def index():
@@ -502,14 +511,14 @@ def startpage():
 def settingspage(username='', error=''):
     return render_template('settings.html', username=username, error=error)
 
-def encounterspage(url, weather, time, energy, city, breed, temperature):
-    return render_template(f'/backgrounds/{weather}{time}.html', url=url, city=city, breed=breed[0], weather=weather, temperature=temperature)
+def encounterspage(url, weather, time, energy, city, breed, temperature, alert):
+    return render_template(f'/backgrounds/{weather}{time}.html', url=url, city=city, breed=breed[0], weather=weather, temperature=temperature, alert=alert)
 
-def weatherspage(r, currJoke, currTrivia, currCat, dialogue, breed, addedAffec, lvl):
+def weatherspage(r, currJoke, currTrivia, currCat, dialogue, breed, addedAffec, lvl, alert):
     return render_template('weather_encounters.html', weather=r, currJoke=currJoke,
                            currTrivia=currTrivia, currCat=currCat, dialogue=dialogue,
-                           breed=breed, addedAffec=addedAffec, lvl=lvl)
+                           breed=breed, addedAffec=addedAffec, lvl=lvl, alert=alert)
 #====================================================================================#
 if __name__ == "__main__":  # false if this file imported as module
     app.debug = True  # enable PSOD, auto-server-restart on code chg
-    app.run(port=6767)
+    app.run(port=5000)

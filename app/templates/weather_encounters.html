@@ -3,7 +3,7 @@
    Kirkland
    Amy Shrestha, Carrie Ko, Rohan Sen
    SoftDev 2025
-   time spent: 3.0 hrs
+   time spent: 7.0 hrs
    -->
 <html>
    <head>
@@ -203,7 +203,7 @@
           function typeDialogue() {
               if ({{ currCat[4] }} == 0){
                 if (letter < joke.length) {
-                  if (!("&#394;".includes(joke.charAt(letter)))) {
+                  if (!("(,)&#394;".includes(joke.charAt(letter)))) {
                     document.getElementById("first").innerHTML += joke.charAt(letter);
                   }
                     letter++;
@@ -213,7 +213,7 @@
               }
               if ({{ currCat[4] }} == 1){
                 if (letter < trivia.length) {
-                  if (!("&#394;".includes(trivia.charAt(letter)))) {
+                  if (!("(,)&#394;".includes(trivia.charAt(letter)))) {
                     document.getElementById("first").innerHTML += trivia.charAt(letter);
                   }
                     letter++;
