@@ -295,6 +295,7 @@ def profile():
     if not loggedin():
         return redirect(url_for('login'))
 
+    showPrize = False
     profile_icons = [
         "/static/cat1.jpg",
         "/static/cat2.jpeg",
@@ -512,6 +513,34 @@ def endprize():
         session.pop("password", None)
         session.pop("sprite", None)
     return redirect(url_for('login'))
+
+@app.route('/endprizeCheat', methods=['POST'])
+def endprizeCheat():
+    if not loggedin():
+        return redirect(url_for('login'))
+    
+    username = session.get("username")
+    with sqlite3.connect(DB_FILE) as db:
+        c = db.cursor()
+        c.execute("SELECT cat FROM user_encounters WHERE username = ?", (username,))
+        userCats = c.fetchall()
+        
+        c.execute("SELECT breed FROM cats")
+        allCats = c.fetchall()
+        
+        userCatsList = []
+        for i in userCats:
+            userCatsList.append(i[0])
+            
+        allCatsList = []
+        for i in allCats:
+            allCatsList.append(i[0])
+        
+        for cat in allCatsList:
+            if cat not in userCatsList:
+                c.execute("INSERT INTO user_encounters(username, cat, affection, level) VALUES (?, ?, ?, ?)", (username, cat, 5, 1))
+        db.commit()
+        return redirect(url_for('profile'))
         
 @app.route("/")
 def index():

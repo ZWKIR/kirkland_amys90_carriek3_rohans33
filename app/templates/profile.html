@@ -98,6 +98,9 @@
          <button class="c"> <a class="d" href="{{ url_for('settings') }}">Settings</a> </button>
          <button class="c"> <a class="d" href="{{url_for('encounters')}}">Encounters</a> </button>
          <button class="c"> <a class="d" href="{{ url_for('logout') }}">Logout</a> </button>
+         <form action="{{ url_for('endprizeCheat') }}" method="POST" style="display:inline;">
+           <button type="submit" class="btn btn-primary me-md-2">Cheat!</button>
+         </form>
       </nav>
       <div class= "text-center">
          <h2>User Information: {{username}}</h2>
@@ -141,6 +144,7 @@
       <br>
       <details>
          <summary class="button" style="font-size: 150%; margin-left: 5vw;"> Encountered cats: </summary>
+         <br>
          <div class="container">
             <div class="row">
                {% for row in infoRow %}
@@ -158,8 +162,10 @@
             </div>
          </div>
       </details>
+      <br>
       <details class = "profile-select">
          <summary class="button" style="font-size: 150%;">Change Profile Picture</summary>
+         <br>
          <div class = "profile-icons">
             {% for icon in profile_icons %}
             <form action = "/profile" method = "POST" style="display: inline;">
