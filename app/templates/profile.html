@@ -90,6 +90,12 @@
          .end{
          color:white;
          }
+         .float-right-button{
+           float:right;
+           padding-bottom: 2vh;
+           padding-top: 1vw;
+           display: inline;
+         }
       </style>
    </head>
    <body>
@@ -98,10 +104,21 @@
          <button class="c"> <a class="d" href="{{ url_for('settings') }}">Settings</a> </button>
          <button class="c"> <a class="d" href="{{url_for('encounters')}}">Encounters</a> </button>
          <button class="c"> <a class="d" href="{{ url_for('logout') }}">Logout</a> </button>
-         <form action="{{ url_for('endprizeCheat') }}" method="POST" style="display:inline;">
+         {% if not useCheat %}
+         <form action="{{ url_for('useCheatFunc') }}" method="POST" class="float-right-button">
+           Enter password: <input class="c" type=password name="cheatPassword" required>
+           <button type="submit" class="btn btn-primary me-md-2">Cheat!</button></p>
+         </form>
+         {% endif %}
+         {% if useCheat %}
+         <form action="{{ url_for('endprizeCheat') }}" method="POST"  class="float-right-button">
            <button type="submit" class="btn btn-primary me-md-2">Cheat!</button>
          </form>
+         {% endif %}
       </nav>
+      <br>
+      <br>
+      <br>
       <div class= "text-center">
          <h2>User Information: {{username}}</h2>
          <img src= "{{ icon }}" class= "img-fluid" alt= "profilepic" style="width:150px; height:150px; object-fit:cover;">

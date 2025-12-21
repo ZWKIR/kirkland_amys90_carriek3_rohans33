@@ -4,7 +4,6 @@
 # P01
 # 2025-12-22
 # time spent: 30.0
-
 from flask import Flask
 from flask import render_template  # facilitate jinja templating
 from flask import request, redirect, url_for  # facilitate form submission
@@ -152,7 +151,6 @@ def pick_city():
             with open("app/locations", "r") as f:
                 lines = f.read().strip().splitlines()
                 city,lat,lon = random.choice(lines).split(",")
-                print(city)
             with open("app/keys/key_pirateWeather.txt", "r") as f:
                 key = f.read().strip()
             with urllib.request.urlopen(f"https://api.pirateweather.net/forecast/{key}/{lat},{lon}") as response:
@@ -191,10 +189,11 @@ def get_temp(a):
 
 def map_info(a):
     w = get_icon(a)
-    print(w)
-    t = c.execute("SELECT * FROM encounter_maps WHERE weather = ?", (w,))
-    d = t.fetchall()
-    print (d)
+    with sqlite3.connect(DB_FILE) as db:
+        c = db.cursor()
+        c.execute("SELECT * FROM encounter_maps WHERE weather = ?", (w,))
+        d = c.fetchall()
+        
     if (len(d) > 1):
         if get_time(a) == "day":
             return d[0]
@@ -202,15 +201,17 @@ def map_info(a):
             return d[1]
     else:
         return d[0]
-
-
 db.commit()
 
 #Helper Functions
 #====================================================================================#
 usernames = {}
-for row in c.execute("SELECT username, password FROM user_profile"):
-    usernames[row[0]] = row[1]
+with sqlite3.connect(DB_FILE) as db:
+    c = db.cursor()
+    c.execute("SELECT username, password FROM user_profile")
+    rows = c.fetchall()
+    for row in rows:
+        usernames[row[0]] = row[1]
 
 print(usernames)
 
@@ -241,7 +242,7 @@ def signup():
                 c = db.cursor()
                 session["alert"] = None
                 
-                rows = c.execute("SELECT username FROM user_profile WHERE username = ?", (request.form['username'],))
+                rows = c.execute("SELECT username FROM user_profile WHERE username = ?", (request.form['username'].lower(),))
                 result = rows.fetchone()
                 if result:
                     return registerpage(False, "Duplicate username")
@@ -257,10 +258,13 @@ def signup():
                         t = t + "password "
                     return registerpage(False, t)
 
-                c.execute("INSERT INTO user_profile VALUES (?, ?, ?);", (request.form['username'], request.form['password'], "/static/placeholder.jpg"))
+                c.execute("INSERT INTO user_profile VALUES (?, ?, ?);", (request.form['username'].lower(), request.form['password'], "/static/placeholder.jpg"))
                 db.commit()
-                session['username'] = request.form['username']
-                session['password'] = request.form['password']
+                
+                session.clear()
+                session.permanent = True
+                session['username'] = request.form['username'].lower()
+                session['useCheat'] = None                
                 return redirect(url_for('start'))
     return registerpage()
 
@@ -272,20 +276,21 @@ def login():
         return redirect(url_for('start'))
 
     if request.method == 'POST':
+        session.clear()
         session.permanent = True
         with sqlite3.connect(DB_FILE) as db:
                 c = db.cursor()
                 session["alert"] = None
-                rows = c.execute("SELECT * FROM user_profile WHERE username LIKE ?;", (request.form['username'],))
+                rows = c.execute("SELECT * FROM user_profile WHERE username = ?;", (request.form['username'],))
                 result = rows.fetchone()
                 
                 if result is None:
                     return loginpage(False, "Username does not exist")
-                if (request.form['password'] != result[1]):
+                elif (request.form['password'] != result[1]):
                     return loginpage(False, "Your password was incorrect")
 
-                session['username'] = request.form['username']
-                session['password'] = request.form['password']
+                session['username'] = request.form['username'].lower()
+                session['useCheat'] = None
                 return redirect(url_for('start'))
     else:
         return loginpage(True, endalert=endalert)
@@ -294,7 +299,7 @@ def login():
 def profile():
     if not loggedin():
         return redirect(url_for('login'))
-
+    
     showPrize = False
     profile_icons = [
         "/static/cat1.jpg",
@@ -313,7 +318,7 @@ def profile():
             session.pop("username")
             return redirect(url_for('login'))
 
-        if request.method == 'POST':
+        if request.method == 'POST' and 'profile_icon' in request.form:
             icon = request.form.get("profile_icon")
             c.execute("UPDATE user_profile SET sprite = ? WHERE username = ?", (icon, session["username"]))
             db.commit()
@@ -328,12 +333,16 @@ def profile():
 
     sprite = user[2]
     return profilepage(profile_icons, sprite, infoRow, currCount, totalCount,
-                       showPrize, user[0])
+                       showPrize, session.get("useCheat"), user[0])
 
 @app.route("/logout", methods=['GET', 'POST'])
 def logout():
     if loggedin():
-        session.pop('username')
+        session.clear()
+        '''
+        session.pop("username")
+        session.pop("useCheat", None)
+        '''
         return logoutpage()
     return redirect(url_for('login'))
 
@@ -388,7 +397,6 @@ def encounters():
             for i in t.fetchall():
                 d.append(i)
         random.shuffle(d)
-        print(d)
         return encounterspage(path, w, time, e, city, d, temperature, alert)
     return loginpage()
 
@@ -505,19 +513,21 @@ def endprize():
         username = session.get("username")
         with sqlite3.connect(DB_FILE) as db:
             c = db.cursor()
+            c.execute("DELETE FROM user_encounters WHERE username = ?", (username,))
             c.execute("DELETE FROM user_profile WHERE username = ?", (username,))
             db.commit()
         
+        session.clear()
         session["endalert"] = True
-        session.pop("username", None)
-        session.pop("password", None)
-        session.pop("sprite", None)
     return redirect(url_for('login'))
 
 @app.route('/endprizeCheat', methods=['POST'])
 def endprizeCheat():
     if not loggedin():
         return redirect(url_for('login'))
+    
+    if session.get("useCheat") is None:
+        return redirect(url_for('profile'))
     
     username = session.get("username")
     with sqlite3.connect(DB_FILE) as db:
@@ -540,8 +550,24 @@ def endprizeCheat():
             if cat not in userCatsList:
                 c.execute("INSERT INTO user_encounters(username, cat, affection, level) VALUES (?, ?, ?, ?)", (username, cat, 5, 1))
         db.commit()
-        return redirect(url_for('profile'))
         
+
+    return redirect(url_for('profile'))
+
+cheatPass = 'charliekirkfanatics'
+
+@app.route('/useCheatFunc', methods=['POST'])
+def useCheatFunc():
+    if not loggedin():
+        return redirect(url_for('login'))
+    
+    userPass = request.form.get("cheatPassword")
+    username = session.get("useCheat")
+    if userPass == cheatPass and not session.get("useCheat", False):
+        session["useCheat"] = True
+    
+    return redirect(url_for('profile'))
+
 @app.route("/")
 def index():
     return startscreenpage()
@@ -567,10 +593,11 @@ def loginpage(valid=True, invalid='', endalert=False):
     else:
         return render_template('login.html',invalid=invalid, endalert=endalert)
 
-def profilepage(profile_icons, icon, infoRow, currCats, totalCats, showPrize, user=''):
+def profilepage(profile_icons, icon, infoRow, currCats, totalCats, showPrize, useCheat, user='',):
+    useCheat=session.get("useCheat", False)
     return render_template('profile.html', profile_icons=profile_icons, icon=icon, 
                            infoRow=infoRow, currCats=currCats, totalCats=totalCats,
-                           showPrize=showPrize, username=user)
+                           showPrize=showPrize, username=user, useCheat=useCheat)
 
 def logoutpage():
     return render_template('logout.html')
