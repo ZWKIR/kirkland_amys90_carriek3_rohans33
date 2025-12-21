@@ -184,7 +184,7 @@ Rohans -- 2025-12-16 21:44
 - animated weather icons
 - temperature
 
-AmyS -- 2025-12-17 00:06
+AmyS -- 2025-12-17 10:06
 - implement button to weather page with necessary data
 - fix html cat buttons and javascript in logout, encounter, & weather pages
 
@@ -227,10 +227,11 @@ CarrieK -- 2025-12-20 18:18
 RohanS -- 2025-12-20 21:12
 - cats load into interactions now
 
-AmyS -- 2025-12-20 22:13
+AmyS -- 2025-12-20 00:10
 - alerts for cat encounter affection up
 - alerts for level ups
 - finish endprize code
 - edit login/signup invalid code
 - add alert on login for endprize (only appears after clicking button)
 - fixed some login stuff
+- finished cheat button for endprize
