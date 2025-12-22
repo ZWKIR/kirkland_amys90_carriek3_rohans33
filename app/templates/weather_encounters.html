@@ -184,8 +184,11 @@
           let letter = 0;
           let r = "";
           /* currently tuples, need to fix symbols */
-          const joke = "{{ currJoke }}";
-          const trivia = "{{ currTrivia[1] }}";
+          {% if currCat[4] == 0 %}
+          const joke = {{ currJoke | tojson}};
+          {% else %}
+          const trivia = {{ currTrivia[1] | tojson}};
+          {% endif %}
           document.getElementById("second").style.visibility = "hidden";
           document.getElementById("third").style.visibility = "hidden";
           document.getElementById("fourth").style.visibility = "hidden";
@@ -209,9 +212,7 @@
           function typeDialogue() {
               if ({{ currCat[4] }} == 0){
                 if (letter < joke.length) {
-                  if (!("(,)&#394;".includes(joke.charAt(letter)))) {
                     document.getElementById("first").innerHTML += joke.charAt(letter);
-                  }
                     letter++;
                     let speed = 25;
                     setTimeout(typeDialogue, speed);
@@ -219,9 +220,7 @@
               }
               if ({{ currCat[4] }} == 1){
                 if (letter < trivia.length) {
-                  if (!("(,)&#394;".includes(trivia.charAt(letter)))) {
                     document.getElementById("first").innerHTML += trivia.charAt(letter);
-                  }
                     letter++;
                     let speed = 25;
                     setTimeout(typeDialogue, speed);
@@ -230,16 +229,16 @@
           }
           function process(a){
               if ({{ currCat[4] }} == 0){
-                  if({{currCat[1]}} == 5 && a === "Hilarious"){
+                  if(a === "Hilarious"){
 		      r = "OMG you liked it! That was one of my favorite jokes! Let's be friends :)";
 		  }
-                  else if(({{currCat[1]}} == 4 || {{currCat[1]}} == 3) && a === "That's a great joke!"){
+                  else if(a === "That's a great joke!"){
 		      r = "Right? If I see you again, I'll tell you another.";
 		  }
-                  else if({{currCat[1]}} == 2 && a === "Meh."){
+                  else if(a === "Meh."){
 		      r = "Yeah, I thought it was meh too. Maybe I'll do better next time.";
 		  }
-                  else if({{currCat[1]}} == 1 && a === "I've heard better..."){
+                  else if(a === "I've heard better..."){
 		      r = "I know... I wish I was better at jokes...";
 		  }
 		  else{

@@ -439,7 +439,10 @@ def weatherencounters(breed):
                 # category, joke, difficulty, desired_response
                 currJoke = c.fetchone()
                 if currJoke:
-                    currJoke = currJoke[0]
+                    if currJoke!="":
+                        currJoke = currJoke[0]
+                    else:
+                        currJoke = "I don't have a joke for you right now..."
                 else:
                     currJoke = "I don't have a joke for you right now..."
 
