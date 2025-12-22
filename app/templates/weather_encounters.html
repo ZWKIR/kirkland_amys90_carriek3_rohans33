@@ -140,7 +140,7 @@
 	    <br>
 	    <br>
 	    <div style="margin: 10px;">
-            <button onclick="response1()" id = "second">
+            <button onclick="response1('1')" id = "second">
                 {% if currCat[4] == 0 %}
                     {{ dialogue[0] }}
                 {% else %}
@@ -148,7 +148,7 @@
                     {{currTrivia[n + 1]}}
                 {% endif %}
             </button>
-            <button onclick="response2()" id = "third">
+            <button onclick="response2('2')" id = "third">
                 {% if currCat[4] == 0 %}
                     {{ dialogue[1] }}
                 {% else %}
@@ -156,7 +156,7 @@
                     {{currTrivia[n + 1]}}
                 {% endif %}
             </button>
-            <button onclick="response3()" id = "fourth">
+            <button onclick="response3('3')" id = "fourth">
                 {% if currCat[4] == 0 %}
                     {{ dialogue[2] }}
                 {% else %}
@@ -164,7 +164,7 @@
                     {{currTrivia[n + 1]}}
                 {% endif %}
             </button>
-            <button onclick="response4()" id = "fifth">
+            <button onclick="response4('4')" id = "fifth">
                 {% if currCat[4] == 0 %}
                     {{ dialogue[3] }}
                 {% else %}
@@ -229,16 +229,16 @@
           }
           function process(a){
               if ({{ currCat[4] }} == 0){
-                  if(a === "Hilarious"){
+                  if(a === '1'){
 		      r = "OMG you liked it! That was one of my favorite jokes! Let's be friends :)";
 		  }
-                  else if(a === "That's a great joke!"){
+                  else if(a === '2'){
 		      r = "Right? If I see you again, I'll tell you another.";
 		  }
-                  else if(a === "Meh."){
+                  else if(a === '3'){
 		      r = "Yeah, I thought it was meh too. Maybe I'll do better next time.";
 		  }
-                  else if(a === "I've heard better..."){
+                  else if(a === '4'){
 		      r = "I know... I wish I was better at jokes...";
 		  }
 		  else{
@@ -301,10 +301,10 @@
           }
 	  t3 = 25 * r.length + 500;
           document.getElementById("play").onclick = function() {this.style.display = 'none'; document.getElementById("hold").style.display = 'inline'; uh(); typeDialogue(); setTimeout(show, t2);};
-	  document.getElementById("second").onclick = function() {this.style.display = 'none'; document.getElementById("third").style.display = 'none'; document.getElementById("fourth").style.display = 'none'; document.getElementById("fifth").style.display = 'none'; uh(); clear(); process(this.textContent.trim()); response(); setTimeout(go, t3);};
-	  document.getElementById("third").onclick = function() {this.style.display = 'none'; document.getElementById("second").style.display = 'none'; document.getElementById("fourth").style.display = 'none'; document.getElementById("fifth").style.display = 'none'; uh(); clear(); process(this.textContent.trim()); response(); setTimeout(go, t3);};
-	  document.getElementById("fourth").onclick = function() {this.style.display = 'none'; document.getElementById("third").style.display = 'none'; document.getElementById("second").style.display = 'none'; document.getElementById("fifth").style.display = 'none'; uh(); clear(); process(this.textContent.trim()); response(); setTimeout(go, t3);};
-	  document.getElementById("fifth").onclick = function() {this.style.display = 'none'; document.getElementById("third").style.display = 'none'; document.getElementById("fourth").style.display = 'none'; document.getElementById("second").style.display = 'none'; uh(); clear(); process(this.textContent.trim()); response(); setTimeout(go, t3);};
+	  document.getElementById("second").onclick = function() {this.style.display = 'none'; document.getElementById("third").style.display = 'none'; document.getElementById("fourth").style.display = 'none'; document.getElementById("fifth").style.display = 'none'; uh(); clear(); process('1'); response(); setTimeout(go, t3);};
+	  document.getElementById("third").onclick = function() {this.style.display = 'none'; document.getElementById("second").style.display = 'none'; document.getElementById("fourth").style.display = 'none'; document.getElementById("fifth").style.display = 'none'; uh(); clear(); process('2'); response(); setTimeout(go, t3);};
+	  document.getElementById("fourth").onclick = function() {this.style.display = 'none'; document.getElementById("third").style.display = 'none'; document.getElementById("second").style.display = 'none'; document.getElementById("fifth").style.display = 'none'; uh(); clear(); process('3'); response(); setTimeout(go, t3);};
+	  document.getElementById("fifth").onclick = function() {this.style.display = 'none'; document.getElementById("third").style.display = 'none'; document.getElementById("fourth").style.display = 'none'; document.getElementById("second").style.display = 'none'; uh(); clear(); process('4'); response(); setTimeout(go, t3);};
       });
    </script>
 </html>
